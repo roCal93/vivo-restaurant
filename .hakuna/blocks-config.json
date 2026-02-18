@@ -1,0 +1,17 @@
+{
+  "selectedBlocks": [
+    "TextBlock",
+    "ImageBlock",
+    "BackgroundBlock",
+    "ButtonBlock",
+    "HeroBlockSimpleText",
+    "TextImageBlock",
+    "CardsBlock",
+    "WorkBlock",
+    "WorkCard",
+    "ContactFormBlock"
+  ],
+  "preset": "restaurant",
+  "autoSync": true,
+  "lastSync": "2026-02-17T12:54:12.803Z"
+}
