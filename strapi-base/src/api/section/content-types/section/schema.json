@@ -55,6 +55,7 @@
         "blocks.text-block",
         "blocks.button-block",
         "blocks.image-block",
+        "blocks.background-block",
         "blocks.cards-block",
         "blocks.text-image-block",
         "blocks.hero-block-simple-text",

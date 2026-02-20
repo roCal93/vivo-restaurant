@@ -286,6 +286,7 @@ export type CardCollectionResponse = StrapiCollectionResponse<Card>;
  * Header
  */
 export interface Header {
+  variant?: 'default' | 'stacked';
   logo?: StrapiMedia;
   title?: string;
   navigation?: PageLink[];

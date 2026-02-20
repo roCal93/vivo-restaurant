@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Julius_Sans_One } from 'next/font/google'
 import './globals.css'
 import { cookies, headers } from 'next/headers'
 import { defaultLocale } from '@/lib/locales'
@@ -8,20 +8,12 @@ import { isDisableDark } from '@/lib/theme'
 // Mark layout dynamic since we read cookies/headers for locale detection
 export const dynamic = 'force-dynamic'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const juliusSansOne = Julius_Sans_One({
+  variable: '--font-julius-sans-one',
   subsets: ['latin'],
+  weight: '400',
   display: 'swap',
   preload: true,
-  adjustFontFallback: true,
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-  display: 'swap',
-  preload: false,
-  adjustFontFallback: true,
 })
 
 export const metadata: Metadata = {
@@ -87,11 +79,10 @@ export default async function RootLayout({
     <html
       lang={locale}
       suppressHydrationWarning
+      className={juliusSansOne.variable}
       data-disable-dark={disableDark ? 'true' : undefined}
     >
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="font-sans antialiased">
         {/* Structured data for SEO */}
         <SchemaOrg />
         {/* Dev-only protective wrapper to avoid dev tooling throwing on performance.measure */}

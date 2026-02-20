@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { Header } from '@/components/sections/Header'
 import { Footer } from '@/components/sections/Footer'
 import { SkipToContent } from '@/components/ui/SkipToContent'
-import { fetchAPI } from '@/lib/strapi'
+import { fetchAPI, cleanImageUrl } from '@/lib/strapi'
 import type {
   HeaderResponse,
   PageLink,
@@ -28,10 +28,13 @@ async function getHeaderData(locale: string) {
     // Si la seconde requête échoue (ex: validation error sur le populate), on continue
     // avec `dataSection = null` pour éviter de planter le rendu du header.
     const [pageResult, sectionResult] = await Promise.allSettled([
-      fetchAPI<HeaderResponse>('/header?populate=navigation.page', {
-        locale,
-        next: { revalidate: 3600 },
-      }),
+      fetchAPI<HeaderResponse>(
+        '/header?populate[0]=navigation.page&populate[1]=logo',
+        {
+          locale,
+          next: { revalidate: 3600 },
+        }
+      ),
       // This request can return 400 for some Strapi installations (invalid populate key).
       // We expect that and don't want a noisy warning in the console, so suppress it.
       fetchAPI<HeaderResponse>('/header?populate=navigation.section', {
@@ -194,8 +197,16 @@ async function getHeaderData(locale: string) {
     }
 
     // Prefer dataPage root fields (logo/title), but attach merged navigation
+    // Clean the logo URL so relative Strapi paths become absolute
+    const logo = dataPage?.logo
+      ? {
+          ...dataPage.logo,
+          url: cleanImageUrl(dataPage.logo.url) ?? dataPage.logo.url,
+        }
+      : dataPage?.logo
     return {
       ...dataPage,
+      logo,
       navigation: merged,
     }
   } catch (error) {
@@ -208,9 +219,10 @@ export const Layout = async ({ children, locale }: LayoutProps) => {
   const headerData = await getHeaderData(locale)
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="relative flex flex-col min-h-screen">
       <SkipToContent />
       <Header
+        variant={headerData?.variant ?? 'stacked'}
         logo={headerData?.logo}
         title={headerData?.title}
         navigation={headerData?.navigation}

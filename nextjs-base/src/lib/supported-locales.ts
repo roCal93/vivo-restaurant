@@ -5,7 +5,36 @@ function uniq(values: string[]) {
   return Array.from(new Set(values))
 }
 
-async function fetchLocalesFromStrapi(): Promise<string[]> {
+type StrapiLocalesConfig = {
+  locales: string[]
+  defaultLocale?: string
+}
+
+type StrapiLocaleItem = {
+  code?: unknown
+  name?: unknown
+  isDefault?: unknown
+  attributes?: {
+    code?: unknown
+    name?: unknown
+    isDefault?: unknown
+  }
+}
+
+function parseStrapiLocaleItem(item: StrapiLocaleItem): {
+  code?: string
+  isDefault?: boolean
+} {
+  const code = item.code ?? item.attributes?.code
+  const isDefault = item.isDefault ?? item.attributes?.isDefault
+
+  return {
+    code: typeof code === 'string' && code.length > 0 ? code : undefined,
+    isDefault: typeof isDefault === 'boolean' ? isDefault : undefined,
+  }
+}
+
+async function fetchLocalesConfigFromStrapi(): Promise<StrapiLocalesConfig> {
   const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
   const url = `${apiUrl.replace(/\/$/, '')}/api/i18n/locales`
 
@@ -24,36 +53,85 @@ async function fetchLocalesFromStrapi(): Promise<string[]> {
   })
 
   if (!res.ok) {
-    return []
+    return { locales: [] }
   }
 
   const json: unknown = await res.json()
 
   if (Array.isArray(json)) {
-    return json
-      .map((item) => (item as { code?: unknown })?.code)
+    const parsed = (json as StrapiLocaleItem[]).map(parseStrapiLocaleItem)
+    const locales = parsed
+      .map((p) => p.code)
       .filter((code): code is string => typeof code === 'string' && code.length > 0)
+
+    const defaultFromStrapi = parsed.find((p) => p.isDefault)?.code
+
+    return {
+      locales,
+      defaultLocale:
+        typeof defaultFromStrapi === 'string' ? defaultFromStrapi : undefined,
+    }
   }
 
   const data = (json as { data?: unknown })?.data
   if (Array.isArray(data)) {
-    return data
-      .map((item) => {
-        const obj = item as { code?: unknown; attributes?: { code?: unknown } }
-        const code = obj.code ?? obj.attributes?.code
-        return typeof code === 'string' ? code : undefined
-      })
+    const parsed = (data as StrapiLocaleItem[]).map(parseStrapiLocaleItem)
+    const locales = parsed
+      .map((p) => p.code)
       .filter((code): code is string => typeof code === 'string' && code.length > 0)
+
+    const defaultFromStrapi = parsed.find((p) => p.isDefault)?.code
+
+    return {
+      locales,
+      defaultLocale:
+        typeof defaultFromStrapi === 'string' ? defaultFromStrapi : undefined,
+    }
   }
 
-  return []
+  return { locales: [] }
 }
+
+export const getLocalesConfig = unstable_cache(
+  async () => {
+    const fromStrapi = await fetchLocalesConfigFromStrapi().catch(() => ({
+      locales: [],
+      defaultLocale: undefined,
+    }))
+
+    const staticList = [...(staticLocales as readonly string[])]
+
+    // Source of truth: Strapi locales. If Strapi is unreachable, fallback to static locales.
+    const candidateLocales =
+      fromStrapi.locales.length > 0 ? fromStrapi.locales : staticList
+
+    // Keep only locales that the frontend is known to support.
+    const filteredLocales = candidateLocales.filter((l) =>
+      staticList.includes(l)
+    )
+
+    const locales =
+      filteredLocales.length > 0 ? uniq(filteredLocales) : uniq(staticList)
+
+    const strapiDefault = fromStrapi.defaultLocale
+    const resolvedDefaultLocale =
+      typeof strapiDefault === 'string' && locales.includes(strapiDefault)
+        ? strapiDefault
+        : defaultLocale
+
+    return {
+      locales,
+      defaultLocale: resolvedDefaultLocale,
+    }
+  },
+  ['locales-config'],
+  { revalidate: 60 * 60 }
+)
 
 export const getSupportedLocales = unstable_cache(
   async () => {
-    const fromStrapi = await fetchLocalesFromStrapi().catch(() => [])
-    const merged = uniq([...(staticLocales as readonly string[]), ...fromStrapi])
-    return merged
+    const { locales } = await getLocalesConfig()
+    return locales
   },
   ['supported-locales'],
   { revalidate: 60 * 60 }

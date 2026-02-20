@@ -15,6 +15,19 @@ export default {
     }
   },
   "attributes": {
+    "variant": {
+      "type": "enumeration",
+      "enum": [
+        "default",
+        "stacked"
+      ],
+      "default": "default",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "logo": {
       "type": "media",
       "pluginOptions": {

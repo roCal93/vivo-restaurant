@@ -24,10 +24,10 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
 
 const getVariantStyles = (variant: ButtonVariant): string => {
   const styles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
-    ghost: 'text-blue-600 hover:bg-blue-50',
+    primary: 'bg-[#533A8F]/70 text-white hover:bg-[#533A8F]',
+    secondary: 'bg-gray-200/70 text-gray-800 hover:bg-gray-200',
+    outline: 'border-2 border-[#533A8F] text-[#533A8F] hover:bg-[#533A8F]/10',
+    ghost: 'text-[#533A8F] hover:bg-[#533A8F]/10',
   }
   return styles[variant]
 }
@@ -38,7 +38,7 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-  const base = 'px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center justify-center gap-2'
+  const base = 'px-6 py-4 rounded-full font-medium transition-all inline-flex items-center justify-center gap-2 backdrop-blur-[25.73px] shadow-[inset_12.87px_-12.87px_12.87px_0px_rgba(63,44,109,0.182),inset_-12.87px_12.87px_12.87px_0px_rgba(255,255,255,0.182)]'
   const variantStyles = getVariantStyles(variant)
   const classes = `${base} ${variantStyles} ${className}`
 

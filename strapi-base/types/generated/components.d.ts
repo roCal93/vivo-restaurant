@@ -58,6 +58,9 @@ export interface BlocksButtonBlock extends Struct.ComponentSchema {
         },
         number
       >;
+    equalWidth: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    layout: Schema.Attribute.Enumeration<['horizontal', 'vertical']> &
+      Schema.Attribute.DefaultTo<'horizontal'>;
   };
 }
 
@@ -76,6 +79,7 @@ export interface BlocksCardsBlock extends Struct.ComponentSchema {
     columns: Schema.Attribute.Enumeration<['1', '2', '3', '4']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'3'>;
+    overlap: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -230,7 +234,9 @@ export interface BlocksHeroBlockSimpleText extends Struct.ComponentSchema {
   };
   attributes: {
     content: Schema.Attribute.Text & Schema.Attribute.Required;
-    height: Schema.Attribute.Enumeration<['medium', 'large', 'full']> &
+    height: Schema.Attribute.Enumeration<
+      ['little', 'medium', 'large', 'full']
+    > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'large'>;
     textAlignment: Schema.Attribute.Enumeration<['left', 'center', 'right']> &

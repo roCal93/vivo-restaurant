@@ -6,9 +6,15 @@ type CardsBlockProps = {
   cards: (CardData & StrapiEntity)[]
   columns: '1' | '2' | '3' | '4'
   alignment?: 'left' | 'center' | 'right'
+  overlap?: boolean
 }
 
-const CardsBlock = ({ cards, columns, alignment = 'center' }: CardsBlockProps) => {
+const CardsBlock = ({
+  cards,
+  columns,
+  alignment = 'center',
+  overlap = false,
+}: CardsBlockProps) => {
   const columnClasses = {
     '1': 'grid-cols-1 max-w-3xl mx-auto',
     '2': 'grid-cols-1 md:grid-cols-2',
@@ -30,15 +36,41 @@ const CardsBlock = ({ cards, columns, alignment = 'center' }: CardsBlockProps) =
     '4': 'w-full',
   }
 
+  if (overlap) {
+    return (
+      <div className="flex items-center justify-center my-8 px-8">
+        {cards.map((card, index) => (
+          <div
+            key={card.id}
+            className="relative w-72 md:w-96 lg:w-[28rem] flex-shrink-0 transition-all duration-300 hover:-translate-y-6 hover:scale-105 cursor-pointer"
+            style={{
+              zIndex: index === 0 ? cards.length : cards.length - index,
+              marginLeft: index > 0 ? '-2rem' : '0',
+            }}
+          >
+            <Card
+              title={card.title}
+              subtitle={card.subtitle}
+              content={card.content || []}
+              image={card.image}
+            />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
-    <div className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}>
+    <div
+      className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}
+    >
       {cards.map((card) => (
         <div key={card.id} className={cardWidthClasses[columns]}>
           <Card
             title={card.title}
             subtitle={card.subtitle}
             content={card.content || []}
-            image={card.image?.url}
+            image={card.image}
           />
         </div>
       ))}

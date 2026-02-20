@@ -23,6 +23,19 @@ export default {
       ],
       "default": "center",
       "required": true
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal",
+      "required": false
+    },
+    "equalWidth": {
+      "type": "boolean",
+      "default": false
     }
   },
   "config": {}

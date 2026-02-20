@@ -9,9 +9,11 @@ import { cleanImageUrl } from '@/lib/strapi'
 type ButtonBlockProps = {
   buttons: ButtonData[]
   alignment: 'left' | 'center' | 'right' | 'space-between'
+  layout?: 'horizontal' | 'vertical'
+  equalWidth?: boolean
 }
 
-const ButtonBlock = ({ buttons, alignment }: ButtonBlockProps) => {
+const ButtonBlock = ({ buttons, alignment, layout = 'horizontal', equalWidth = false }: ButtonBlockProps) => {
   const pathname = usePathname()
   const segments = pathname?.split('/').filter(Boolean) || []
   const currentLocale = segments[0] || 'fr'
@@ -23,8 +25,20 @@ const ButtonBlock = ({ buttons, alignment }: ButtonBlockProps) => {
     'space-between': 'justify-between',
   }
 
+  const verticalAlignmentClasses = {
+    left: 'items-start',
+    center: 'items-center',
+    right: 'items-end',
+    'space-between': 'items-stretch',
+  }
+
+  const containerClass =
+    layout === 'vertical'
+      ? `flex flex-col gap-6 my-14 ${verticalAlignmentClasses[alignment]}`
+      : `flex flex-wrap gap-6 my-14 ${alignmentClasses[alignment]}`
+
   return (
-    <div className={`flex flex-wrap gap-4 my-6 ${alignmentClasses[alignment]}`}>
+    <div className={containerClass}>
       {buttons.map((button, index) => {
         // If file is present, use it; otherwise use URL
         let href = button.file?.url 
@@ -46,15 +60,17 @@ const ButtonBlock = ({ buttons, alignment }: ButtonBlockProps) => {
         }
         
         return (
-          <Button
-            key={index}
-            href={href}
-            variant={button.variant as 'primary' | 'secondary' | 'outline' | 'ghost'}
-            target={button.isExternal || isFileDownload ? '_blank' : undefined}
-            rel={isFileDownload ? 'noopener noreferrer' : undefined}
-          >
-            {button.label}
-          </Button>
+          <div key={index}>
+            <Button
+              href={href}
+              className={equalWidth ? 'w-[440px]' : ''}
+              variant={button.variant as 'primary' | 'secondary' | 'outline' | 'ghost'}
+              target={button.isExternal || isFileDownload ? '_blank' : undefined}
+              rel={isFileDownload ? 'noopener noreferrer' : undefined}
+            >
+              {button.label}
+            </Button>
+          </div>
         )
       })}
     </div>

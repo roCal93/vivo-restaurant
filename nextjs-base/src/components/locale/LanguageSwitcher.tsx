@@ -44,7 +44,10 @@ export function LanguageSwitcher({
 
         const locales = Array.isArray(json.locales)
           ? json.locales.filter(
-              (l): l is string => typeof l === 'string' && l.length > 0
+              (l): l is string =>
+                typeof l === 'string' &&
+                l.length > 0 &&
+                (STATIC_LOCALES as readonly string[]).includes(l)
             )
           : []
 

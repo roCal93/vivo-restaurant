@@ -32,6 +32,10 @@ export default {
       ],
       "default": "center",
       "required": true
+    },
+    "overlap": {
+      "type": "boolean",
+      "default": false
     }
   },
   "config": {}

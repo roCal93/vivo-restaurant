@@ -22,8 +22,7 @@ export default {
         "i18n": {
           "localized": true
         }
-      },
-      "required": true
+      }
     },
     "subtitle": {
       "type": "string",

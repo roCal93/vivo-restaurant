@@ -17,6 +17,7 @@ export default {
     "height": {
       "type": "enumeration",
       "enum": [
+        "little",
         "medium",
         "large",
         "full"

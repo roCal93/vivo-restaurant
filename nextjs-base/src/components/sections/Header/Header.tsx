@@ -26,6 +26,7 @@ export interface HeaderProps {
   title?: string
   navigation?: PageLink[]
   hideLanguageSwitcher?: boolean
+  variant?: 'default' | 'stacked'
 }
 
 export const Header = memo(
@@ -34,6 +35,7 @@ export const Header = memo(
     title = 'My Website',
     navigation = [],
     hideLanguageSwitcher = false,
+    variant = 'default',
   }: HeaderProps) => {
     const rawPathname = usePathname() ?? '/'
     const pathname = useDeferredValue(rawPathname)
@@ -185,6 +187,106 @@ export const Header = memo(
         e.preventDefault()
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
+    }
+
+    const isStackedVariant = variant === 'stacked'
+
+    if (isStackedVariant) {
+      return (
+        <header
+          id="site-header"
+          role="banner"
+          aria-label="Site header"
+          className="absolute top-8 left-0 right-0 z-50 p-6"
+        >
+          <div className="flex items-start justify-between gap-6">
+            <Link
+              href={`/${currentLocale}`}
+              prefetch
+              onClick={handleLogoClick}
+              aria-label={`${title} - Return to homepage`}
+              className="block pl-32"
+            >
+              {logo ? (
+                <Image
+                  src={logo.url}
+                  alt={logo.alternativeText || title}
+                  width={logo.width || 180}
+                  height={logo.height || 60}
+                  className="cursor-pointer"
+                  priority
+                />
+              ) : (
+                <h1 className="text-5xl font-caveat cursor-pointer hover:text-gray-600 text-left">
+                  {title.split(' ').map((word, i) => (
+                    <span key={i} className="block">
+                      {word}
+                      {i < title.split(' ').length - 1 && ' '}
+                    </span>
+                  ))}
+                </h1>
+              )}
+            </Link>
+
+            {!hideLanguageSwitcher && (
+              <div className="flex-none pr-6">
+                <LanguageSwitcher />
+              </div>
+            )}
+          </div>
+
+          <nav
+            role="navigation"
+            aria-label="Main navigation"
+            className="mt-10 flex flex-col gap-6"
+          >
+            {links.map((link, index) => {
+              const active = isActive(link.slug, link.isHome, link.anchor)
+              const hovered = hoveredIndex === index
+              return (
+                <Link
+                  key={link.slug || index}
+                  href={getLocalizedHref(link.slug, link.isHome, link.anchor)}
+                  prefetch
+                  onClick={(e) => handleNavClick(e, link)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  aria-current={active ? 'page' : undefined}
+                  aria-label={
+                    link.anchor ? `${link.label} section` : link.label
+                  }
+                  className={`relative inline-flex items-center h-9 text-lg transition-colors hover:text-gray-600 w-fit ${
+                    active ? 'font-semibold text-black' : 'text-gray-700'
+                  }`}
+                >
+                  <span className="z-10">{link.label}</span>
+                  <motion.span
+                    aria-hidden
+                    className="absolute left-0 bottom-0 h-[3px] w-full bg-[#F88379] origin-left transform"
+                    initial={
+                      shouldReduceMotion
+                        ? {}
+                        : { scaleX: active || hovered ? 1 : 0 }
+                    }
+                    animate={
+                      shouldReduceMotion
+                        ? {}
+                        : { scaleX: active || hovered ? 1 : 0 }
+                    }
+                    transition={{
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 30,
+                      duration: 0.18,
+                    }}
+                    style={{ transformOrigin: 'left' }}
+                  />
+                </Link>
+              )
+            })}
+          </nav>
+        </header>
+      )
     }
 
     return (

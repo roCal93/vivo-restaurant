@@ -3,7 +3,7 @@ import React from 'react'
 type HeroBlockProps = {
   title?: string
   content: string
-  height?: 'medium' | 'large' | 'full'
+  height?: 'little' | 'medium' | 'large' | 'full'
   textAlignment?: 'left' | 'center' | 'right'
 }
 
@@ -14,8 +14,9 @@ const HeroBlockSimpleText = ({
   textAlignment = 'center',
 }: HeroBlockProps) => {
   const heightClasses = {
-    medium: 'min-h-[400px] py-16',
-    large: 'min-h-[600px] py-24',
+    little: 'min-h-[220px] py-8',
+    medium: 'min-h-[550px] py-16',
+    large: 'min-h-[750px] py-24',
     full: 'min-h-screen py-32',
   }
 
@@ -26,16 +27,20 @@ const HeroBlockSimpleText = ({
   }
 
   return (
-    <section className={`${heightClasses[height]} flex items-center justify-center`}>
+    <section
+      className={`${heightClasses[height]} flex items-center justify-center`}
+    >
       <div className="w-full max-w-6xl mx-auto px-4">
-        <div className={`flex flex-col ${textAlignmentClasses[textAlignment]} gap-6`}>
+        <div
+          className={`flex flex-col ${textAlignmentClasses[textAlignment]} gap-6`}
+        >
           {title && (
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium">
               {title}
             </h1>
           )}
-          
-          <p className="text-lg md:text-xl lg:text-2xl text-gray-700 max-w-4xl whitespace-pre-line">
+
+          <p className="text-lg md:text-xl lg:text-2xl max-w-4xl whitespace-pre-line">
             {content}
           </p>
         </div>

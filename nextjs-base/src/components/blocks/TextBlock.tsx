@@ -8,11 +8,11 @@ type TextBlockProps = {
   maxWidth?: 'small' | 'medium' | 'large' | 'full'
 }
 
-const TextBlock = ({ 
-  content, 
+const TextBlock = ({
+  content,
   textAlignment = 'left',
   blockAlignment = 'full',
-  maxWidth = 'full'
+  maxWidth = 'full',
 }: TextBlockProps) => {
   const alignmentClasses = {
     left: 'text-left',
@@ -40,13 +40,19 @@ const TextBlock = ({
       switch (block.type) {
         case 'paragraph':
           return (
-            <p key={index} className={`text-gray-700 mb-4 ${alignmentClasses[textAlignment]}`}>
+            <p
+              key={index}
+              className={`text-[var(--foreground)] mb-4 ${alignmentClasses[textAlignment]}`}
+            >
               {block.children?.map((child, childIndex) => {
                 if (child.type === 'text') {
                   let text = <span key={childIndex}>{child.text}</span>
-                  if (child.bold) text = <strong key={childIndex}>{child.text}</strong>
-                  if (child.italic) text = <em key={childIndex}>{child.text}</em>
-                  if (child.underline) text = <u key={childIndex}>{child.text}</u>
+                  if (child.bold)
+                    text = <strong key={childIndex}>{child.text}</strong>
+                  if (child.italic)
+                    text = <em key={childIndex}>{child.text}</em>
+                  if (child.underline)
+                    text = <u key={childIndex}>{child.text}</u>
                   return text
                 }
                 return null
@@ -65,7 +71,10 @@ const TextBlock = ({
             6: 'text-base font-bold mb-2',
           }
           return (
-            <HeadingTag key={index} className={`${headingClasses[level as keyof typeof headingClasses]} ${alignmentClasses[textAlignment]}`}>
+            <HeadingTag
+              key={index}
+              className={`${headingClasses[level as keyof typeof headingClasses]} ${alignmentClasses[textAlignment]}`}
+            >
               {block.children?.map((child, childIndex) => {
                 if (child.type === 'text') {
                   return <span key={childIndex}>{child.text}</span>
@@ -76,17 +85,28 @@ const TextBlock = ({
           )
         case 'list':
           const ListTag = block.format === 'ordered' ? 'ol' : 'ul'
-          const listClass = block.format === 'ordered' ? 'list-decimal' : 'list-disc'
+          const listClass =
+            block.format === 'ordered' ? 'list-decimal' : 'list-disc'
           return (
-            <ListTag key={index} className={`${listClass} ml-6 mb-4 text-gray-700 ${alignmentClasses[textAlignment]}`}>
+            <ListTag
+              key={index}
+              className={`${listClass} ml-6 mb-4 text-[var(--foreground)] ${alignmentClasses[textAlignment]}`}
+            >
               {block.children?.map((child, childIndex) => (
                 <li key={childIndex} className="mb-2">
-                  {Array.isArray(child.children) && child.children.map((grandChild: StrapiBlock, grandChildIndex: number) => {
-                    if (grandChild.type === 'text') {
-                      return <span key={grandChildIndex}>{String(grandChild.text || '')}</span>
-                    }
-                    return null
-                  })}
+                  {Array.isArray(child.children) &&
+                    child.children.map(
+                      (grandChild: StrapiBlock, grandChildIndex: number) => {
+                        if (grandChild.type === 'text') {
+                          return (
+                            <span key={grandChildIndex}>
+                              {String(grandChild.text || '')}
+                            </span>
+                          )
+                        }
+                        return null
+                      }
+                    )}
                 </li>
               ))}
             </ListTag>
@@ -98,7 +118,9 @@ const TextBlock = ({
   }
 
   return (
-    <div className={`${blockAlignmentClasses[blockAlignment]} ${maxWidthClasses[maxWidth]}`}>
+    <div
+      className={`${blockAlignmentClasses[blockAlignment]} ${maxWidthClasses[maxWidth]}`}
+    >
       <div className="prose max-w-none">{renderBlocks(content)}</div>
     </div>
   )

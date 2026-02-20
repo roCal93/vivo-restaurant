@@ -467,7 +467,6 @@ export interface ApiCardCard extends Struct.CollectionTypeSchema {
         };
       }>;
     title: Schema.Attribute.String &
-      Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -529,6 +528,13 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    variant: Schema.Attribute.Enumeration<['default', 'stacked']> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'default'>;
   };
 }
 
@@ -680,6 +686,7 @@ export interface ApiSectionSection extends Struct.CollectionTypeSchema {
         'blocks.text-block',
         'blocks.button-block',
         'blocks.image-block',
+        'blocks.background-block',
         'blocks.cards-block',
         'blocks.text-image-block',
         'blocks.hero-block-simple-text',
