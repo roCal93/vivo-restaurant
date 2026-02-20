@@ -25,7 +25,7 @@ export const Card = ({ title, subtitle, content, image }: CardProps) => {
       case 'paragraph':
       case 'heading':
         return (block.children || []).some(
-          (child: any) =>
+          (child: { type?: string; text?: string }) =>
             child?.type === 'text' &&
             (child.text || '').toString().trim() !== ''
         )
@@ -93,10 +93,13 @@ export const Card = ({ title, subtitle, content, image }: CardProps) => {
             </div>
           ) : (
             <div className="w-full">
-              <img
+              <Image
                 src={cleanImage}
                 alt={title || 'Card image'}
+                width={imgWidth || 1200}
+                height={imgHeight || 800}
                 className="w-full h-auto object-cover rounded-lg"
+                sizes="100vw"
               />
             </div>
           )
