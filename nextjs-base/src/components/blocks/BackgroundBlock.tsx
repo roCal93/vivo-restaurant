@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
@@ -67,38 +66,48 @@ const BackgroundBlock = ({
     | { attributes?: { url?: string } }
     | null
     | undefined
-  
+
   const getMediaUrl = (m?: MediaLike) => {
     if (!m) return undefined
     if (typeof m === 'string') return cleanImageUrl(m)
-  
+
     if (typeof m === 'object') {
       const obj = m as Record<string, unknown>
-  
+
       if (typeof obj.url === 'string') return cleanImageUrl(obj.url as string)
-  
+
       if (
         obj.data &&
         typeof obj.data === 'object' &&
         'attributes' in (obj.data as Record<string, unknown>) &&
-        typeof ((obj.data as Record<string, unknown>).attributes as Record<string, unknown>).url ===
-          'string'
+        typeof (
+          (obj.data as Record<string, unknown>).attributes as Record<
+            string,
+            unknown
+          >
+        ).url === 'string'
       ) {
         return cleanImageUrl(
-          ((obj.data as Record<string, unknown>).attributes as Record<string, unknown>)
-            .url as string
+          (
+            (obj.data as Record<string, unknown>).attributes as Record<
+              string,
+              unknown
+            >
+          ).url as string
         )
       }
-  
+
       if (
         obj.attributes &&
         typeof obj.attributes === 'object' &&
         typeof (obj.attributes as Record<string, unknown>).url === 'string'
       ) {
-        return cleanImageUrl((obj.attributes as Record<string, unknown>).url as string)
+        return cleanImageUrl(
+          (obj.attributes as Record<string, unknown>).url as string
+        )
       }
     }
-  
+
     return undefined
   }
 
@@ -277,8 +286,6 @@ const BackgroundBlock = ({
           }}
         />
       ) : null}
-
-
     </>
   )
 }
