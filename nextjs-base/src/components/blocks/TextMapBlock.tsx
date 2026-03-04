@@ -290,9 +290,7 @@ const TextMapBlock = ({
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={
-          shouldReduce
-            ? { duration: 0 }
-            : { duration: 0.7, ease: 'easeOut' }
+          shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
         }
       >
         {title && <h3 className="text-2xl font-bold mb-14">{title}</h3>}

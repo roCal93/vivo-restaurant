@@ -11,7 +11,13 @@ type CardProps = {
   mobileImage?: string | StrapiMedia
 }
 
-export const Card = ({ title, subtitle, content, image, mobileImage }: CardProps) => {
+export const Card = ({
+  title,
+  subtitle,
+  content,
+  image,
+  mobileImage,
+}: CardProps) => {
   // accept either a URL string or the full Strapi media object
   const imageUrl = typeof image === 'string' ? image : image?.url
   const cleanImage = cleanImageUrl(imageUrl)
@@ -20,12 +26,17 @@ export const Card = ({ title, subtitle, content, image, mobileImage }: CardProps
   const imgHeight =
     typeof image === 'object' && image?.height ? image.height : undefined
 
-  const mobileImageUrl = typeof mobileImage === 'string' ? mobileImage : mobileImage?.url
+  const mobileImageUrl =
+    typeof mobileImage === 'string' ? mobileImage : mobileImage?.url
   const cleanMobileImage = cleanImageUrl(mobileImageUrl)
   const mobileImgWidth =
-    typeof mobileImage === 'object' && mobileImage?.width ? mobileImage.width : undefined
+    typeof mobileImage === 'object' && mobileImage?.width
+      ? mobileImage.width
+      : undefined
   const mobileImgHeight =
-    typeof mobileImage === 'object' && mobileImage?.height ? mobileImage.height : undefined
+    typeof mobileImage === 'object' && mobileImage?.height
+      ? mobileImage.height
+      : undefined
 
   // Determine whether content contains any visible text (handles empty blocks)
   const hasVisibleContent = (content || []).some((block) => {

@@ -68,7 +68,11 @@ export async function PATCH(
   }
 
   if (reservation.status === status) {
-    return NextResponse.json({ ok: true, skippedEmail: true, data: reservation })
+    return NextResponse.json({
+      ok: true,
+      skippedEmail: true,
+      data: reservation,
+    })
   }
 
   const res = await fetch(`${STRAPI_URL}/api/reservations/${id}`, {

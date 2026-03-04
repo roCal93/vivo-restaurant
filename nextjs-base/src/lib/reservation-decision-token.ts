@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 
-const SECRET = process.env.RESERVATION_DECISION_SECRET || process.env.ADMIN_SECRET
+const SECRET =
+  process.env.RESERVATION_DECISION_SECRET || process.env.ADMIN_SECRET
 const TOKEN_TTL = 7 * 24 * 60 * 60 * 1000
 
 type ReservationDecisionStatus = 'confirmed' | 'cancelled'
@@ -23,7 +24,9 @@ export function signReservationDecisionToken(
     exp: Date.now() + TOKEN_TTL,
   }
 
-  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url')
+  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString(
+    'base64url'
+  )
   const signature = createHmac('sha256', SECRET)
     .update(encodedPayload)
     .digest('base64url')

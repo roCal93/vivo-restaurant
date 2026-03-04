@@ -64,16 +64,19 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const currentRes = await fetch(`${STRAPI_URL}/api/reservations/${decision.id}`, {
-    headers: strapiHeaders(),
-    cache: 'no-store',
-  })
+  const currentRes = await fetch(
+    `${STRAPI_URL}/api/reservations/${decision.id}`,
+    {
+      headers: strapiHeaders(),
+      cache: 'no-store',
+    }
+  )
 
   if (!currentRes.ok) {
     return new NextResponse(
       htmlPage(
         'Réservation introuvable',
-        "Impossible de retrouver cette réservation. Elle a peut-être déjà été traitée.",
+        'Impossible de retrouver cette réservation. Elle a peut-être déjà été traitée.',
         '#dc2626'
       ),
       {
@@ -88,7 +91,11 @@ export async function GET(request: NextRequest) {
 
   if (!reservation) {
     return new NextResponse(
-      htmlPage('Réservation introuvable', 'Aucune donnée associée à ce lien.', '#dc2626'),
+      htmlPage(
+        'Réservation introuvable',
+        'Aucune donnée associée à ce lien.',
+        '#dc2626'
+      ),
       {
         status: 404,
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -109,11 +116,14 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const updateRes = await fetch(`${STRAPI_URL}/api/reservations/${decision.id}`, {
-    method: 'PUT',
-    headers: strapiHeaders(),
-    body: JSON.stringify({ data: { status: decision.status } }),
-  })
+  const updateRes = await fetch(
+    `${STRAPI_URL}/api/reservations/${decision.id}`,
+    {
+      method: 'PUT',
+      headers: strapiHeaders(),
+      body: JSON.stringify({ data: { status: decision.status } }),
+    }
+  )
 
   if (!updateRes.ok) {
     return new NextResponse(
@@ -156,7 +166,9 @@ export async function GET(request: NextRequest) {
 
   return new NextResponse(
     htmlPage(
-      decision.status === 'confirmed' ? 'Réservation confirmée' : 'Réservation refusée',
+      decision.status === 'confirmed'
+        ? 'Réservation confirmée'
+        : 'Réservation refusée',
       decision.status === 'confirmed'
         ? 'Le statut a été mis à jour et le client a été notifié.'
         : 'Le statut a été mis à jour et le client a été notifié.',

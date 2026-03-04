@@ -261,8 +261,22 @@ export default async function Page({
           identifier={section.identifier}
           title={section.hideTitle ? undefined : section.title}
           blocks={section.blocks as DynamicBlock[]}
-          spacingTop={section.spacingTop as 'none' | 'small' | 'medium' | 'large' | undefined}
-          spacingBottom={section.spacingBottom as 'none' | 'small' | 'medium' | 'large' | undefined}
+          spacingTop={
+            section.spacingTop as
+              | 'none'
+              | 'small'
+              | 'medium'
+              | 'large'
+              | undefined
+          }
+          spacingBottom={
+            section.spacingBottom as
+              | 'none'
+              | 'small'
+              | 'medium'
+              | 'large'
+              | undefined
+          }
           containerWidth={normalizeContainerWidth(section.containerWidth)}
         />
       ))}

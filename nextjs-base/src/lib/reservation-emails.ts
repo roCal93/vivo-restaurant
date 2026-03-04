@@ -26,12 +26,15 @@ export function normalizeReservationLocale(value: unknown): ReservationLocale {
 }
 
 function formatDateByLocale(date: string, locale: ReservationLocale): string {
-  return new Date(date).toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  return new Date(date).toLocaleDateString(
+    locale === 'en' ? 'en-GB' : 'fr-FR',
+    {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }
+  )
 }
 
 export function buildRestaurantNewReservationEmail(

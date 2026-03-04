@@ -175,9 +175,7 @@ const TextImageBlock = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={
-        shouldReduce
-          ? { duration: 0 }
-          : { duration: 0.6, ease: 'easeOut' }
+        shouldReduce ? { duration: 0 } : { duration: 0.6, ease: 'easeOut' }
       }
     >
       {renderBlocks(content)}
