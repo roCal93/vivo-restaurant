@@ -21,7 +21,6 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
   useEffect(() => {
     const el = ref.current
     if (!el || shouldReduce) {
-      setVisible(true)
       return
     }
     const observer = new IntersectionObserver(
@@ -62,7 +61,7 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
       ref={ref}
       className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}
       initial={{ opacity: 0, y: 80 }}
-      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
+      animate={shouldReduce || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
       transition={
         shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
       }
