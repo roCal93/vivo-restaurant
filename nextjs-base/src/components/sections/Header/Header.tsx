@@ -197,15 +197,15 @@ export const Header = memo(
           id="site-header"
           role="banner"
           aria-label="Site header"
-          className="absolute top-8 left-0 right-0 z-50 p-6"
+          className="absolute top-8 left-0 right-0 z-50 p-6 pointer-events-none max-[1299px]:relative max-[1299px]:top-0 max-[1299px]:min-h-[20vh]"
         >
-          <div className="flex items-start justify-between gap-6">
+          <div className="flex items-start justify-between gap-6 pointer-events-auto">
             <Link
               href={`/${currentLocale}`}
               prefetch
               onClick={handleLogoClick}
               aria-label={`${title} - Return to homepage`}
-              className="block pl-32"
+              className="block pl-32 max-[1299px]:pl-0"
             >
               {logo ? (
                 <Image
@@ -238,50 +238,70 @@ export const Header = memo(
           <nav
             role="navigation"
             aria-label="Main navigation"
-            className="mt-10 flex flex-col gap-6"
+            className="mt-36 flex flex-col gap-6 pl-32 pointer-events-auto max-[1299px]:mt-20 max-[1299px]:pl-0"
           >
             {links.map((link, index) => {
               const active = isActive(link.slug, link.isHome, link.anchor)
               const hovered = hoveredIndex === index
               return (
-                <Link
-                  key={link.slug || index}
-                  href={getLocalizedHref(link.slug, link.isHome, link.anchor)}
-                  prefetch
-                  onClick={(e) => handleNavClick(e, link)}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  aria-current={active ? 'page' : undefined}
-                  aria-label={
-                    link.anchor ? `${link.label} section` : link.label
+                <motion.div
+                  key={`${link.slug}-${link.anchor ?? index}`}
+                  initial={shouldReduceMotion ? {} : { opacity: 0, x: -60 }}
+                  animate={
+                    shouldReduceMotion
+                      ? {}
+                      : mounted
+                        ? { opacity: 1, x: 0 }
+                        : { opacity: 0, x: -60 }
                   }
-                  className={`relative inline-flex items-center h-9 text-lg transition-colors hover:text-gray-600 w-fit ${
-                    active ? 'font-semibold text-black' : 'text-gray-700'
-                  }`}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0 }
+                      : {
+                          duration: 0.5,
+                          delay: 0.8 + index * 0.12,
+                          ease: 'easeOut',
+                        }
+                  }
                 >
-                  <span className="z-10">{link.label}</span>
-                  <motion.span
-                    aria-hidden
-                    className="absolute left-0 bottom-0 h-[3px] w-full bg-[#F88379] origin-left transform"
-                    initial={
-                      shouldReduceMotion
-                        ? {}
-                        : { scaleX: active || hovered ? 1 : 0 }
+                  <Link
+                    href={getLocalizedHref(link.slug, link.isHome, link.anchor)}
+                    prefetch
+                    onClick={(e) => handleNavClick(e, link)}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    aria-current={active ? 'page' : undefined}
+                    aria-label={
+                      link.anchor ? `${link.label} section` : link.label
                     }
-                    animate={
-                      shouldReduceMotion
-                        ? {}
-                        : { scaleX: active || hovered ? 1 : 0 }
-                    }
-                    transition={{
-                      type: 'spring',
-                      stiffness: 400,
-                      damping: 30,
-                      duration: 0.18,
-                    }}
-                    style={{ transformOrigin: 'left' }}
-                  />
-                </Link>
+                    className={`relative inline-flex items-center h-9 text-[20px] leading-[24px] font-sans transition-colors hover:text-[#EBFFEE] w-fit ${
+                      active ? 'font-semibold text-[#EBFFEE]' : 'text-[#EBFFEE]'
+                    }`}
+                  >
+                    <span className="z-10">{link.label}</span>
+                    <motion.span
+                      aria-hidden
+                      className="absolute left-0 bottom-0 h-[1px] w-full bg-current origin-left transform"
+                      initial={
+                        shouldReduceMotion
+                          ? {}
+                          : { scaleX: active || hovered ? 1 : 0 }
+                      }
+                      animate={
+                        shouldReduceMotion
+                          ? {}
+                          : { scaleX: active || hovered ? 1 : 0 }
+                      }
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 30,
+                        duration: 0.18,
+                      }}
+                      style={{ transformOrigin: 'left' }}
+                    />
+                  </Link>
+                </motion.div>
               )
             })}
           </nav>
@@ -327,51 +347,72 @@ export const Header = memo(
           <nav
             role="navigation"
             aria-label="Main navigation"
-            className="hidden min-[850px]:flex min-[850px]:flex-nowrap min-[850px]:space-x-6"
+            className="hidden min-[850px]:flex min-[850px]:flex-nowrap min-[850px]:space-x-6 min-[850px]:pl-8"
           >
             {links.map((link, index) => {
               const active = isActive(link.slug, link.isHome, link.anchor)
               const hovered = hoveredIndex === index
               return (
-                <Link
-                  key={link.slug || index}
-                  href={getLocalizedHref(link.slug, link.isHome, link.anchor)}
-                  prefetch
-                  onClick={(e) => handleNavClick(e, link)}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  aria-current={active ? 'page' : undefined}
-                  aria-label={
-                    link.anchor ? `${link.label} section` : link.label
+                <motion.div
+                  key={`${link.slug}-${link.anchor ?? index}`}
+                  initial={shouldReduceMotion ? {} : { opacity: 0, x: -60 }}
+                  animate={
+                    shouldReduceMotion
+                      ? {}
+                      : mounted
+                        ? { opacity: 1, x: 0 }
+                        : { opacity: 0, x: -60 }
                   }
-                  // Relative container for absolute animated underline
-                  className={`relative inline-flex items-center h-9 text-lg transition-colors hover:text-gray-600 whitespace-nowrap flex-none ${
-                    active ? 'font-semibold text-black' : 'text-gray-700'
-                  }`}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0 }
+                      : {
+                          duration: 0.5,
+                          delay: 0.8 + index * 0.12,
+                          ease: 'easeOut',
+                        }
+                  }
+                  className="flex-none"
                 >
-                  <span className="z-10">{link.label}</span>
-                  <motion.span
-                    aria-hidden
-                    className="absolute left-0 bottom-0 h-[3px] w-full bg-[#F88379] origin-left transform"
-                    initial={
-                      shouldReduceMotion
-                        ? {}
-                        : { scaleX: active || hovered ? 1 : 0 }
+                  <Link
+                    href={getLocalizedHref(link.slug, link.isHome, link.anchor)}
+                    prefetch
+                    onClick={(e) => handleNavClick(e, link)}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    aria-current={active ? 'page' : undefined}
+                    aria-label={
+                      link.anchor ? `${link.label} section` : link.label
                     }
-                    animate={
-                      shouldReduceMotion
-                        ? {}
-                        : { scaleX: active || hovered ? 1 : 0 }
-                    }
-                    transition={{
-                      type: 'spring',
-                      stiffness: 400,
-                      damping: 30,
-                      duration: 0.18,
-                    }}
-                    style={{ transformOrigin: 'left' }}
-                  />
-                </Link>
+                    // Relative container for absolute animated underline
+                    className={`relative inline-flex items-center h-9 text-[20px] leading-[24px] font-sans transition-colors hover:text-[#EBFFEE] whitespace-nowrap ${
+                      active ? 'font-semibold text-[#EBFFEE]' : 'text-[#EBFFEE]'
+                    }`}
+                  >
+                    <span className="z-10">{link.label}</span>
+                    <motion.span
+                      aria-hidden
+                      className="absolute left-0 bottom-0 h-[1px] w-full bg-current origin-left transform"
+                      initial={
+                        shouldReduceMotion
+                          ? {}
+                          : { scaleX: active || hovered ? 1 : 0 }
+                      }
+                      animate={
+                        shouldReduceMotion
+                          ? {}
+                          : { scaleX: active || hovered ? 1 : 0 }
+                      }
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 30,
+                        duration: 0.18,
+                      }}
+                      style={{ transformOrigin: 'left' }}
+                    />
+                  </Link>
+                </motion.div>
               )
             })}
           </nav>

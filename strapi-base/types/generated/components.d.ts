@@ -266,6 +266,212 @@ export interface BlocksImageBlock extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksReservationBlock extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_reservation_blocks';
+  info: {
+    description: 'Online reservation form for restaurants with date/time/covers picker';
+    displayName: 'Reservation Block';
+  };
+  attributes: {
+    blockAlignment: Schema.Attribute.Enumeration<
+      ['left', 'center', 'right', 'full']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'center'>;
+    consentRequiredText: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    consentText: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<"J'accepte que mes donn\u00E9es personnelles soient trait\u00E9es conform\u00E9ment \u00E0 la">;
+    coversLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Nombre de couverts'>;
+    dateLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Date'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    dinnerEnd: Schema.Attribute.String & Schema.Attribute.DefaultTo<'20:00'>;
+    dinnerStart: Schema.Attribute.String & Schema.Attribute.DefaultTo<'18:00'>;
+    emailLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Email'>;
+    emailPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'votre@email.com'>;
+    errorMessage: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'\u2717 Une erreur est survenue. Veuillez r\u00E9essayer ou nous contacter par t\u00E9l\u00E9phone.'>;
+    firstNameLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Pr\u00E9nom'>;
+    firstNamePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Votre pr\u00E9nom'>;
+    lastNameLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Nom'>;
+    lastNamePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Votre nom'>;
+    lunchEnd: Schema.Attribute.String & Schema.Attribute.DefaultTo<'13:00'>;
+    lunchStart: Schema.Attribute.String & Schema.Attribute.DefaultTo<'11:00'>;
+    maxAdvanceDays: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<60>;
+    maxCovers: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
+    maxWidth: Schema.Attribute.Enumeration<
+      ['small', 'medium', 'large', 'full']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'medium'>;
+    messageLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Message (optionnel)'>;
+    messagePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Occasion sp\u00E9ciale, allergies, demandes particuli\u00E8res...'>;
+    minAdvanceDays: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    minCovers: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    phoneLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'T\u00E9l\u00E9phone'>;
+    phonePlaceholder: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'+33 6 12 34 56 78'>;
+    policyLinkText: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'politique de confidentialit\u00E9'>;
+    privacyPolicy: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::privacy-policy.privacy-policy'
+    >;
+    rgpdInfoText: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    submitLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'R\u00E9server'>;
+    submittingText: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Envoi en cours...'>;
+    subtitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    successMessage: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'\u2713 Votre r\u00E9servation a \u00E9t\u00E9 envoy\u00E9e avec succ\u00E8s ! Nous vous confirmerons par email.'>;
+    timeLabel: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'Heure'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'R\u00E9servez une table'>;
+  };
+}
+
 export interface BlocksTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_blocks_text_blocks';
   info: {
@@ -318,6 +524,28 @@ export interface BlocksTextImageBlock extends Struct.ComponentSchema {
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'center'>;
+  };
+}
+
+export interface BlocksTextMapBlock extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_text_map_blocks';
+  info: {
+    description: 'Bloc deux colonnes : titre + texte et carte. Adresse configurable depuis Strapi';
+    displayName: 'Text + Map Block';
+  };
+  attributes: {
+    address: Schema.Attribute.String & Schema.Attribute.Required;
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    itineraryLinkLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Ouvrir dans Maps'>;
+    latitude: Schema.Attribute.Decimal;
+    longitude: Schema.Attribute.Decimal;
+    markerImage: Schema.Attribute.Media<'images'>;
+    showItineraryLink: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    showMarker: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String;
+    zoom: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<15>;
   };
 }
 
@@ -443,8 +671,10 @@ declare module '@strapi/strapi' {
       'blocks.contact-form-block': BlocksContactFormBlock;
       'blocks.hero-block-simple-text': BlocksHeroBlockSimpleText;
       'blocks.image-block': BlocksImageBlock;
+      'blocks.reservation-block': BlocksReservationBlock;
       'blocks.text-block': BlocksTextBlock;
       'blocks.text-image-block': BlocksTextImageBlock;
+      'blocks.text-map-block': BlocksTextMapBlock;
       'blocks.work-block': BlocksWorkBlock;
       'shared.button': SharedButton;
       'shared.carousel-card': SharedCarouselCard;

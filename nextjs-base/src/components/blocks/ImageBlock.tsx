@@ -1,4 +1,8 @@
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { motion, useReducedMotion } from 'framer-motion'
 import { StrapiMedia } from '@/types/strapi'
 import { cleanImageUrl } from '@/lib/strapi'
 
@@ -10,10 +14,34 @@ type ImageBlockProps = {
 }
 
 const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
+  const shouldReduce = useReducedMotion()
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || shouldReduce) {
+      setVisible(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [shouldReduce])
+
   const imageSrc = cleanImageUrl(image.url)
-  const finalImageSrc = imageSrc && imageSrc.startsWith('/') 
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${imageSrc}` 
-    : imageSrc || ''
+  const finalImageSrc =
+    imageSrc && imageSrc.startsWith('/')
+      ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${imageSrc}`
+      : imageSrc || ''
 
   const alignmentClasses = {
     left: 'mr-auto',
@@ -30,7 +58,15 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
   }
 
   return (
-    <figure className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}>
+    <motion.figure
+      ref={ref}
+      className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}
+      initial={{ opacity: 0, y: 80 }}
+      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
+      transition={
+        shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
+      }
+    >
       <Image
         src={finalImageSrc}
         alt={image.alternativeText || caption || 'Image'}
@@ -45,7 +81,7 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
           {caption}
         </figcaption>
       )}
-    </figure>
+    </motion.figure>
   )
 }
 

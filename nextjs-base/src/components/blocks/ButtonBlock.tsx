@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { Button as ButtonData } from '@/types/strapi'
 import { Button } from '@/components/ui/Button'
@@ -13,8 +14,14 @@ type ButtonBlockProps = {
   equalWidth?: boolean
 }
 
-const ButtonBlock = ({ buttons, alignment, layout = 'horizontal', equalWidth = false }: ButtonBlockProps) => {
+const ButtonBlock = ({
+  buttons,
+  alignment,
+  layout = 'horizontal',
+  equalWidth = false,
+}: ButtonBlockProps) => {
   const pathname = usePathname()
+  const shouldReduce = useReducedMotion()
   const segments = pathname?.split('/').filter(Boolean) || []
   const currentLocale = segments[0] || 'fr'
 
@@ -41,36 +48,64 @@ const ButtonBlock = ({ buttons, alignment, layout = 'horizontal', equalWidth = f
     <div className={containerClass}>
       {buttons.map((button, index) => {
         // If file is present, use it; otherwise use URL
-        let href = button.file?.url 
-          ? cleanImageUrl(button.file.url) || button.url 
+        let href = button.file?.url
+          ? cleanImageUrl(button.file.url) || button.url
           : button.url
-        
+
+        // Auto-detect plain phone numbers (e.g. "+33 1 23 45 67 89" or "0123456789")
+        // and convert to `tel:` so editors can paste numbers directly.
+        if (href && !href.includes(':') && /^[+\d][\d\s().-]{5,}$/.test(href)) {
+          const cleaned = href.replace(/[^\d+]/g, '')
+          href = `tel:${cleaned}`
+        }
+
         // For file downloads, add download attribute
         const isFileDownload = !!button.file?.url
-        
-        // Check if URL is internal (doesn't start with http:// or https://)
-        const isInternalUrl = href && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('/')
-        
+
+        // Treat scheme-based links (tel:, mailto:, etc.) as having a scheme
+        const hasScheme = href && /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href)
+
+        // Check if URL is internal (no scheme and doesn't start with /)
+        const isInternalUrl = href && !hasScheme && !href.startsWith('/')
+
         // Prefix internal URLs with locale
         if (isInternalUrl && !isFileDownload) {
           href = `/${currentLocale}/${href}`
-        } else if (href?.startsWith('/') && !href.startsWith(`/${currentLocale}`) && !isFileDownload) {
+        } else if (
+          href?.startsWith('/') &&
+          !href.startsWith(`/${currentLocale}`) &&
+          !isFileDownload
+        ) {
           // Also handle URLs that start with / but don't have locale
           href = `/${currentLocale}${href}`
         }
-        
+
         return (
-          <div key={index}>
+          <motion.div
+            key={index}
+            initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={
+              shouldReduce
+                ? { duration: 0 }
+                : { duration: 0.6, delay: index * 0.1, ease: 'easeOut' }
+            }
+          >
             <Button
               href={href}
-              className={equalWidth ? 'w-[440px]' : ''}
-              variant={button.variant as 'primary' | 'secondary' | 'outline' | 'ghost'}
-              target={button.isExternal || isFileDownload ? '_blank' : undefined}
+              className={equalWidth ? 'w-[320px]' : ''}
+              variant={
+                button.variant as 'primary' | 'secondary' | 'outline' | 'ghost'
+              }
+              target={
+                button.isExternal || isFileDownload ? '_blank' : undefined
+              }
               rel={isFileDownload ? 'noopener noreferrer' : undefined}
             >
               {button.label}
             </Button>
-          </div>
+          </motion.div>
         )
       })}
     </div>

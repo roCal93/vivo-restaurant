@@ -2,11 +2,25 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { locales, defaultLocale } from './src/lib/locales'
 
-export const runtime = 'edge'
+const ADMIN_COOKIE = 'admin_token'
 
 export function middleware(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl
+
+    // ── Admin routes ──────────────────────────────────────────────────────────
+    if (pathname.startsWith('/admin')) {
+      // Always allow the login page
+      if (pathname === '/admin/login') return NextResponse.next()
+      // Redirect to login if cookie is absent
+      const token = req.cookies.get(ADMIN_COOKIE)?.value
+      if (!token) {
+        const loginUrl = req.nextUrl.clone()
+        loginUrl.pathname = '/admin/login'
+        return NextResponse.redirect(loginUrl)
+      }
+      return NextResponse.next()
+    }
 
     // Ignore static assets, API and other non-page requests
     if (
@@ -77,11 +91,17 @@ export function middleware(req: NextRequest) {
 
     return res
   } catch {
+    const { pathname } = req.nextUrl
+    if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+      const loginUrl = req.nextUrl.clone()
+      loginUrl.pathname = '/admin/login'
+      return NextResponse.redirect(loginUrl)
+    }
     return NextResponse.next()
   }
 }
 
-// Match all non-api and non-_next routes
+// Match all non-api and non-_next routes (including /admin)
 export const config = {
   matcher: ['/((?!_next|api|static).*)'],
 }

@@ -3,11 +3,18 @@ export function scrollToAnchor(id?: string) {
 
   const el = document.getElementById(id)
   if (el) {
-    // compute offset from sticky header if present
+    // compute offset from sticky/fixed header only (not absolute/static)
     const header = document.getElementById('site-header')
-    const offset = header ? Math.ceil(header.getBoundingClientRect().height) : 0
-    const TOP_PADDING = 8 // small extra spacing
-    const top = Math.round(el.getBoundingClientRect().top + window.scrollY - offset - TOP_PADDING)
+    const headerPosition = header
+      ? window.getComputedStyle(header).position
+      : ''
+    const isSticky = headerPosition === 'sticky' || headerPosition === 'fixed'
+    const offset =
+      header && isSticky ? Math.ceil(header.getBoundingClientRect().height) : 0
+    const TOP_PADDING = 48 // small extra spacing
+    const top = Math.round(
+      el.getBoundingClientRect().top + window.scrollY - offset - TOP_PADDING
+    )
     window.scrollTo({ top, behavior: 'smooth' })
     // update the hash without jumping
     history.replaceState(null, '', `#${id}`)
@@ -17,7 +24,11 @@ export function scrollToAnchor(id?: string) {
   }
 }
 
-export async function scrollToAnchorWithRetry(id?: string, attempts = 10, interval = 100) {
+export async function scrollToAnchorWithRetry(
+  id?: string,
+  attempts = 10,
+  interval = 100
+) {
   if (!id || typeof window === 'undefined') return
 
   // debug log to help troubleshooting in dev
@@ -26,16 +37,24 @@ export async function scrollToAnchorWithRetry(id?: string, attempts = 10, interv
   for (let i = 0; i < attempts; i++) {
     const el = document.getElementById(id)
     if (el) {
-
       const header = document.getElementById('site-header')
-      const offset = header ? Math.ceil(header.getBoundingClientRect().height) : 0
-      const TOP_PADDING = 8
-      const top = Math.round(el.getBoundingClientRect().top + window.scrollY - offset - TOP_PADDING)
+      const headerPosition = header
+        ? window.getComputedStyle(header).position
+        : ''
+      const isSticky = headerPosition === 'sticky' || headerPosition === 'fixed'
+      const offset =
+        header && isSticky
+          ? Math.ceil(header.getBoundingClientRect().height)
+          : 0
+      const TOP_PADDING = 48
+      const top = Math.round(
+        el.getBoundingClientRect().top + window.scrollY - offset - TOP_PADDING
+      )
       window.scrollTo({ top, behavior: 'smooth' })
       history.replaceState(null, '', `#${id}`)
       return
     }
-    await new Promise(res => setTimeout(res, interval))
+    await new Promise((res) => setTimeout(res, interval))
   }
   // last attempt: set hash as fallback
 

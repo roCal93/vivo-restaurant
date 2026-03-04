@@ -47,6 +47,14 @@ export default {
         "images",
         "files"
       ]
+    },
+    "mobileImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     }
   }
 } as const;

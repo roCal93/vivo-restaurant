@@ -269,6 +269,7 @@ const BackgroundBlock = ({
           position: fixed ? 'fixed' : 'absolute',
           inset: 0,
           zIndex: -1,
+          pointerEvents: 'none',
           ...backgroundStyles,
         }}
       />
@@ -281,6 +282,7 @@ const BackgroundBlock = ({
             position: fixed ? 'fixed' : 'absolute',
             inset: 0,
             zIndex: -1,
+            pointerEvents: 'none',
             background: overlayColor,
             opacity: overlayOpacity,
           }}

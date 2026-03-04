@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Blocks from '@/components/blocks'
+import { FadeIn } from '@/components/animations/FadeIn'
 
 type BlocksMap = Record<string, React.ComponentType<Record<string, unknown>>>
 const TypedBlocks = Blocks as unknown as BlocksMap
@@ -23,6 +24,21 @@ export const SectionGeneric = ({
   spacingBottom = 'medium',
   containerWidth = 'medium',
 }: SectionGenericProps) => {
+  const normalizeSpacing = (
+    value: unknown
+  ): 'none' | 'small' | 'medium' | 'large' => {
+    const normalized = String(value ?? '')
+      .trim()
+      .toLowerCase()
+
+    if (normalized === 'none') return 'none'
+    if (normalized === 'small') return 'small'
+    if (normalized === 'medium') return 'medium'
+    if (normalized === 'large') return 'large'
+
+    return 'medium'
+  }
+
   const getContainerWidthClass = (
     width: 'small' | 'medium' | 'large' | 'full'
   ) => {
@@ -97,48 +113,48 @@ export const SectionGeneric = ({
     )
   }
 
-  const getTopSpacingClass = (
-    spacing: 'none' | 'small' | 'medium' | 'large'
-  ) => {
+  const getTopSpacingClass = (spacingValue: unknown) => {
+    const spacing = normalizeSpacing(spacingValue)
     switch (spacing) {
       case 'none':
         return ''
       case 'small':
-        return 'mt-6'
+        return 'mt-12'
       case 'medium':
-        return 'mt-12'
-      case 'large':
         return 'mt-24'
+      case 'large':
+        return 'mt-48'
       default:
-        return 'mt-12'
+        return 'mt-24'
     }
   }
 
-  const getBottomSpacingClass = (
-    spacing: 'none' | 'small' | 'medium' | 'large'
-  ) => {
+  const getBottomSpacingClass = (spacingValue: unknown) => {
+    const spacing = normalizeSpacing(spacingValue)
     switch (spacing) {
       case 'none':
         return ''
       case 'small':
-        return 'mb-6'
+        return 'mb-12'
       case 'medium':
-        return 'mb-12'
-      case 'large':
         return 'mb-24'
+      case 'large':
+        return 'mb-48'
       default:
-        return 'mb-12'
+        return 'mb-24'
     }
   }
 
   return (
     <section
       id={identifier}
-      className={`${getTopSpacingClass(spacingTop)} ${getBottomSpacingClass(spacingBottom)} px-4`}
+      className={`relative ${getTopSpacingClass(spacingTop)} ${getBottomSpacingClass(spacingBottom)} px-4`}
     >
       <div className={`${getContainerWidthClass(containerWidth)} mx-auto`}>
         {title && (
-          <h2 className="text-3xl font-bold mb-8 text-center">{title}</h2>
+          <FadeIn>
+            <h2 className="text-3xl font-bold mb-8 text-center">{title}</h2>
+          </FadeIn>
         )}
         <div className="space-y-4">
           {blocks?.map((block, index) => renderBlock(block, index))}

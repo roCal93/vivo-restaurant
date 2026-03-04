@@ -4,7 +4,7 @@
  * ⚠️  FICHIER AUTO-GÉNÉRÉ - NE PAS MODIFIER
  * 
  * Pour régénérer: npm run generate:types
- * Généré le: 2026-02-18T05:27:22.141Z
+ * Généré le: 2026-02-20T13:11:02.402Z
  */
 
 // ============================================================================
@@ -115,6 +115,8 @@ export interface BackgroundBlock {
 export interface ButtonBlock {
   buttons: Button[];
   alignment: string;
+  layout?: string;
+  equalWidth?: boolean;
 }
 
 /**
@@ -124,6 +126,7 @@ export interface CardsBlock {
   cards: (Card & StrapiEntity)[];
   columns: string;
   alignment: string;
+  overlap?: boolean;
 }
 
 /**
@@ -192,6 +195,22 @@ export interface TextImageBlock {
   verticalAlignment: string;
   textAlignment: string;
   roundedImage?: boolean;
+}
+
+/**
+ * Component: blocks.text-map-block
+ */
+export interface TextMapBlock {
+  title?: string;
+  content: StrapiBlock[];
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  zoom?: number;
+  showMarker?: boolean;
+  showItineraryLink?: boolean;
+  itineraryLinkLabel?: string;
+  markerImage?: StrapiMedia;
 }
 
 /**
@@ -272,7 +291,7 @@ export interface TimelineItem {
  * card
  */
 export interface Card {
-  title: string;
+  title?: string;
   subtitle?: string;
   content?: StrapiBlock[];
   image?: StrapiMedia;
@@ -286,7 +305,7 @@ export type CardCollectionResponse = StrapiCollectionResponse<Card>;
  * Header
  */
 export interface Header {
-  variant?: 'default' | 'stacked';
+  variant?: string;
   logo?: StrapiMedia;
   title?: string;
   navigation?: PageLink[];

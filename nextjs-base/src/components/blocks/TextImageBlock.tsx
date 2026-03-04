@@ -1,5 +1,8 @@
+'use client'
+
 import React from 'react'
 import Image from 'next/image'
+import { motion, useReducedMotion } from 'framer-motion'
 import { StrapiMedia, StrapiBlock } from '@/types/strapi'
 import { cleanImageUrl } from '@/lib/strapi'
 
@@ -22,6 +25,8 @@ const TextImageBlock = ({
   textAlignment = 'left',
   roundedImage = false,
 }: TextImageBlockProps) => {
+  const shouldReduce = useReducedMotion()
+
   const imageSrc = cleanImageUrl(image.url)
   const finalImageSrc =
     imageSrc && imageSrc.startsWith('/')
@@ -63,7 +68,7 @@ const TextImageBlock = ({
           return (
             <p
               key={index}
-              className={`text-[var(--foreground)] mb-4 ${textAlignmentClasses[textAlignment]}`}
+              className={`text-[var(--foreground)] text-lg md:text-xl mb-4 ${textAlignmentClasses[textAlignment]}`}
             >
               {block.children?.map((child, childIndex) => {
                 if (child.type === 'text') {
@@ -140,8 +145,16 @@ const TextImageBlock = ({
   }
 
   const imageElement = (
-    <div
+    <motion.div
       className={`${roundedImage ? roundedImageSizeClasses[imageSize] : `w-full ${imageSizeClasses[imageSize]}`} flex-shrink-0 mx-auto`}
+      initial={shouldReduce ? {} : { opacity: 0, x: 60 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={
+        shouldReduce
+          ? { duration: 0 }
+          : { duration: 0.7, delay: 0.2, ease: 'easeOut' }
+      }
     >
       <Image
         src={finalImageSrc || '/placeholder.jpg'}
@@ -152,10 +165,24 @@ const TextImageBlock = ({
         sizes="(max-width: 768px) 100vw, 50vw"
         unoptimized={true}
       />
-    </div>
+    </motion.div>
   )
 
-  const textElement = <div className="flex-1">{renderBlocks(content)}</div>
+  const textElement = (
+    <motion.div
+      className="flex-1"
+      initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={
+        shouldReduce
+          ? { duration: 0 }
+          : { duration: 0.6, ease: 'easeOut' }
+      }
+    >
+      {renderBlocks(content)}
+    </motion.div>
+  )
 
   return (
     <div

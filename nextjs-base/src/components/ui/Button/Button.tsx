@@ -24,7 +24,8 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
 
 const getVariantStyles = (variant: ButtonVariant): string => {
   const styles = {
-    primary: 'bg-[#533A8F]/70 text-white hover:bg-[#533A8F]',
+    primary:
+      'bg-[#533A8F]/70 opacity-70 hover:opacity-100 text-[#EBFFEE] text-2xl leading-[44px] drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]',
     secondary: 'bg-gray-200/70 text-gray-800 hover:bg-gray-200',
     outline: 'border-2 border-[#533A8F] text-[#533A8F] hover:bg-[#533A8F]/10',
     ghost: 'text-[#533A8F] hover:bg-[#533A8F]/10',
@@ -38,14 +39,15 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-  const base = 'px-6 py-4 rounded-full font-medium transition-all inline-flex items-center justify-center gap-2 backdrop-blur-[25.73px] shadow-[inset_12.87px_-12.87px_12.87px_0px_rgba(63,44,109,0.182),inset_-12.87px_12.87px_12.87px_0px_rgba(255,255,255,0.182)]'
+  const base =
+    'px-3 py-2 rounded-[50px] font-medium cursor-pointer transition-all inline-flex items-center justify-center gap-2 backdrop-blur-[12.8667px] shadow-[inset_12.8667px_-12.8667px_12.8667px_rgba(63,44,109,0.182),inset_-12.8667px_12.8667px_12.8667px_rgba(255,255,255,0.182)]'
   const variantStyles = getVariantStyles(variant)
   const classes = `${base} ${variantStyles} ${className}`
 
   if ('href' in props && props.href) {
     const { href, target, rel, ...linkProps } = props
     const isExternal = target === '_blank' || href.startsWith('http')
-    
+
     return (
       <Link
         href={href}

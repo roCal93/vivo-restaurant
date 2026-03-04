@@ -62,7 +62,9 @@ async function fetchLocalesConfigFromStrapi(): Promise<StrapiLocalesConfig> {
     const parsed = (json as StrapiLocaleItem[]).map(parseStrapiLocaleItem)
     const locales = parsed
       .map((p) => p.code)
-      .filter((code): code is string => typeof code === 'string' && code.length > 0)
+      .filter(
+        (code): code is string => typeof code === 'string' && code.length > 0
+      )
 
     const defaultFromStrapi = parsed.find((p) => p.isDefault)?.code
 
@@ -78,7 +80,9 @@ async function fetchLocalesConfigFromStrapi(): Promise<StrapiLocalesConfig> {
     const parsed = (data as StrapiLocaleItem[]).map(parseStrapiLocaleItem)
     const locales = parsed
       .map((p) => p.code)
-      .filter((code): code is string => typeof code === 'string' && code.length > 0)
+      .filter(
+        (code): code is string => typeof code === 'string' && code.length > 0
+      )
 
     const defaultFromStrapi = parsed.find((p) => p.isDefault)?.code
 

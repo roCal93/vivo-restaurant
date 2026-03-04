@@ -9,9 +9,10 @@
     "CardsBlock",
     "WorkBlock",
     "WorkCard",
-    "ContactFormBlock"
+    "ContactFormBlock",
+    "ReservationBlock"
   ],
   "preset": "restaurant",
   "autoSync": true,
-  "lastSync": "2026-02-17T12:54:12.803Z"
+  "lastSync": "2026-02-27T00:00:00.000Z"
 }

@@ -58,9 +58,11 @@ export default {
         "blocks.background-block",
         "blocks.cards-block",
         "blocks.text-image-block",
+        "blocks.text-map-block",
         "blocks.hero-block-simple-text",
         "blocks.contact-form-block",
-        "blocks.work-block"
+        "blocks.work-block",
+        "blocks.reservation-block"
       ],
       "required": true
     },

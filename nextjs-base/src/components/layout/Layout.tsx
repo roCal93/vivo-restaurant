@@ -65,9 +65,14 @@ async function getHeaderData(locale: string) {
     // Only process page navigation since PageLink only has page references now
     if (dataPage?.navigation) {
       for (const item of dataPage.navigation as NavItem[]) {
-        if (item.page?.id) {
-          navMap.set(`page-${item.page.id}`, { ...item })
-        }
+        // Use the navigation component id when available to preserve duplicate
+        // entries that target the same page (e.g., two links to the same page
+        // but different section anchors). Fallback to a stable page-based key
+        // when no nav id is present.
+        const key = item.id
+          ? `nav-${item.id}`
+          : `page-${item.page?.id}-${navMap.size}`
+        navMap.set(key, { ...item })
       }
     }
 
@@ -75,8 +80,38 @@ async function getHeaderData(locale: string) {
       for (const item of dataSection.navigation as NavItem[]) {
         const pageId = item.page?.id
         if (pageId) {
-          const existing = navMap.get(`page-${pageId}`) || {}
-          navMap.set(`page-${pageId}`, { ...existing, ...item })
+          // Prefer matching by navigation component id (if present), otherwise
+          // match any existing nav entry that references the same pageId and
+          // does not yet have section information attached.
+          let matchedKey: string | null = null
+
+          // 1) Try match by nav item id (exact match)
+          for (const [key, val] of navMap.entries()) {
+            if (val.id && val.id === item.id) {
+              matchedKey = key
+              break
+            }
+          }
+
+          // 2) Otherwise match the first entry that references the same pageId
+          if (!matchedKey) {
+            for (const [key, val] of navMap.entries()) {
+              if (val.page?.id === pageId && !val.section) {
+                matchedKey = key
+                break
+              }
+            }
+          }
+
+          if (matchedKey) {
+            const existing = navMap.get(matchedKey) || {}
+            navMap.set(matchedKey, { ...existing, ...item })
+          } else {
+            // No matching nav entry found: keep as separate entry to avoid
+            // losing the section reference.
+            const extraKey = `extra-${navMap.size}-${Math.random().toString(36).slice(2, 7)}`
+            navMap.set(extraKey, { ...item })
+          }
         } else {
           // Try to match by nav item id (preferred) or by page slug if available.
           let matchedKey: string | null = null
@@ -218,11 +253,20 @@ async function getHeaderData(locale: string) {
 export const Layout = async ({ children, locale }: LayoutProps) => {
   const headerData = await getHeaderData(locale)
 
+  const validVariant = (
+    variant: string | undefined
+  ): 'default' | 'stacked' | undefined => {
+    if (variant === 'default' || variant === 'stacked') {
+      return variant
+    }
+    return undefined
+  }
+
   return (
     <div className="relative flex flex-col min-h-screen">
       <SkipToContent />
       <Header
-        variant={headerData?.variant ?? 'stacked'}
+        variant={validVariant(headerData?.variant) ?? 'stacked'}
         logo={headerData?.logo}
         title={headerData?.title}
         navigation={headerData?.navigation}

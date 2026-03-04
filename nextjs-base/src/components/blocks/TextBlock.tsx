@@ -1,4 +1,7 @@
+'use client'
+
 import React from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { StrapiBlock } from '@/types/strapi'
 
 type TextBlockProps = {
@@ -14,6 +17,8 @@ const TextBlock = ({
   blockAlignment = 'full',
   maxWidth = 'full',
 }: TextBlockProps) => {
+  const shouldReduce = useReducedMotion()
+
   const alignmentClasses = {
     left: 'text-left',
     center: 'text-center',
@@ -35,14 +40,24 @@ const TextBlock = ({
     full: 'max-w-none',
   }
 
+  const motionProps = (index: number) => ({
+    initial: shouldReduce ? {} : { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.35 },
+    transition: shouldReduce
+      ? { duration: 0 }
+      : { duration: 0.6, delay: index * 0.1, ease: 'easeOut' as const },
+  })
+
   const renderBlocks = (blocks: StrapiBlock[]) => {
     return blocks.map((block, index) => {
       switch (block.type) {
         case 'paragraph':
           return (
-            <p
+            <motion.p
               key={index}
-              className={`text-[var(--foreground)] mb-4 ${alignmentClasses[textAlignment]}`}
+              className={`text-[var(--foreground)] text-lg md:text-xl mb-4 ${alignmentClasses[textAlignment]}`}
+              {...motionProps(index)}
             >
               {block.children?.map((child, childIndex) => {
                 if (child.type === 'text') {
@@ -57,7 +72,7 @@ const TextBlock = ({
                 }
                 return null
               })}
-            </p>
+            </motion.p>
           )
         case 'heading':
           const level = block.level || 2
@@ -71,45 +86,47 @@ const TextBlock = ({
             6: 'text-base font-bold mb-2',
           }
           return (
-            <HeadingTag
-              key={index}
-              className={`${headingClasses[level as keyof typeof headingClasses]} ${alignmentClasses[textAlignment]}`}
-            >
-              {block.children?.map((child, childIndex) => {
-                if (child.type === 'text') {
-                  return <span key={childIndex}>{child.text}</span>
-                }
-                return null
-              })}
-            </HeadingTag>
+            <motion.div key={index} {...motionProps(index)}>
+              <HeadingTag
+                className={`${headingClasses[level as keyof typeof headingClasses]} ${alignmentClasses[textAlignment]}`}
+              >
+                {block.children?.map((child, childIndex) => {
+                  if (child.type === 'text') {
+                    return <span key={childIndex}>{child.text}</span>
+                  }
+                  return null
+                })}
+              </HeadingTag>
+            </motion.div>
           )
         case 'list':
           const ListTag = block.format === 'ordered' ? 'ol' : 'ul'
           const listClass =
             block.format === 'ordered' ? 'list-decimal' : 'list-disc'
           return (
-            <ListTag
-              key={index}
-              className={`${listClass} ml-6 mb-4 text-[var(--foreground)] ${alignmentClasses[textAlignment]}`}
-            >
-              {block.children?.map((child, childIndex) => (
-                <li key={childIndex} className="mb-2">
-                  {Array.isArray(child.children) &&
-                    child.children.map(
-                      (grandChild: StrapiBlock, grandChildIndex: number) => {
-                        if (grandChild.type === 'text') {
-                          return (
-                            <span key={grandChildIndex}>
-                              {String(grandChild.text || '')}
-                            </span>
-                          )
+            <motion.div key={index} {...motionProps(index)}>
+              <ListTag
+                className={`${listClass} ml-6 mb-4 text-[var(--foreground)] ${alignmentClasses[textAlignment]}`}
+              >
+                {block.children?.map((child, childIndex) => (
+                  <li key={childIndex} className="mb-2">
+                    {Array.isArray(child.children) &&
+                      child.children.map(
+                        (grandChild: StrapiBlock, grandChildIndex: number) => {
+                          if (grandChild.type === 'text') {
+                            return (
+                              <span key={grandChildIndex}>
+                                {String(grandChild.text || '')}
+                              </span>
+                            )
+                          }
+                          return null
                         }
-                        return null
-                      }
-                    )}
-                </li>
-              ))}
-            </ListTag>
+                      )}
+                  </li>
+                ))}
+              </ListTag>
+            </motion.div>
           )
         default:
           return null

@@ -145,9 +145,14 @@ export class StrapiClient {
           // Support for populate=* and populate=deep (Strapi deep populate)
           params.set('populate', p)
         } else if (p.includes(',')) {
-          // Pour les chemins multiples séparés par virgules (ex: "sections.blocks.cards.image,seoImage")
-          // on les passe directement dans un seul paramètre populate
-          params.set('populate', p)
+          // Pour les chemins multiples séparés par virgules, on utilise le format tableau indexé
+          // requis par Strapi v5 : populate[0]=path1&populate[1]=path2...
+          p.split(',')
+            .map((k) => k.trim())
+            .filter(Boolean)
+            .forEach((key, idx) => {
+              params.set(`populate[${idx}]`, key)
+            })
         } else {
           appendPopulateKey(p)
         }

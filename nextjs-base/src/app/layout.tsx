@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Julius_Sans_One } from 'next/font/google'
 import './globals.css'
+import 'leaflet/dist/leaflet.css'
 import { cookies, headers } from 'next/headers'
 import { defaultLocale } from '@/lib/locales'
 import { isDisableDark } from '@/lib/theme'

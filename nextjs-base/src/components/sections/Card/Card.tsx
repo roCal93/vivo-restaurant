@@ -8,9 +8,10 @@ type CardProps = {
   subtitle?: string
   content?: StrapiBlock[]
   image?: string | StrapiMedia
+  mobileImage?: string | StrapiMedia
 }
 
-export const Card = ({ title, subtitle, content, image }: CardProps) => {
+export const Card = ({ title, subtitle, content, image, mobileImage }: CardProps) => {
   // accept either a URL string or the full Strapi media object
   const imageUrl = typeof image === 'string' ? image : image?.url
   const cleanImage = cleanImageUrl(imageUrl)
@@ -18,6 +19,13 @@ export const Card = ({ title, subtitle, content, image }: CardProps) => {
     typeof image === 'object' && image?.width ? image.width : undefined
   const imgHeight =
     typeof image === 'object' && image?.height ? image.height : undefined
+
+  const mobileImageUrl = typeof mobileImage === 'string' ? mobileImage : mobileImage?.url
+  const cleanMobileImage = cleanImageUrl(mobileImageUrl)
+  const mobileImgWidth =
+    typeof mobileImage === 'object' && mobileImage?.width ? mobileImage.width : undefined
+  const mobileImgHeight =
+    typeof mobileImage === 'object' && mobileImage?.height ? mobileImage.height : undefined
 
   // Determine whether content contains any visible text (handles empty blocks)
   const hasVisibleContent = (content || []).some((block) => {
@@ -73,47 +81,61 @@ export const Card = ({ title, subtitle, content, image }: CardProps) => {
     })
   }
 
+  // Helper to render an image block
+  const renderImageBlock = (
+    src: string,
+    w: number | undefined,
+    h: number | undefined
+  ) => {
+    if (isImageOnly) {
+      return (
+        <div className="w-full">
+          <Image
+            src={src}
+            alt={title || 'Card image'}
+            width={w || 1200}
+            height={h || 800}
+            className="w-full h-auto object-cover rounded-lg"
+            sizes="100vw"
+            priority
+          />
+        </div>
+      )
+    }
+    return (
+      <div className="relative w-full h-40 mb-4 flex-shrink-0">
+        <Image
+          src={src}
+          alt={title || 'Card image'}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+    )
+  }
+
   return (
     <div
       className={`rounded-lg overflow-hidden h-full flex flex-col ${isImageOnly ? 'bg-transparent border-0 shadow-none p-0 max-w-none' : 'border shadow p-4 bg-white'}`}
     >
-      {cleanImage &&
-        (isImageOnly ? (
-          imgWidth && imgHeight ? (
-            <div className="w-full">
-              <Image
-                src={cleanImage}
-                alt={title || 'Card image'}
-                width={imgWidth}
-                height={imgHeight}
-                className="w-full h-auto object-cover rounded-lg"
-                sizes="100vw"
-                priority
-              />
-            </div>
-          ) : (
-            <div className="w-full">
-              <Image
-                src={cleanImage}
-                alt={title || 'Card image'}
-                width={imgWidth || 1200}
-                height={imgHeight || 800}
-                className="w-full h-auto object-cover rounded-lg"
-                sizes="100vw"
-              />
-            </div>
-          )
-        ) : (
-          <div className="relative w-full h-40 mb-4 flex-shrink-0">
-            <Image
-              src={cleanImage}
-              alt={title || 'Card image'}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </div>
-        ))}
+      {/* Image mobile : affichée en dessous de md, fallback sur l'image desktop si pas définie */}
+      {(cleanMobileImage || cleanImage) && (
+        <div className="block md:hidden">
+          {renderImageBlock(
+            cleanMobileImage || cleanImage!,
+            cleanMobileImage ? mobileImgWidth : imgWidth,
+            cleanMobileImage ? mobileImgHeight : imgHeight
+          )}
+        </div>
+      )}
+
+      {/* Image desktop : cachée en dessous de md */}
+      {cleanImage && (
+        <div className="hidden md:block">
+          {renderImageBlock(cleanImage, imgWidth, imgHeight)}
+        </div>
+      )}
 
       {title && (
         <h3 className="text-xl font-semibold whitespace-pre-line">{title}</h3>

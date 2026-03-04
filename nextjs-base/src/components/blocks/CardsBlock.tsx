@@ -1,4 +1,7 @@
+'use client'
+
 import React from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Card as CardData, StrapiEntity } from '@/types/strapi'
 import { Card } from '@/components/sections/Card'
 
@@ -15,6 +18,17 @@ const CardsBlock = ({
   alignment = 'center',
   overlap = false,
 }: CardsBlockProps) => {
+  const shouldReduce = useReducedMotion()
+
+  const getInitial = (index: number) => {
+    if (shouldReduce) return {}
+    const directions = [
+      { opacity: 0, x: -90 },
+      { opacity: 0, y: 90 },
+      { opacity: 0, x: 90 },
+    ]
+    return directions[index % directions.length]
+  }
   const columnClasses = {
     '1': 'grid-cols-1 max-w-3xl mx-auto',
     '2': 'grid-cols-1 md:grid-cols-2',
@@ -38,41 +52,85 @@ const CardsBlock = ({
 
   if (overlap) {
     return (
-      <div className="flex items-center justify-center my-8 px-8">
+      <div
+        className="flex flex-col md:flex-row items-center justify-center my-8 px-4 sm:px-8 gap-4 md:gap-0"
+      >
         {cards.map((card, index) => (
-          <div
+          <motion.div
             key={card.id}
-            className="relative w-72 md:w-96 lg:w-[28rem] flex-shrink-0 transition-all duration-300 hover:-translate-y-6 hover:scale-105 cursor-pointer"
+            className={`relative w-full sm:w-96 md:w-80 lg:w-96 xl:w-[28rem] flex-shrink-0 cursor-pointer ${index > 0 ? 'md:-ml-10 lg:-ml-12' : ''}`}
             style={{
               zIndex: index === 0 ? cards.length : cards.length - index,
-              marginLeft: index > 0 ? '-2rem' : '0',
             }}
+            custom={index}
+            variants={{
+              hidden: (i: number) => getInitial(i),
+              visible: (i: number) => ({
+                opacity: 1,
+                x: 0,
+                y: 0,
+                transition: shouldReduce
+                  ? { duration: 0 }
+                  : {
+                      duration: 1.5,
+                      delay: i * 0.3,
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+              }),
+            }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.45 }}
           >
-            <Card
-              title={card.title}
-              subtitle={card.subtitle}
-              content={card.content || []}
-              image={card.image}
-            />
-          </div>
+            <div className="transition-transform duration-300 hover:-translate-y-6 hover:scale-105">
+              <Card
+                title={card.title}
+                subtitle={card.subtitle}
+                content={card.content || []}
+                image={card.image}
+                mobileImage={card.mobileImage}
+              />
+            </div>
+          </motion.div>
         ))}
       </div>
     )
   }
 
   return (
-    <div
-      className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}
-    >
-      {cards.map((card) => (
-        <div key={card.id} className={cardWidthClasses[columns]}>
+    <div className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}>
+      {cards.map((card, index) => (
+        <motion.div
+          key={card.id}
+          className={cardWidthClasses[columns]}
+          custom={index}
+          variants={{
+            hidden: (i: number) => getInitial(i),
+            visible: (i: number) => ({
+              opacity: 1,
+              x: 0,
+              y: 0,
+              transition: shouldReduce
+                ? { duration: 0 }
+                : {
+                    duration: 1,
+                    delay: i * 0.2,
+                    ease: [0.22, 1, 0.36, 1],
+                  },
+            }),
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.45 }}
+        >
           <Card
             title={card.title}
             subtitle={card.subtitle}
             content={card.content || []}
             image={card.image}
+            mobileImage={card.mobileImage}
           />
-        </div>
+        </motion.div>
       ))}
     </div>
   )
