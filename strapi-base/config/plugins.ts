@@ -29,6 +29,11 @@ export default ({ env }) => {
 						resource_type: 'auto',
 						access_mode: 'public',
 					},
+					uploadStream: {
+						folder: env('CLOUDINARY_FOLDER'),
+						resource_type: 'auto',
+						access_mode: 'public',
+					},
 					delete: {},
 				},
 			},
