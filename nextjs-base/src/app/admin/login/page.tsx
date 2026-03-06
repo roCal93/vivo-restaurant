@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 
@@ -88,6 +89,15 @@ export default function AdminLoginPage() {
             {loading ? 'Connexion…' : 'Se connecter'}
           </Button>
         </form>
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/"
+            className="text-sm text-neutral-500 hover:text-neutral-800 transition-colors inline-flex items-center gap-1"
+          >
+            ← Retour au site
+          </Link>
+        </div>
       </div>
     </div>
   )
