@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, COOKIE_NAME } from '@/lib/admin-auth'
+import { enforceSameOrigin } from '@/lib/csrf'
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN
@@ -31,6 +32,9 @@ export async function POST(request: NextRequest) {
   if (!requireAdmin(request)) {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
   }
+
+  const csrfError = enforceSameOrigin(request)
+  if (csrfError) return csrfError
 
   const formData = await request.formData()
   const file = formData.get('file') as File | null
@@ -71,6 +75,9 @@ export async function DELETE(request: NextRequest) {
   if (!requireAdmin(request)) {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
   }
+
+  const csrfError = enforceSameOrigin(request)
+  if (csrfError) return csrfError
 
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')

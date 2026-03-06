@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, COOKIE_NAME } from '@/lib/admin-auth'
+import { enforceSameOrigin } from '@/lib/csrf'
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN
@@ -88,6 +89,9 @@ export async function PUT(request: NextRequest) {
   if (!requireAdmin(request)) {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
   }
+
+  const csrfError = enforceSameOrigin(request)
+  if (csrfError) return csrfError
 
   const { sectionDocumentId, blockId, buttonId, fileId } = await request.json()
 
