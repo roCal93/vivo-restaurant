@@ -80,6 +80,7 @@ const nextConfig: NextConfig = {
       "default-src 'self';",
       `img-src 'self' data: https: ${strapiOrigin};`,
       `script-src 'self' 'unsafe-inline' https://vercel.live${isProd ? '' : " 'unsafe-eval'"};`,
+      "frame-src 'self' https://vercel.live;",
       "style-src 'self' 'unsafe-inline';",
       `connect-src 'self' ${strapiOrigin} https://*.railway.app https://*.vercel.app https://nominatim.openstreetmap.org;`,
       // allow OSM geocoding requests (Nominatim)
