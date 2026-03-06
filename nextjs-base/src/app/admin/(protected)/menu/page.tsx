@@ -71,14 +71,18 @@ function PdfPicker({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function MenuPage() {
   const [buttons, setButtons] = useState<MenuButton[]>([])
+  const [locales, setLocales] = useState<string[]>(['fr'])
+  const [currentLocale, setCurrentLocale] = useState('fr')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [pickerFor, setPickerFor] = useState<MenuButton | null>(null)
   const [assigning, setAssigning] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
 
-  const loadButtons = useCallback(async () => {
-    const res = await fetch('/api/admin/menu-buttons')
+  const loadButtons = useCallback(async (locale: string) => {
+    const res = await fetch(
+      `/api/admin/menu-buttons?locale=${encodeURIComponent(locale)}`
+    )
     if (res.ok) {
       const data = await res.json()
       setButtons(Array.isArray(data) ? data : [])
@@ -86,8 +90,36 @@ export default function MenuPage() {
   }, [])
 
   useEffect(() => {
-    loadButtons()
-  }, [loadButtons])
+    async function loadLocales() {
+      try {
+        const res = await fetch('/api/locales', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        const list = Array.isArray(data?.locales)
+          ? data.locales.filter((l: unknown): l is string => typeof l === 'string')
+          : []
+
+        if (list.length === 0) return
+
+        setLocales(list)
+
+        const preferredLocale =
+          typeof data?.defaultLocale === 'string' && list.includes(data.defaultLocale)
+            ? data.defaultLocale
+            : list[0]
+
+        setCurrentLocale(preferredLocale)
+      } catch {
+        // Keep fallback locale if locales API fails.
+      }
+    }
+
+    loadLocales()
+  }, [])
+
+  useEffect(() => {
+    loadButtons(currentLocale)
+  }, [currentLocale, loadButtons])
 
   async function uploadAndAssign(btn: MenuButton, rawFile: File) {
     if (rawFile.type !== 'application/pdf') {
@@ -127,11 +159,12 @@ export default function MenuPage() {
           blockId: btn.blockId,
           buttonId: btn.buttonId,
           fileId: file.id,
+          locale: currentLocale,
         }),
       })
       if (res.ok) {
         setSuccess(`Bouton "${btn.buttonLabel}" mis à jour → ${file.name}`)
-        await loadButtons()
+        await loadButtons(currentLocale)
       } else {
         const d = await res.json()
         setError(d.error || 'Erreur lors de la mise à jour.')
@@ -150,6 +183,31 @@ export default function MenuPage() {
         <p className="text-sm text-[#EBFFEE] mt-1">
           Changez le PDF associé à chaque bouton du site.
         </p>
+      </div>
+
+      <div className="max-w-xs">
+        <label
+          htmlFor="menu-locale"
+          className="block text-xs font-semibold uppercase tracking-wide text-[#EBFFEE]/85 mb-1.5"
+        >
+          Langue
+        </label>
+        <select
+          id="menu-locale"
+          value={currentLocale}
+          onChange={(e) => {
+            setError('')
+            setSuccess('')
+            setCurrentLocale(e.target.value)
+          }}
+          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900"
+        >
+          {locales.map((locale) => (
+            <option key={locale} value={locale}>
+              {locale.toUpperCase()}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Feedback */}

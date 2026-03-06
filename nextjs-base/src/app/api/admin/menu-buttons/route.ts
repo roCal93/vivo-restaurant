@@ -16,16 +16,28 @@ function requireAdmin(request: NextRequest): string | null {
   return verifyToken(token)
 }
 
+function normalizeLocale(rawLocale: unknown): string {
+  if (typeof rawLocale !== 'string') return 'fr'
+  const locale = rawLocale.trim()
+  if (!locale) return 'fr'
+  if (!/^[a-z]{2}(?:-[A-Za-z]{2})?$/.test(locale)) return 'fr'
+  return locale
+}
+
 // ─── GET /api/admin/menu-buttons ─────────────────────────────────────────────
-// Returns all buttons that have a PDF file, across all sections (fr locale)
+// Returns all buttons from the menu section for the requested locale
 export async function GET(request: NextRequest) {
   if (!requireAdmin(request)) {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
   }
 
+  const { searchParams } = new URL(request.url)
+  const locale = normalizeLocale(searchParams.get('locale'))
+
   const url =
     `${STRAPI_URL}/api/sections` +
     `?pagination[pageSize]=100` +
+    `&locale=${encodeURIComponent(locale)}` +
     `&populate[blocks][on][blocks.button-block][populate][buttons][populate]=file`
 
   const res = await fetch(url, {
@@ -93,7 +105,9 @@ export async function PUT(request: NextRequest) {
   const csrfError = enforceSameOrigin(request)
   if (csrfError) return csrfError
 
-  const { sectionDocumentId, blockId, buttonId, fileId } = await request.json()
+  const { sectionDocumentId, blockId, buttonId, fileId, locale: bodyLocale } =
+    await request.json()
+  const locale = normalizeLocale(bodyLocale)
 
   if (!sectionDocumentId || !blockId || !buttonId || !fileId) {
     return NextResponse.json(
@@ -105,7 +119,8 @@ export async function PUT(request: NextRequest) {
   // 1. Fetch the full section with all blocks populated so we can rebuild it
   const fetchUrl =
     `${STRAPI_URL}/api/sections/${sectionDocumentId}` +
-    `?populate[blocks][on][blocks.button-block][populate][buttons][populate]=file`
+    `?locale=${encodeURIComponent(locale)}` +
+    `&populate[blocks][on][blocks.button-block][populate][buttons][populate]=file`
 
   const sectionRes = await fetch(fetchUrl, {
     headers: strapiHeaders(),
@@ -160,7 +175,7 @@ export async function PUT(request: NextRequest) {
 
   // 3. PUT the section with updated blocks
   const putRes = await fetch(
-    `${STRAPI_URL}/api/sections/${sectionDocumentId}`,
+    `${STRAPI_URL}/api/sections/${sectionDocumentId}?locale=${encodeURIComponent(locale)}`,
     {
       method: 'PUT',
       headers: strapiHeaders(true),
