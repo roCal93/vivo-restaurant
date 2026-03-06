@@ -36,6 +36,7 @@ Ajoutez dans `.env.local` :
 ```env
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 STRAPI_API_TOKEN=votre-token-api
+STRAPI_WRITE_API_TOKEN=votre-token-api-write
 ```
 
 ### 3. Configuration ISR (Revalidation)

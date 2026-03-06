@@ -155,6 +155,8 @@ export async function POST(request: NextRequest) {
     const strapiUrl =
       process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
     const strapiToken = process.env.STRAPI_API_TOKEN
+    const strapiWriteToken =
+      process.env.STRAPI_WRITE_API_TOKEN || process.env.STRAPI_API_TOKEN
 
     if (!strapiToken) {
       console.error('STRAPI_API_TOKEN not configured. Reservation aborted.')
@@ -162,6 +164,19 @@ export async function POST(request: NextRequest) {
         {
           error:
             'Le service de réservation est temporairement indisponible. Veuillez réessayer plus tard.',
+        },
+        { status: 503 }
+      )
+    }
+
+    if (!strapiWriteToken) {
+      console.error(
+        'STRAPI_WRITE_API_TOKEN not configured. Reservation creation aborted.'
+      )
+      return NextResponse.json(
+        {
+          error:
+            'Le service de reservation est temporairement indisponible. Veuillez reessayer plus tard.',
         },
         { status: 503 }
       )
@@ -231,7 +246,7 @@ export async function POST(request: NextRequest) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${strapiToken}`,
+          Authorization: `Bearer ${strapiWriteToken}`,
         },
         body: JSON.stringify({
           data: {
@@ -249,8 +264,22 @@ export async function POST(request: NextRequest) {
       })
 
       if (!strapiResponse.ok) {
+        const status = strapiResponse.status
         const errorData = await strapiResponse.json().catch(() => ({}))
-        console.error('Strapi reservation creation error:', errorData)
+        console.error('Strapi reservation creation error:', {
+          status,
+          statusText: strapiResponse.statusText,
+          errorData,
+        })
+
+        if (status === 401 || status === 403) {
+          return { ok: false as const, status: 503, error: 'STRAPI_FORBIDDEN' }
+        }
+
+        if (status === 400 || status === 422) {
+          return { ok: false as const, status: 400, error: 'CREATE_INVALID' }
+        }
+
         return { ok: false as const, status: 500, error: 'CREATE_FAILED' }
       }
 
@@ -283,6 +312,24 @@ export async function POST(request: NextRequest) {
               "Ce créneau n'a plus de disponibilité pour le nombre de couverts demandé.",
           },
           { status: 400 }
+        )
+      }
+      if (reservationWriteResult.error === 'CREATE_INVALID') {
+        return NextResponse.json(
+          {
+            error:
+              "Impossible d'enregistrer la reservation avec les informations envoyees.",
+          },
+          { status: 400 }
+        )
+      }
+      if (reservationWriteResult.error === 'STRAPI_FORBIDDEN') {
+        return NextResponse.json(
+          {
+            error:
+              'Le service de reservation est temporairement indisponible. Veuillez reessayer plus tard.',
+          },
+          { status: 503 }
         )
       }
       if (reservationWriteResult.error === 'SERVICE_UNAVAILABLE') {
