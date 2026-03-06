@@ -6,6 +6,7 @@ import PrivacyPolicyModal from '@/components/shared/PrivacyPolicyModal'
 import { StrapiEntity, PrivacyPolicy } from '@/types/strapi'
 import Cookies from 'js-cookie'
 import { generateSlots } from '@/lib/reservation-slots'
+import { usePathname } from 'next/navigation'
 
 interface BlockedSlot {
   id: number
@@ -31,6 +32,21 @@ const MONTHS_FR = [
   'Décembre',
 ]
 const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+const MONTHS_EN = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+const DAYS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -42,12 +58,14 @@ const InlineCalendar = ({
   minDate,
   maxDate,
   blockedDates = [],
+  locale = 'fr',
 }: {
   value: string
   onChange: (date: string) => void
   minDate: string
   maxDate: string
   blockedDates?: string[]
+  locale?: 'fr' | 'en'
 }) => {
   const today = new Date()
   const initFrom = value ? new Date(value + 'T12:00:00') : today
@@ -104,6 +122,9 @@ const InlineCalendar = ({
     viewMonth === today.getMonth() &&
     viewYear === today.getFullYear()
 
+  const months = locale === 'en' ? MONTHS_EN : MONTHS_FR
+  const days = locale === 'en' ? DAYS_EN : DAYS_FR
+
   return (
     <div className="rounded-xl border border-neutral-300 bg-[#E9F1EB] p-3 select-none w-full">
       {/* Navigation mois */}
@@ -112,19 +133,19 @@ const InlineCalendar = ({
           type="button"
           onClick={prevMonth}
           disabled={!canGoPrev}
-          aria-label="Mois précédent"
+          aria-label={locale === 'en' ? 'Previous month' : 'Mois précédent'}
           className="flex h-7 w-7 items-center justify-center rounded hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 text-neutral-700 text-lg"
         >
           ‹
         </button>
         <span className="text-sm font-semibold text-neutral-900">
-          {MONTHS_FR[viewMonth]} {viewYear}
+          {months[viewMonth]} {viewYear}
         </span>
         <button
           type="button"
           onClick={nextMonth}
           disabled={!canGoNext}
-          aria-label="Mois suivant"
+          aria-label={locale === 'en' ? 'Next month' : 'Mois suivant'}
           className="flex h-7 w-7 items-center justify-center rounded hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 text-neutral-700 text-lg"
         >
           ›
@@ -133,7 +154,7 @@ const InlineCalendar = ({
 
       {/* En-têtes jours */}
       <div className="grid grid-cols-7 mb-1">
-        {DAYS_FR.map((d) => (
+        {days.map((d) => (
           <div
             key={d}
             className="text-center text-xs font-medium text-neutral-400 py-1"
@@ -186,6 +207,7 @@ const TimePicker = ({
   lunchSlots,
   dinnerSlots,
   blockedTimes = [],
+  locale = 'fr',
 }: {
   value: string
   onChange: (time: string) => void
@@ -194,6 +216,7 @@ const TimePicker = ({
   lunchSlots: string[]
   dinnerSlots: string[]
   blockedTimes?: string[]
+  locale?: 'fr' | 'en'
 }) => {
   const availableLunch = lunchSlots.filter((s) => !blockedTimes.includes(s))
   const availableDinner = dinnerSlots.filter((s) => !blockedTimes.includes(s))
@@ -202,7 +225,9 @@ const TimePicker = ({
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label={label || 'Choisir une heure'}
+      aria-label={
+        label || (locale === 'en' ? 'Choose a time' : 'Choisir une heure')
+      }
     >
       {/* Overlay */}
       <div
@@ -214,12 +239,12 @@ const TimePicker = ({
       <div className="relative w-full max-w-xs rounded-xl bg-[#E9F1EB] p-5 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-neutral-900">
-            {label || 'Choisir une heure'}
+            {label || (locale === 'en' ? 'Choose a time' : 'Choisir une heure')}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label={locale === 'en' ? 'Close' : 'Fermer'}
             className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 text-lg leading-none"
           >
             ×
@@ -230,11 +255,13 @@ const TimePicker = ({
           {/* Service du midi */}
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
-              Midi
+              {locale === 'en' ? 'Lunch' : 'Midi'}
             </p>
             {availableLunch.length === 0 ? (
               <p className="text-xs text-neutral-400 italic">
-                Aucun créneau disponible.
+                {locale === 'en'
+                  ? 'No time slot available.'
+                  : 'Aucun créneau disponible.'}
               </p>
             ) : (
               <div className="grid grid-cols-3 gap-2">
@@ -263,11 +290,13 @@ const TimePicker = ({
           {/* Service du soir */}
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
-              Soir
+              {locale === 'en' ? 'Dinner' : 'Soir'}
             </p>
             {availableDinner.length === 0 ? (
               <p className="text-xs text-neutral-400 italic">
-                Aucun créneau disponible.
+                {locale === 'en'
+                  ? 'No time slot available.'
+                  : 'Aucun créneau disponible.'}
               </p>
             ) : (
               <div className="grid grid-cols-3 gap-2">
@@ -307,6 +336,7 @@ const CoverPicker = ({
   min = 1,
   max = 20,
   label,
+  locale = 'fr',
 }: {
   value: string
   onChange: (n: string) => void
@@ -314,6 +344,7 @@ const CoverPicker = ({
   min?: number
   max?: number
   label?: string
+  locale?: 'fr' | 'en'
 }) => {
   const options = Array.from({ length: max - min + 1 }, (_, i) => i + min)
   return (
@@ -321,7 +352,9 @@ const CoverPicker = ({
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label={label || 'Nombre de couverts'}
+      aria-label={
+        label || (locale === 'en' ? 'Number of guests' : 'Nombre de couverts')
+      }
     >
       <div
         className="absolute inset-0 bg-black/60"
@@ -331,12 +364,13 @@ const CoverPicker = ({
       <div className="relative w-full max-w-xs rounded-xl bg-[#E9F1EB] p-5 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-neutral-900">
-            {label || 'Nombre de couverts'}
+            {label ||
+              (locale === 'en' ? 'Number of guests' : 'Nombre de couverts')}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label={locale === 'en' ? 'Close' : 'Fermer'}
             className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 text-lg leading-none"
           >
             ×
@@ -443,6 +477,13 @@ const ReservationBlock = ({
   maxWidth = 'medium',
   privacyPolicy,
 }: ReservationBlockProps) => {
+  const pathname = usePathname()
+  const currentLocale = useMemo<'fr' | 'en'>(() => {
+    const firstSegment = pathname.split('/')[1]
+    return firstSegment === 'en' ? 'en' : 'fr'
+  }, [pathname])
+  const dateLocale = currentLocale === 'en' ? 'en-US' : 'fr-FR'
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -630,11 +671,12 @@ const ReservationBlock = ({
                   minDate={minDateStr}
                   maxDate={maxDateStr}
                   blockedDates={blockedDates}
+                  locale={currentLocale}
                 />
                 {formData.date ? (
                   <p className="text-sm text-[#ebffee] opacity-80">
                     {new Date(formData.date + 'T12:00:00').toLocaleDateString(
-                      'fr-FR',
+                      dateLocale,
                       {
                         weekday: 'long',
                         day: 'numeric',
@@ -645,7 +687,9 @@ const ReservationBlock = ({
                   </p>
                 ) : dateError ? (
                   <p className="text-sm text-red-400">
-                    Veuillez sélectionner une date.
+                    {currentLocale === 'en'
+                      ? 'Please select a date.'
+                      : 'Veuillez sélectionner une date.'}
                   </p>
                 ) : null}
               </div>
@@ -668,11 +712,16 @@ const ReservationBlock = ({
                       formData.time ? 'text-neutral-900' : 'text-neutral-400',
                     ].join(' ')}
                   >
-                    {formData.time || 'Choisir une heure…'}
+                    {formData.time ||
+                      (currentLocale === 'en'
+                        ? 'Choose a time...'
+                        : 'Choisir une heure…')}
                   </button>
                   {timeError && (
                     <p className="text-sm text-red-400">
-                      Veuillez choisir une heure.
+                      {currentLocale === 'en'
+                        ? 'Please choose a time.'
+                        : 'Veuillez choisir une heure.'}
                     </p>
                   )}
                 </div>
@@ -686,8 +735,12 @@ const ReservationBlock = ({
                     className="w-full rounded-xl border border-neutral-300 bg-[#E9F1EB] px-3 py-2 text-left text-sm shadow-sm text-neutral-900 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-neutral-900/60"
                   >
                     {formData.covers
-                      ? `${formData.covers} ${Number(formData.covers) === 1 ? 'couvert' : 'couverts'}`
-                      : 'Choisir…'}
+                      ? currentLocale === 'en'
+                        ? `${formData.covers} ${Number(formData.covers) === 1 ? 'guest' : 'guests'}`
+                        : `${formData.covers} ${Number(formData.covers) === 1 ? 'couvert' : 'couverts'}`
+                      : currentLocale === 'en'
+                        ? 'Choose...'
+                        : 'Choisir…'}
                   </button>
                 </div>
               </div>
@@ -884,10 +937,14 @@ const ReservationBlock = ({
           value={formData.time}
           onChange={(time) => setFormData((prev) => ({ ...prev, time }))}
           onClose={() => setIsTimePickerOpen(false)}
-          label={timeLabel || 'Choisir une heure'}
+          label={
+            timeLabel ||
+            (currentLocale === 'en' ? 'Choose a time' : 'Choisir une heure')
+          }
           lunchSlots={lunchSlots}
           dinnerSlots={dinnerSlots}
           blockedTimes={blockedTimesForDate}
+          locale={currentLocale}
         />
       )}
 
@@ -898,7 +955,11 @@ const ReservationBlock = ({
           onClose={() => setIsCoverPickerOpen(false)}
           min={minCovers}
           max={dynamicMaxCovers}
-          label={coversLabel || 'Nombre de couverts'}
+          label={
+            coversLabel ||
+            (currentLocale === 'en' ? 'Number of guests' : 'Nombre de couverts')
+          }
+          locale={currentLocale}
         />
       )}
     </div>
