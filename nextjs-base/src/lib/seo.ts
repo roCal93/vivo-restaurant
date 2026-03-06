@@ -62,7 +62,7 @@ export function buildMetadata({
           alt: title,
         },
       ],
-      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Amanda Traduction',
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Vivo Restaurant',
       type: 'website',
       locale:
         alternates && alternates.length > 0

@@ -84,6 +84,48 @@ export default async function RootLayout({
 
   const disableDark = isDisableDark()
 
+  const schemaCuisine = process.env.NEXT_PUBLIC_SCHEMA_CUISINE?.split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+  const schemaSameAs = process.env.NEXT_PUBLIC_SCHEMA_SAME_AS?.split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+  const hasAddress =
+    process.env.NEXT_PUBLIC_SCHEMA_STREET_ADDRESS ||
+    process.env.NEXT_PUBLIC_SCHEMA_CITY ||
+    process.env.NEXT_PUBLIC_SCHEMA_POSTAL_CODE ||
+    process.env.NEXT_PUBLIC_SCHEMA_COUNTRY
+
+  const schemaAddress = hasAddress
+    ? {
+        streetAddress: process.env.NEXT_PUBLIC_SCHEMA_STREET_ADDRESS,
+        addressLocality: process.env.NEXT_PUBLIC_SCHEMA_CITY,
+        postalCode: process.env.NEXT_PUBLIC_SCHEMA_POSTAL_CODE,
+        addressCountry: process.env.NEXT_PUBLIC_SCHEMA_COUNTRY,
+      }
+    : undefined
+
+  let schemaOpeningHours:
+    | Array<{
+        dayOfWeek: string | string[]
+        opens: string
+        closes: string
+      }>
+    | undefined
+  const openingHoursRaw = process.env.NEXT_PUBLIC_SCHEMA_OPENING_HOURS
+  if (openingHoursRaw) {
+    try {
+      const parsed = JSON.parse(openingHoursRaw)
+      if (Array.isArray(parsed)) {
+        schemaOpeningHours = parsed
+      }
+    } catch {
+      schemaOpeningHours = undefined
+    }
+  }
+
   return (
     <html
       lang={locale}
@@ -93,7 +135,36 @@ export default async function RootLayout({
     >
       <body className="font-sans antialiased">
         {/* Structured data for SEO */}
-        <SchemaOrg />
+        <SchemaOrg
+          type="Restaurant"
+          name={process.env.NEXT_PUBLIC_SITE_NAME}
+          description={process.env.NEXT_PUBLIC_SCHEMA_DESCRIPTION}
+          url={process.env.NEXT_PUBLIC_SITE_URL}
+          logo={process.env.NEXT_PUBLIC_SCHEMA_LOGO}
+          telephone={process.env.NEXT_PUBLIC_SCHEMA_TELEPHONE}
+          email={process.env.NEXT_PUBLIC_SCHEMA_EMAIL}
+          address={schemaAddress}
+          areaServed={process.env.NEXT_PUBLIC_SCHEMA_AREA_SERVED}
+          priceRange={process.env.NEXT_PUBLIC_SCHEMA_PRICE_RANGE}
+          servesCuisine={schemaCuisine}
+          menu={process.env.NEXT_PUBLIC_SCHEMA_MENU}
+          acceptsReservations={
+            process.env.NEXT_PUBLIC_SCHEMA_ACCEPTS_RESERVATIONS
+              ? process.env.NEXT_PUBLIC_SCHEMA_ACCEPTS_RESERVATIONS === 'true'
+              : undefined
+          }
+          openingHours={schemaOpeningHours}
+          geo={
+            process.env.NEXT_PUBLIC_SCHEMA_LATITUDE &&
+            process.env.NEXT_PUBLIC_SCHEMA_LONGITUDE
+              ? {
+                  latitude: Number(process.env.NEXT_PUBLIC_SCHEMA_LATITUDE),
+                  longitude: Number(process.env.NEXT_PUBLIC_SCHEMA_LONGITUDE),
+                }
+              : undefined
+          }
+          sameAs={schemaSameAs}
+        />
         {/* Dev-only protective wrapper to avoid dev tooling throwing on performance.measure */}
         <DevPerfProtector />
         {children}
