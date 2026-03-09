@@ -403,22 +403,34 @@ export async function POST(request: NextRequest) {
       companyName
     )
 
-    // Email de notification au restaurant
-    await sendEmail({
-      from: getDefaultFromEmail(),
-      to: process.env.CONTACT_EMAIL || 'contact@votre-domaine.com',
-      replyTo: sanitizedEmail,
-      subject: restaurantEmail.subject,
-      html: restaurantEmail.html,
-    })
+    try {
+      // Email de notification au restaurant
+      await sendEmail({
+        from: getDefaultFromEmail(),
+        to: process.env.CONTACT_EMAIL || 'contact@votre-domaine.com',
+        replyTo: sanitizedEmail,
+        subject: restaurantEmail.subject,
+        html: restaurantEmail.html,
+      })
 
-    // Email de confirmation au client
-    await sendEmail({
-      from: `${companyName} <${getDefaultFromEmail()}>`,
-      to: sanitizedEmail,
-      subject: customerPendingEmail.subject,
-      html: customerPendingEmail.html,
-    })
+      // Email de confirmation au client
+      await sendEmail({
+        from: `${companyName} <${getDefaultFromEmail()}>`,
+        to: sanitizedEmail,
+        subject: customerPendingEmail.subject,
+        html: customerPendingEmail.html,
+      })
+    } catch (emailError) {
+      // La réservation est déjà enregistrée, on ne renvoie pas d'erreur 500 au client.
+      console.error('Erreur envoi email reservation (SES):', emailError)
+      return NextResponse.json(
+        {
+          message:
+            'Réservation enregistrée avec succès. Email de confirmation en attente.',
+        },
+        { status: 200 }
+      )
+    }
 
     return NextResponse.json(
       { message: 'Réservation enregistrée avec succès !' },

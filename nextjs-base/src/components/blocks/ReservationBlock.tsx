@@ -4,7 +4,6 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import PrivacyPolicyModal from '@/components/shared/PrivacyPolicyModal'
 import { StrapiEntity, PrivacyPolicy } from '@/types/strapi'
-import Cookies from 'js-cookie'
 import { generateSlots } from '@/lib/reservation-slots'
 import { usePathname } from 'next/navigation'
 
@@ -602,12 +601,10 @@ const ReservationBlock = ({
     setSubmitStatus('idle')
 
     try {
-      const locale = Cookies.get('locale') || 'fr'
-
       const response = await fetch('/api/reservation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, locale }),
+        body: JSON.stringify({ ...formData, locale: currentLocale }),
       })
 
       const data = await response.json()
