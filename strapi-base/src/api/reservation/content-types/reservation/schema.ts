@@ -54,7 +54,7 @@ export default {
       "default": "pending",
       "required": true
     },
-    "locale": {
+    "customerLocale": {
       "type": "enumeration",
       "enum": [
         "fr",

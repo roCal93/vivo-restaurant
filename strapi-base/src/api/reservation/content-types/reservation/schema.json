@@ -50,7 +50,7 @@
       "default": "pending",
       "required": true
     },
-    "locale": {
+    "customerLocale": {
       "type": "enumeration",
       "enum": ["fr", "en"],
       "default": "fr",

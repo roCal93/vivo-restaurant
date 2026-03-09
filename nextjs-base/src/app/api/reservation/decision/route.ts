@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (isEmailConfigured() && reservation.email) {
-    const locale = normalizeReservationLocale(reservation.locale)
+    const locale = normalizeReservationLocale(reservation.customerLocale)
     const companyName = process.env.COMPANY_NAME || 'Le restaurant'
 
     const customerStatusEmail = buildCustomerStatusEmail(
