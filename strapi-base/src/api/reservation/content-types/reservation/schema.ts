@@ -53,6 +53,15 @@ export default {
       ],
       "default": "pending",
       "required": true
+    },
+    "locale": {
+      "type": "enumeration",
+      "enum": [
+        "fr",
+        "en"
+      ],
+      "default": "fr",
+      "required": true
     }
   }
 } as const;

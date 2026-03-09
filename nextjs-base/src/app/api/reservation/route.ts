@@ -255,6 +255,7 @@ export async function POST(request: NextRequest) {
             covers: coversInt,
             message: sanitizedMessage,
             status: 'pending',
+            locale: reservationLocale,
           },
         }),
       })
@@ -388,7 +389,7 @@ export async function POST(request: NextRequest) {
         covers: coversInt,
         message: sanitizedMessage,
       },
-      reservationLocale,
+      'fr',
       decisionLinks
     )
 
