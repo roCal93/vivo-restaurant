@@ -1,4 +1,4 @@
-import { ALL_RESERVATION_SLOTS } from '@/lib/reservation-slots'
+import { ALL_RESERVATION_SLOTS } from './reservation-slots'
 
 export type ReservationInput = {
   firstName: unknown
