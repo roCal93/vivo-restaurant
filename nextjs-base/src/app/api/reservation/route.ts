@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { validateReservationInput } from '@/lib/reservation-validation'
 import {
   buildCustomerPendingEmail,
@@ -9,6 +8,11 @@ import {
 import { signReservationDecisionToken } from '@/lib/reservation-decision-token'
 import { checkRateLimit, getClientIpFromHeaders } from '@/lib/rate-limit'
 import { enforcePublicApiOrigin } from '@/lib/public-api-security'
+import {
+  getDefaultFromEmail,
+  isEmailConfigured,
+  sendEmail,
+} from '@/lib/email-client'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000 // 10 minutes
@@ -56,10 +60,6 @@ function escapeHtml(text: string): string {
   }
   return text.replace(/[&<>"'\/]/g, (char) => map[char] || char)
 }
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
 
 export async function POST(request: NextRequest) {
   try {
@@ -343,9 +343,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 7. Envoi email si Resend est configuré
-    if (!resend) {
-      console.warn('Resend API key not configured. Email not sent.')
+    // 7. Envoi email si Amazon SES est configuré
+    if (!isEmailConfigured()) {
+      console.warn('AWS SES not configured. Email not sent.')
       return NextResponse.json(
         {
           success: true,
@@ -404,8 +404,8 @@ export async function POST(request: NextRequest) {
     )
 
     // Email de notification au restaurant
-    await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+    await sendEmail({
+      from: getDefaultFromEmail(),
       to: process.env.CONTACT_EMAIL || 'contact@votre-domaine.com',
       replyTo: sanitizedEmail,
       subject: restaurantEmail.subject,
@@ -413,8 +413,8 @@ export async function POST(request: NextRequest) {
     })
 
     // Email de confirmation au client
-    await resend.emails.send({
-      from: `${companyName} <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
+    await sendEmail({
+      from: `${companyName} <${getDefaultFromEmail()}>`,
       to: sanitizedEmail,
       subject: customerPendingEmail.subject,
       html: customerPendingEmail.html,

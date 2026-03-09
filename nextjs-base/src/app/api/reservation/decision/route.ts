@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import {
   buildCustomerStatusEmail,
   normalizeReservationLocale,
 } from '@/lib/reservation-emails'
 import { verifyReservationDecisionToken } from '@/lib/reservation-decision-token'
+import {
+  getDefaultFromEmail,
+  isEmailConfigured,
+  sendEmail,
+} from '@/lib/email-client'
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
-
 function strapiHeaders() {
   return {
     Authorization: `Bearer ${STRAPI_TOKEN}`,
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  if (resend && reservation.email) {
+  if (isEmailConfigured() && reservation.email) {
     const locale = normalizeReservationLocale(reservation.locale)
     const companyName = process.env.COMPANY_NAME || 'Le restaurant'
 
@@ -153,8 +153,8 @@ export async function GET(request: NextRequest) {
     )
 
     try {
-      await resend.emails.send({
-        from: `${companyName} <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
+      await sendEmail({
+        from: `${companyName} <${getDefaultFromEmail()}>`,
         to: reservation.email,
         subject: customerStatusEmail.subject,
         html: customerStatusEmail.html,

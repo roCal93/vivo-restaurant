@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { checkRateLimit, getClientIpFromHeaders } from '@/lib/rate-limit'
 import { enforcePublicApiOrigin } from '@/lib/public-api-security'
+import {
+  getDefaultFromEmail,
+  isEmailConfigured,
+  sendEmail,
+} from '@/lib/email-client'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000 // 5 minutes
@@ -64,10 +68,6 @@ function validateInput(data: {
 
   return { valid: true }
 }
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
 
 // Templates multilingues pour les emails
 const emailTemplates = {
@@ -189,29 +189,25 @@ export async function POST(request: NextRequest) {
     const sanitizedEmail = escapeHtml(email.trim())
     const sanitizedMessage = escapeHtml(message.trim())
 
-    // Vérifier si Resend est configuré
-    if (!resend) {
-      console.warn('Resend API key not configured. Email not sent.')
+    // Vérifier si Amazon SES est configuré
+    if (!isEmailConfigured()) {
+      console.warn('AWS SES not configured. Email not sent.')
       return NextResponse.json(
         {
           success: true,
           message:
-            'Message reçu (mode démo - email non envoyé car Resend non configuré)',
+            'Message reçu (mode démo - email non envoyé car Amazon SES non configuré)',
         },
         { status: 200 }
       )
     }
 
-    // Envoi de l'email avec Resend
-    const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+    // Envoi de l'email avec Amazon SES
+    const messageId = await sendEmail({
+      from: getDefaultFromEmail(),
       to: process.env.CONTACT_EMAIL || 'contact@votre-domaine.com',
       replyTo: sanitizedEmail,
       subject: `Nouveau message de contact de ${sanitizedName}`,
-      headers: {
-        'X-Priority': '3',
-        'X-Mailer': 'Hakuna Mataweb Contact Form',
-      },
       html: `
         <!DOCTYPE html>
         <html>
@@ -297,17 +293,9 @@ export async function POST(request: NextRequest) {
       `,
     })
 
-    if (error) {
-      console.error('Erreur Resend:', error)
-      return NextResponse.json(
-        { error: "Erreur lors de l'envoi du message." },
-        { status: 500 }
-      )
-    }
-
     // Email de confirmation automatique à l'expéditeur (multilingue)
-    await resend.emails.send({
-      from: `${process.env.COMPANY_NAME || 'Contact'} <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
+    await sendEmail({
+      from: `${process.env.COMPANY_NAME || 'Contact'} <${getDefaultFromEmail()}>`,
       to: sanitizedEmail,
       subject: template.subject,
       html: `
@@ -367,7 +355,7 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { message: 'Message envoyé avec succès !', id: data?.id },
+      { message: 'Message envoyé avec succès !', id: messageId },
       { status: 200 }
     )
   } catch (error) {

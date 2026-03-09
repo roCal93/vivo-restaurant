@@ -15,22 +15,22 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.1004.0",
     "framer-motion": "^12.34.5",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1",
     "next": "16.1.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "resend": "^6.9.3"
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.13",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/js-cookie": "^3.0.6",
+    "@types/leaflet": "^1.9.13",
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
