@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.1004.0",
+    "@vercel/analytics": "^1.6.1",
     "framer-motion": "^12.34.5",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",

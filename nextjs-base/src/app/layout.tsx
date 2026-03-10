@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Julius_Sans_One } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { cookies, headers } from 'next/headers'
@@ -168,6 +169,7 @@ export default async function RootLayout({
         {/* Dev-only protective wrapper to avoid dev tooling throwing on performance.measure */}
         <DevPerfProtector />
         {children}
+        <Analytics />
       </body>
     </html>
   )
