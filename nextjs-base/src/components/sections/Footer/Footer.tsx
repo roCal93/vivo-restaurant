@@ -50,7 +50,7 @@ export const Footer = ({
             </Link>
           </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-4 text-sm text-[#EBFFEE]">
+        <div className="w-full max-w-6xl mx-auto px-4 flex flex-wrap justify-end gap-4 text-sm text-[#EBFFEE]">
           <Link href={`/${locale}/privacy-policy`} className="hover:underline">
             {privacyLabel}
           </Link>

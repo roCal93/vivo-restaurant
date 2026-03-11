@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, CSSProperties } from 'react'
 import { Header } from '@/components/sections/Header'
 import { Footer } from '@/components/sections/Footer'
 import { SkipToContent } from '@/components/ui/SkipToContent'
@@ -14,6 +14,7 @@ import type {
 type LayoutProps = {
   children: ReactNode
   locale: string
+  backgroundStyle?: CSSProperties
 }
 
 async function getHeaderData(locale: string) {
@@ -250,7 +251,11 @@ async function getHeaderData(locale: string) {
   }
 }
 
-export const Layout = async ({ children, locale }: LayoutProps) => {
+export const Layout = async ({
+  children,
+  locale,
+  backgroundStyle,
+}: LayoutProps) => {
   const headerData = await getHeaderData(locale)
 
   const validVariant = (
@@ -263,7 +268,7 @@ export const Layout = async ({ children, locale }: LayoutProps) => {
   }
 
   return (
-    <div className="relative flex flex-col min-h-screen">
+    <div className="relative flex flex-col min-h-screen" style={backgroundStyle}>
       <SkipToContent />
       <Header
         variant={validVariant(headerData?.variant) ?? 'stacked'}
