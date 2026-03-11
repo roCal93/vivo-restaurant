@@ -52,7 +52,7 @@ export default async function LegalNoticePage({
       }}
     >
       <section className="relative px-4 py-24">
-        <div className="max-w-4xl ml-auto mr-2 md:mr-6 rounded-xl border border-white/20 bg-white/5 p-6 md:p-10 text-[#EBFFEE] text-left">
+        <div className="max-w-4xl ml-auto mr-4 md:mr-10 rounded-xl border border-white/20 bg-white/5 p-6 md:p-10 text-[#EBFFEE] text-left">
           <h1 className="text-3xl md:text-4xl font-semibold mb-6">
             {legal.title}
           </h1>
