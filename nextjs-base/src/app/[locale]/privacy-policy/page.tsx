@@ -51,7 +51,7 @@ export default async function PrivacyPolicyPage({
       }}
     >
       <section className="relative px-4 py-24">
-        <div className="max-w-4xl mx-auto rounded-xl border border-white/20 bg-white/5 p-6 md:p-10 text-[#EBFFEE]">
+        <div className="max-w-4xl ml-auto rounded-xl border border-white/20 bg-white/5 p-6 md:p-10 text-[#EBFFEE] text-right">
           <h1 className="text-3xl md:text-4xl font-semibold mb-6">
             {policy.title}
           </h1>
@@ -61,7 +61,7 @@ export default async function PrivacyPolicyPage({
               {policy.lastUpdated}
             </p>
           )}
-          <article className="prose prose-invert max-w-none whitespace-pre-line">
+          <article className="prose prose-invert max-w-none whitespace-pre-line text-right">
             {policy.content}
           </article>
         </div>

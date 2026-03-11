@@ -268,7 +268,10 @@ export const Layout = async ({
   }
 
   return (
-    <div className="relative flex flex-col min-h-screen" style={backgroundStyle}>
+    <div
+      className="relative flex flex-col min-h-screen"
+      style={backgroundStyle}
+    >
       <SkipToContent />
       <Header
         variant={validVariant(headerData?.variant) ?? 'stacked'}
