@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { Button } from '@/components/ui/Button'
 
 const CONSENT_COOKIE_NAME = 'cookie_consent'
 const ONE_YEAR = 60 * 60 * 24 * 365
@@ -24,7 +25,7 @@ export default function CookieConsentBanner() {
         reject: 'Refuse',
       }
     : {
-        text: 'Nous utilisons des cookies de mesure d\'audience pour ameliorer le site. Vous pouvez accepter ou refuser ces cookies.',
+        text: "Nous utilisons des cookies de mesure d'audience pour ameliorer le site. Vous pouvez accepter ou refuser ces cookies.",
         accept: 'Accepter',
         reject: 'Refuser',
       }
@@ -33,30 +34,36 @@ export default function CookieConsentBanner() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[300] px-4 pb-4">
-      <div className="mx-auto max-w-4xl rounded-xl border border-white/30 bg-[#194B23]/95 text-[#EBFFEE] p-4 shadow-xl backdrop-blur-sm">
+      <div
+        className="mx-auto max-w-4xl rounded-xl border border-white/20 text-[#EBFFEE] p-4 shadow-xl backdrop-blur-sm"
+        style={{
+          background:
+            'radial-gradient(43.41% 65.16% at 65.56% 45.02%, #3CB152 0%, #194B23 79.62%)',
+        }}
+      >
         <p className="text-sm leading-relaxed">{labels.text}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
+        <div className="mt-3 flex flex-wrap gap-3">
+          <Button
             type="button"
             onClick={() => {
               setConsentCookie('rejected')
               setVisible(false)
             }}
-            className="rounded-md border border-[#EBFFEE]/40 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+            className="!text-sm !leading-normal px-5 py-2"
           >
             {labels.reject}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               setConsentCookie('accepted')
               setVisible(false)
               window.location.reload()
             }}
-            className="rounded-md bg-[#EBFFEE] px-4 py-2 text-sm text-[#194B23] font-semibold hover:opacity-90 transition-opacity"
+            className="!text-sm !leading-normal px-5 py-2"
           >
             {labels.accept}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

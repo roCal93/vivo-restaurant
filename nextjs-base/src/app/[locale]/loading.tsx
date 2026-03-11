@@ -1,14 +1,25 @@
+"use client"
+
+import { usePathname } from 'next/navigation'
+
 export default function Loading() {
+  const pathname = usePathname()
+  const locale = pathname?.split('/').filter(Boolean)[0] === 'en' ? 'en' : 'fr'
+
   return (
     <div
+      className="min-h-screen flex items-center justify-center px-4"
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        background:
+          'radial-gradient(43.41% 65.16% at 65.56% 45.02%, #3CB152 0%, #194B23 79.62%)',
       }}
     >
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
+      <div className="flex flex-col items-center gap-4 text-[#EBFFEE]">
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-white/30 border-t-[#EBFFEE]"></div>
+        <p className="text-sm opacity-90">
+          {locale === 'en' ? 'Loading...' : 'Chargement...'}
+        </p>
+      </div>
     </div>
   )
 }

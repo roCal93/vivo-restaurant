@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { locales, defaultLocale } from '@/lib/locales'
+import { Button } from '@/components/ui/Button'
 
 export default function RootNotFound() {
   const router = useRouter()
@@ -44,39 +44,25 @@ export default function RootNotFound() {
 
   return (
     <main
+      className="min-h-screen flex items-center justify-center px-4"
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '2rem',
+        background:
+          'radial-gradient(43.41% 65.16% at 65.56% 45.02%, #3CB152 0%, #194B23 79.62%)',
       }}
       aria-labelledby="notfound-title"
     >
-      <h1
-        id="notfound-title"
-        style={{ fontSize: '3rem', marginBottom: '1rem' }}
-      >
-        {text.title}
-      </h1>
-
-      <p style={{ marginBottom: '1.5rem', color: '#374151' }}>{text.message}</p>
-
-      <Link
-        href={`/${defaultLocale}`}
-        style={{
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#2563eb',
-          color: 'white',
-          borderRadius: '0.5rem',
-          textDecoration: 'none',
-          fontWeight: '500',
-        }}
-      >
-        {text.button}
-      </Link>
+      <section className="w-full max-w-xl rounded-xl border border-white/20 bg-white/5 p-8 md:p-10 text-center text-[#EBFFEE]">
+        <h1 id="notfound-title" className="text-5xl font-semibold mb-4">
+          {text.title}
+        </h1>
+        <p className="mb-8 opacity-90">{text.message}</p>
+        <Button
+          href={`/${defaultLocale}`}
+          className="!text-base !leading-normal px-6 py-2"
+        >
+          {text.button}
+        </Button>
+      </section>
     </main>
   )
 }

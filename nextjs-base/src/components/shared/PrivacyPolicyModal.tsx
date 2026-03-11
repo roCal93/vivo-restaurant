@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { formatLegalContent } from '@/lib/format-legal-content'
+import { Button } from '@/components/ui/Button'
 
 type PrivacyPolicyModalProps = {
   isOpen: boolean
@@ -31,19 +32,23 @@ const PrivacyPolicyModal = ({
       aria-labelledby="policy-modal-title"
     >
       <div
-        className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl"
+        className="rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl border border-white/20 text-[#EBFFEE]"
+        style={{
+          background:
+            'radial-gradient(43.41% 65.16% at 65.56% 45.02%, #3CB152 0%, #194B23 79.62%)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+        <div className="sticky top-0 bg-[#194B23]/90 border-b border-white/20 p-6 flex items-center justify-between backdrop-blur-sm">
           <h2
             id="policy-modal-title"
-            className="text-2xl font-bold text-gray-900"
+            className="text-2xl font-bold text-[#EBFFEE]"
           >
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-3xl leading-none focus:outline-none focus:ring-2 focus:ring-[#F88379] rounded"
+            className="text-[#EBFFEE] hover:opacity-80 text-3xl leading-none focus:outline-none focus:ring-2 focus:ring-[#EBFFEE] rounded"
             aria-label={`Fermer ${title}`}
           >
             ×
@@ -51,17 +56,17 @@ const PrivacyPolicyModal = ({
         </div>
 
         <div
-          className="p-6 md:p-8 prose prose-sm md:prose-base max-w-none [&_h2]:scroll-mt-20 [&_h3]:scroll-mt-20"
+          className="p-6 md:p-8 prose prose-invert prose-sm md:prose-base max-w-none [&_h2]:scroll-mt-20 [&_h3]:scroll-mt-20"
           dangerouslySetInnerHTML={{ __html: formatContent(content || '') }}
         />
 
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 text-center">
-          <button
+        <div className="sticky bottom-0 bg-[#194B23]/90 border-t border-white/20 p-4 text-center backdrop-blur-sm">
+          <Button
             onClick={onClose}
-            className="px-6 py-2 bg-[#F88379] text-white rounded-full hover:bg-[#e67369] transition-colors focus:outline-none focus:ring-2 focus:ring-[#F88379] focus:ring-offset-2"
+            className="!text-base !leading-normal px-6 py-2"
           >
             {closeButtonText}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
