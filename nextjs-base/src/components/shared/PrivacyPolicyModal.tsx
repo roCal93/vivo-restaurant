@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { formatLegalContent } from '@/lib/format-legal-content'
 
 type PrivacyPolicyModalProps = {
   isOpen: boolean
@@ -19,46 +20,7 @@ const PrivacyPolicyModal = ({
 }: PrivacyPolicyModalProps) => {
   if (!isOpen) return null
 
-  // Fonction pour convertir le contenu markdown simple en HTML
-  const formatContent = (text: string) => {
-    if (!text) return ''
-
-    return (
-      text
-        // Convertir ## en <h2>
-        .replace(
-          /^## (.+?)$/gm,
-          '<h2 class="text-2xl font-bold mt-8 mb-4 text-gray-900">$1</h2>'
-        )
-        // Convertir ### en <h3>
-        .replace(
-          /^### (.+?)$/gm,
-          '<h3 class="text-xl font-semibold mt-6 mb-3 text-gray-800">$1</h3>'
-        )
-        // Convertir ** en <strong>
-        .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-        // Convertir les URLs en liens
-        .replace(
-          /(https?:\/\/[^\s]+)/g,
-          '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[#F88379] underline hover:text-[#e67369] break-words">$1</a>'
-        )
-        // Convertir les listes à puces (- item)
-        .replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
-        // Entourer les <li> de <ul>
-        .replace(
-          /(<li class="ml-4">.*?<\/li>\n?)+/g,
-          '<ul class="list-disc list-outside mb-4 space-y-2 text-gray-700">$&</ul>'
-        )
-        // Convertir les doubles sauts de ligne en paragraphes
-        .replace(/\n\n+/g, '</p><p class="mb-4 text-gray-700 leading-relaxed">')
-        // Ajouter les balises <p> de début et fin
-        .replace(/^(.+)/, '<p class="mb-4 text-gray-700 leading-relaxed">$1')
-        .replace(/(.+)$/, '$1</p>')
-        // Nettoyer les <p> vides et ceux qui contiennent déjà des titres
-        .replace(/<p class="[^"]*">(<h[23][^>]*>.*?<\/h[23]>)<\/p>/g, '$1')
-        .replace(/<p class="[^"]*"><\/p>/g, '')
-    )
-  }
+  const formatContent = (text: string) => formatLegalContent(text)
 
   return (
     <div
