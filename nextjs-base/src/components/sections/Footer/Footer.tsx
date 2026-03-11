@@ -4,17 +4,26 @@ import Link from 'next/link'
 
 type FooterProps = {
   siteName?: string
+  locale?: string
 }
 
-export const Footer = ({ siteName = 'Hakuna Mataweb' }: FooterProps) => {
+export const Footer = ({
+  siteName = 'Hakuna Mataweb',
+  locale = 'fr',
+}: FooterProps) => {
   const currentYear = new Date().getFullYear()
+  const isEn = locale === 'en'
+  const privacyLabel = isEn ? 'Privacy Policy' : 'Politique de confidentialite'
+  const legalLabel = isEn ? 'Legal Notice' : 'Mentions legales'
+  const rightsLabel = isEn ? 'All rights reserved.' : 'Tous droits reserves.'
+  const madeWithLabel = isEn ? 'Made with passion by' : 'Fait avec passion par'
 
   return (
     <footer className="backdrop-blur-sm bg-white/10 border-t-[0.5px] border-gray-200 text-[#EBFFEE] py-8 text-center">
       <div className="space-y-3">
         <div className="flex flex-wrap justify-center gap-6">
           <p className="text-sm text-[#EBFFEE]">
-            {siteName} © {currentYear}. Tous droits réservés.
+            {siteName} © {currentYear}. {rightsLabel}
           </p>{' '}
           <div>
             <Link
@@ -41,8 +50,17 @@ export const Footer = ({ siteName = 'Hakuna Mataweb' }: FooterProps) => {
             </Link>
           </div>
         </div>
+        <div className="flex flex-wrap justify-center gap-4 text-sm text-[#EBFFEE]">
+          <Link href={`/${locale}/privacy-policy`} className="hover:underline">
+            {privacyLabel}
+          </Link>
+          <span aria-hidden="true">•</span>
+          <Link href={`/${locale}/legal-notice`} className="hover:underline">
+            {legalLabel}
+          </Link>
+        </div>
         <p className="text-sm text-[#EBFFEE]">
-          Fait avec passion par{' '}
+          {madeWithLabel}{' '}
           <a
             href="https://hakuna-mataweb.com"
             target="_blank"
