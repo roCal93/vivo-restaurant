@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Layout } from '@/components/layout'
 import { fetchAPI } from '@/lib/strapi'
+import { defaultLocale } from '@/lib/locales'
 
 type LegalData = {
   title?: string
@@ -26,7 +27,17 @@ export default async function LegalNoticePage({
     next: { revalidate: 60 },
   })
 
-  const legal = response?.data
+  let legal = response?.data
+
+  // If the page is missing in the requested locale, fallback to default locale.
+  if ((!legal?.title || !legal?.content) && locale !== defaultLocale) {
+    const fallbackResponse = await fetchAPI<LegalResponse>('/legal-notice', {
+      locale: defaultLocale,
+      next: { revalidate: 60 },
+    })
+    legal = fallbackResponse?.data
+  }
+
   if (!legal?.title || !legal?.content) {
     notFound()
   }

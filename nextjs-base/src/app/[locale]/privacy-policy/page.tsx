@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Layout } from '@/components/layout'
 import { fetchAPI } from '@/lib/strapi'
+import { defaultLocale } from '@/lib/locales'
 
 type PolicyData = {
   title?: string
@@ -26,7 +27,17 @@ export default async function PrivacyPolicyPage({
     next: { revalidate: 60 },
   })
 
-  const policy = response?.data
+  let policy = response?.data
+
+  // If the page is missing in the requested locale, fallback to default locale.
+  if ((!policy?.title || !policy?.content) && locale !== defaultLocale) {
+    const fallbackResponse = await fetchAPI<PolicyResponse>('/privacy-policy', {
+      locale: defaultLocale,
+      next: { revalidate: 60 },
+    })
+    policy = fallbackResponse?.data
+  }
+
   if (!policy?.title || !policy?.content) {
     notFound()
   }
