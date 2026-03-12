@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout'
 import { fetchAPI } from '@/lib/strapi'
 import { defaultLocale } from '@/lib/locales'
 import { formatLegalContent } from '@/lib/format-legal-content'
+import type { Metadata } from 'next'
 
 type LegalData = {
   title?: string
@@ -15,6 +16,35 @@ type LegalResponse = {
 }
 
 export const revalidate = 60
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+
+  const response = await fetchAPI<LegalResponse>('/legal-notice', {
+    locale,
+    next: { revalidate: 60 },
+    suppressWarnings: true,
+  })
+
+  let legal = response?.data
+
+  if (!legal?.title && locale !== defaultLocale) {
+    const fallbackResponse = await fetchAPI<LegalResponse>('/legal-notice', {
+      locale: defaultLocale,
+      next: { revalidate: 60 },
+      suppressWarnings: true,
+    })
+    legal = fallbackResponse?.data
+  }
+
+  return {
+    title: legal?.title || (locale === 'en' ? 'Legal Notice' : 'Mentions legales'),
+  }
+}
 
 export default async function LegalNoticePage({
   params,

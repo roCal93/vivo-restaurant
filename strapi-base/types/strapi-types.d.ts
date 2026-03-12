@@ -4,7 +4,7 @@
  * ⚠️  FICHIER AUTO-GÉNÉRÉ - NE PAS MODIFIER
  * 
  * Pour régénérer: npm run generate:types
- * Généré le: 2026-02-20T13:11:02.402Z
+ * Généré le: 2026-03-12T09:57:40.426Z
  */
 
 // ============================================================================
@@ -175,6 +175,47 @@ export interface ImageBlock {
 }
 
 /**
+ * Component: blocks.reservation-block
+ */
+export interface ReservationBlock {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  submitLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  submittingText?: string;
+  firstNameLabel?: string;
+  lastNameLabel?: string;
+  phoneLabel?: string;
+  emailLabel?: string;
+  dateLabel?: string;
+  timeLabel?: string;
+  coversLabel?: string;
+  messageLabel?: string;
+  firstNamePlaceholder?: string;
+  lastNamePlaceholder?: string;
+  phonePlaceholder?: string;
+  emailPlaceholder?: string;
+  messagePlaceholder?: string;
+  consentText?: string;
+  policyLinkText?: string;
+  consentRequiredText?: string;
+  rgpdInfoText?: string;
+  minAdvanceDays?: number;
+  maxAdvanceDays?: number;
+  lunchStart?: string;
+  lunchEnd?: string;
+  dinnerStart?: string;
+  dinnerEnd?: string;
+  minCovers?: number;
+  maxCovers?: number;
+  privacyPolicy?: (PrivacyPolicy & StrapiEntity);
+  blockAlignment: string;
+  maxWidth: string;
+}
+
+/**
  * Component: blocks.text-block
  */
 export interface TextBlock {
@@ -209,6 +250,12 @@ export interface TextMapBlock {
   zoom?: number;
   showMarker?: boolean;
   showItineraryLink?: boolean;
+  showOpeningHours?: boolean;
+  openingHoursTitle?: string;
+  openingHoursClosedLabel?: string;
+  openingDays?: OpeningDay[];
+  openingHoursFirstPeriodLabel?: string;
+  openingHoursSecondPeriodLabel?: string;
   itineraryLinkLabel?: string;
   markerImage?: StrapiMedia;
 }
@@ -257,6 +304,28 @@ export interface ExternalLink {
 }
 
 /**
+ * Component: shared.opening-day
+ */
+export interface OpeningDay {
+  dayLabel: string;
+  isClosedAllDay?: boolean;
+  firstPeriodOpenTime?: string;
+  firstPeriodCloseTime?: string;
+  secondPeriodOpenTime?: string;
+  secondPeriodCloseTime?: string;
+}
+
+/**
+ * Component: shared.opening-hour
+ */
+export interface OpeningHour {
+  dayLabel: string;
+  openTime?: string;
+  closeTime?: string;
+  isClosed?: boolean;
+}
+
+/**
  * Component: shared.page-link
  */
 export interface PageLink {
@@ -288,6 +357,17 @@ export interface TimelineItem {
 // ============================================================================
 
 /**
+ * Blocked Slot
+ */
+export interface BlockedSlot {
+  date: string;
+  time?: string;
+  label?: string;
+}
+export type BlockedSlotResponse = StrapiResponse<BlockedSlot>;
+export type BlockedSlotCollectionResponse = StrapiCollectionResponse<BlockedSlot>;
+
+/**
  * card
  */
 export interface Card {
@@ -295,6 +375,7 @@ export interface Card {
   subtitle?: string;
   content?: StrapiBlock[];
   image?: StrapiMedia;
+  mobileImage?: StrapiMedia;
   locale?: string;
   localizations?: (Card & StrapiEntity)[];
 }
@@ -315,6 +396,20 @@ export interface Header {
 }
 export type HeaderResponse = StrapiResponse<Header>;
 export type HeaderCollectionResponse = StrapiCollectionResponse<Header>;
+
+/**
+ * Legal Notice
+ */
+export interface LegalNotice {
+  title: string;
+  content: string;
+  closeButtonText?: string;
+  lastUpdated?: string;
+  locale?: string;
+  localizations?: (LegalNotice & StrapiEntity)[];
+}
+export type LegalNoticeResponse = StrapiResponse<LegalNotice>;
+export type LegalNoticeCollectionResponse = StrapiCollectionResponse<LegalNotice>;
 
 /**
  * page
@@ -347,6 +442,33 @@ export interface PrivacyPolicy {
 }
 export type PrivacyPolicyResponse = StrapiResponse<PrivacyPolicy>;
 export type PrivacyPolicyCollectionResponse = StrapiCollectionResponse<PrivacyPolicy>;
+
+/**
+ * Reservation
+ */
+export interface Reservation {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  date: string;
+  time: string;
+  covers: number;
+  message?: string;
+  status: string;
+  customerLocale: string;
+}
+export type ReservationResponse = StrapiResponse<Reservation>;
+export type ReservationCollectionResponse = StrapiCollectionResponse<Reservation>;
+
+/**
+ * Reservation Config
+ */
+export interface ReservationConfig {
+  maxCoversPerSlot: number;
+}
+export type ReservationConfigResponse = StrapiResponse<ReservationConfig>;
+export type ReservationConfigCollectionResponse = StrapiCollectionResponse<ReservationConfig>;
 
 /**
  * section

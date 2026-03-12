@@ -15,6 +15,27 @@ type TextMapBlockProps = {
   showItineraryLink?: boolean
   itineraryLinkLabel?: string
   markerImage?: StrapiMedia | null
+  showOpeningHours?: boolean
+  openingHoursTitle?: string
+  openingHoursClosedLabel?: string
+  openingHoursFirstPeriodLabel?: string
+  openingHoursSecondPeriodLabel?: string
+  // Backward compatibility for old field names
+  openingHoursLunchLabel?: string
+  openingHoursDinnerLabel?: string
+  openingDays?: Array<{
+    dayLabel: string
+    isClosedAllDay?: boolean | null
+    firstPeriodOpenTime?: string | null
+    firstPeriodCloseTime?: string | null
+    secondPeriodOpenTime?: string | null
+    secondPeriodCloseTime?: string | null
+    // Backward compatibility for old field names
+    lunchOpenTime?: string | null
+    lunchCloseTime?: string | null
+    dinnerOpenTime?: string | null
+    dinnerCloseTime?: string | null
+  }>
 }
 
 // helper that turns phone numbers and email addresses into clickable links
@@ -236,7 +257,20 @@ const TextMapBlock = ({
   showItineraryLink = true,
   itineraryLinkLabel = 'Ouvrir dans Maps',
   markerImage,
+  showOpeningHours = false,
+  openingHoursTitle = 'Horaires',
+  openingHoursClosedLabel = 'Fermé',
+  openingHoursFirstPeriodLabel,
+  openingHoursSecondPeriodLabel,
+  openingHoursLunchLabel,
+  openingHoursDinnerLabel,
+  openingDays = [],
 }: TextMapBlockProps) => {
+  const firstPeriodLabel =
+    openingHoursFirstPeriodLabel ?? openingHoursLunchLabel ?? 'Service 1'
+  const secondPeriodLabel =
+    openingHoursSecondPeriodLabel ?? openingHoursDinnerLabel ?? 'Service 2'
+
   const shouldReduce = useReducedMotion()
   const [coords, setCoords] = useState<[number, number] | null>(
     latitude && longitude ? [latitude, longitude] : null
@@ -295,10 +329,74 @@ const TextMapBlock = ({
       >
         {title && <h3 className="text-2xl font-bold mb-14">{title}</h3>}
         {renderBlocks(content)}
+
+        {showOpeningHours && openingDays.length > 0 && (
+          <div className="mt-8 max-w-sm rounded-lg border border-gray-200/70 p-4">
+            <h4 className="text-lg font-semibold mb-3">{openingHoursTitle}</h4>
+            <ul className="space-y-2">
+              {openingDays.map((entry, index) => {
+                const firstOpen =
+                  entry.firstPeriodOpenTime ?? entry.lunchOpenTime
+                const firstClose =
+                  entry.firstPeriodCloseTime ?? entry.lunchCloseTime
+                const secondOpen =
+                  entry.secondPeriodOpenTime ?? entry.dinnerOpenTime
+                const secondClose =
+                  entry.secondPeriodCloseTime ?? entry.dinnerCloseTime
+
+                const firstRange =
+                  firstOpen && firstClose
+                    ? `${firstOpen} - ${firstClose}`
+                    : null
+                const secondRange =
+                  secondOpen && secondClose
+                    ? `${secondOpen} - ${secondClose}`
+                    : null
+                const isClosed = !!entry.isClosedAllDay
+
+                return (
+                  <li
+                    key={`${entry.dayLabel}-${index}`}
+                    className="flex items-start justify-between gap-4 text-sm"
+                  >
+                    <span className="font-medium">{entry.dayLabel}</span>
+                    <span
+                      className={`text-right ${isClosed ? 'opacity-80 italic' : ''}`}
+                    >
+                      {isClosed ? (
+                        openingHoursClosedLabel
+                      ) : (
+                        <>
+                          {firstRange && (
+                            <span className="block">
+                              <span className="opacity-70 mr-2">
+                                {firstPeriodLabel}
+                              </span>
+                              {firstRange}
+                            </span>
+                          )}
+                          {secondRange && (
+                            <span className="block">
+                              <span className="opacity-70 mr-2">
+                                {secondPeriodLabel}
+                              </span>
+                              {secondRange}
+                            </span>
+                          )}
+                          {!firstRange && !secondRange && '--'}
+                        </>
+                      )}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
       </motion.div>
 
       <motion.div
-        className="rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900 h-64 md:h-96 relative"
+        className="rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900 h-64 md:h-96 relative md:mt-24"
         initial={shouldReduce ? {} : { opacity: 0, x: 60 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, amount: 0.35 }}

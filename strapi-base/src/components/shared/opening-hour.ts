@@ -1,0 +1,24 @@
+export default {
+  "collectionName": "components_shared_opening_hours",
+  "info": {
+    "displayName": "Opening Hour",
+    "description": "Ligne d'horaires d'ouverture"
+  },
+  "options": {},
+  "attributes": {
+    "dayLabel": {
+      "type": "string",
+      "required": true
+    },
+    "openTime": {
+      "type": "string"
+    },
+    "closeTime": {
+      "type": "string"
+    },
+    "isClosed": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+} as const;

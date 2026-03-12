@@ -35,6 +35,31 @@ export default {
       "type": "boolean",
       "default": true
     },
+    "showOpeningHours": {
+      "type": "boolean",
+      "default": false
+    },
+    "openingHoursTitle": {
+      "type": "string",
+      "default": "Horaires"
+    },
+    "openingHoursClosedLabel": {
+      "type": "string",
+      "default": "Fermé"
+    },
+    "openingDays": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.opening-day"
+    },
+    "openingHoursFirstPeriodLabel": {
+      "type": "string",
+      "default": "Service 1"
+    },
+    "openingHoursSecondPeriodLabel": {
+      "type": "string",
+      "default": "Service 2"
+    },
     "itineraryLinkLabel": {
       "type": "string",
       "default": "Ouvrir dans Maps"

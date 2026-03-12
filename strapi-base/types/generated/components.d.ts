@@ -541,9 +541,20 @@ export interface BlocksTextMapBlock extends Struct.ComponentSchema {
     latitude: Schema.Attribute.Decimal;
     longitude: Schema.Attribute.Decimal;
     markerImage: Schema.Attribute.Media<'images'>;
+    openingDays: Schema.Attribute.Component<'shared.opening-day', true>;
+    openingHoursClosedLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Ferm\u00E9'>;
+    openingHoursFirstPeriodLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Service 1'>;
+    openingHoursSecondPeriodLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Service 2'>;
+    openingHoursTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Horaires'>;
     showItineraryLink: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<true>;
     showMarker: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    showOpeningHours: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     title: Schema.Attribute.String;
     zoom: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<15>;
   };
@@ -621,6 +632,37 @@ export interface SharedExternalLink extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedOpeningDay extends Struct.ComponentSchema {
+  collectionName: 'components_shared_opening_days';
+  info: {
+    description: 'Horaires midi/soir pour un jour';
+    displayName: 'Opening Day';
+  };
+  attributes: {
+    dayLabel: Schema.Attribute.String & Schema.Attribute.Required;
+    firstPeriodCloseTime: Schema.Attribute.String;
+    firstPeriodOpenTime: Schema.Attribute.String;
+    isClosedAllDay: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    secondPeriodCloseTime: Schema.Attribute.String;
+    secondPeriodOpenTime: Schema.Attribute.String;
+  };
+}
+
+export interface SharedOpeningHour extends Struct.ComponentSchema {
+  collectionName: 'components_shared_opening_hours';
+  info: {
+    description: "Ligne d'horaires d'ouverture";
+    displayName: 'Opening Hour';
+  };
+  attributes: {
+    closeTime: Schema.Attribute.String;
+    dayLabel: Schema.Attribute.String & Schema.Attribute.Required;
+    isClosed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    openTime: Schema.Attribute.String;
+  };
+}
+
 export interface SharedPageLink extends Struct.ComponentSchema {
   collectionName: 'components_shared_page_links';
   info: {
@@ -679,6 +721,8 @@ declare module '@strapi/strapi' {
       'shared.button': SharedButton;
       'shared.carousel-card': SharedCarouselCard;
       'shared.external-link': SharedExternalLink;
+      'shared.opening-day': SharedOpeningDay;
+      'shared.opening-hour': SharedOpeningHour;
       'shared.page-link': SharedPageLink;
       'shared.timeline-image': SharedTimelineImage;
       'shared.timeline-item': SharedTimelineItem;

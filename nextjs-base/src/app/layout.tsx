@@ -60,7 +60,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   let locale = defaultLocale
-    let cookieConsent: 'accepted' | 'rejected' | undefined
+  let cookieConsent: 'accepted' | 'rejected' | undefined
 
   try {
     const cookieStore = await cookies()

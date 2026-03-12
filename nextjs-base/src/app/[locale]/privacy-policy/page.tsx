@@ -3,6 +3,7 @@ import { Layout } from '@/components/layout'
 import { fetchAPI } from '@/lib/strapi'
 import { defaultLocale } from '@/lib/locales'
 import { formatLegalContent } from '@/lib/format-legal-content'
+import type { Metadata } from 'next'
 
 type PolicyData = {
   title?: string
@@ -15,6 +16,35 @@ type PolicyResponse = {
 }
 
 export const revalidate = 60
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+
+  const response = await fetchAPI<PolicyResponse>('/privacy-policy', {
+    locale,
+    next: { revalidate: 60 },
+    suppressWarnings: true,
+  })
+
+  let policy = response?.data
+
+  if (!policy?.title && locale !== defaultLocale) {
+    const fallbackResponse = await fetchAPI<PolicyResponse>('/privacy-policy', {
+      locale: defaultLocale,
+      next: { revalidate: 60 },
+      suppressWarnings: true,
+    })
+    policy = fallbackResponse?.data
+  }
+
+  return {
+    title: policy?.title || (locale === 'en' ? 'Privacy Policy' : 'Politique de confidentialite'),
+  }
+}
 
 export default async function PrivacyPolicyPage({
   params,
