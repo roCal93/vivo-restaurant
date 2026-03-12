@@ -197,6 +197,16 @@ function toWritableStrapiValue(value: unknown): JsonLike | undefined {
   return out
 }
 
+function isTextMapBlock(
+  block: unknown
+): block is Record<string, unknown> & { __component: 'blocks.text-map-block' } {
+  return (
+    typeof block === 'object' &&
+    block !== null &&
+    (block as { __component?: unknown }).__component === 'blocks.text-map-block'
+  )
+}
+
 function requireAdmin(request: NextRequest): string | null {
   const token = request.cookies.get(COOKIE_NAME)?.value
   return verifyToken(token)
@@ -303,8 +313,8 @@ async function syncTextMapOpeningDays(openingDays: OpeningDayPayload[]) {
 
   for (const section of page.sections) {
     const blocks = Array.isArray(section?.blocks) ? section.blocks : []
-    const hasTextMapBlock = blocks.some(
-      (block: any) => block?.__component === 'blocks.text-map-block'
+    const hasTextMapBlock = blocks.some((block: unknown) =>
+      isTextMapBlock(block)
     )
     if (!hasTextMapBlock) continue
 
@@ -314,8 +324,8 @@ async function syncTextMapOpeningDays(openingDays: OpeningDayPayload[]) {
       throw new Error('DocumentId de section introuvable pour TextMapBlock.')
     }
 
-    const nextBlocks = blocks.map((block: any) =>
-      block?.__component === 'blocks.text-map-block'
+    const nextBlocks = blocks.map((block: unknown) =>
+      isTextMapBlock(block)
         ? {
             ...block,
             openingDays,
