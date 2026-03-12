@@ -10,7 +10,7 @@ export default function AdminHomePage() {
         Bienvenue dans l&apos;espace admin de Vivo Restaurant.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
         <Link
           href="/admin/reservations"
           className="group bg-[#EBFFEE] border border-neutral-200 rounded-2xl p-8 hover:border-neutral-400 hover:shadow-md transition-all flex flex-col gap-3"
@@ -36,6 +36,20 @@ export default function AdminHomePage() {
             </h2>
             <p className="text-sm text-center text-neutral-500 mt-1">
               Importer et gérer les menus PDF affichés sur le site.
+            </p>
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/horaires"
+          className="group bg-[#EBFFEE] border border-neutral-200 rounded-2xl p-8 hover:border-neutral-400 hover:shadow-md transition-all flex flex-col gap-3"
+        >
+          <div>
+            <h2 className="text-lg text-center font-semibold text-neutral-900 group-hover:underline">
+              Horaires
+            </h2>
+            <p className="text-sm text-center text-neutral-500 mt-1">
+              Modifier les jours ouverts/fermés et les horaires de réservation.
             </p>
           </div>
         </Link>

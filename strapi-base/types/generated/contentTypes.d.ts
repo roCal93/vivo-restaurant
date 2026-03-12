@@ -784,6 +784,7 @@ export interface ApiReservationConfigReservationConfig
         number
       > &
       Schema.Attribute.DefaultTo<20>;
+    openingDays: Schema.Attribute.Component<'shared.opening-day', true>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

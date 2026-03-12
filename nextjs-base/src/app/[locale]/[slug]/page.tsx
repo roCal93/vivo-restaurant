@@ -290,16 +290,18 @@ export default async function Page({
   // If the current page has no TextMap opening days, fallback to home page
   // so ReservationBlock can still enforce closed weekdays and slot ranges.
   if (sharedOpeningDays.length === 0) {
-    const homeRes = isEnabled || isDraft
-      ? await fetchPageData('home', locale, isDraft)
-      : await getPageData('home', locale)
+    const homeRes =
+      isEnabled || isDraft
+        ? await fetchPageData('home', locale, isDraft)
+        : await getPageData('home', locale)
     const homeSections = homeRes?.data?.[0]?.sections || []
     sharedOpeningDays = getSharedOpeningDays(homeSections)
 
     if (sharedOpeningDays.length === 0 && locale !== defaultLocale) {
-      const homeDefaultRes = isEnabled || isDraft
-        ? await fetchPageData('home', defaultLocale, isDraft)
-        : await getPageData('home', defaultLocale)
+      const homeDefaultRes =
+        isEnabled || isDraft
+          ? await fetchPageData('home', defaultLocale, isDraft)
+          : await getPageData('home', defaultLocale)
       const homeDefaultSections = homeDefaultRes?.data?.[0]?.sections || []
       sharedOpeningDays = getSharedOpeningDays(homeDefaultSections)
     }

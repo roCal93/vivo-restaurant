@@ -495,7 +495,9 @@ const findOpeningDayForDate = (
   }
 
   const firstPeriodSource =
-    entries.find((entry) => !!entry.firstPeriodOpenTime && !!entry.firstPeriodCloseTime) ??
+    entries.find(
+      (entry) => !!entry.firstPeriodOpenTime && !!entry.firstPeriodCloseTime
+    ) ??
     entries.find((entry) => !!entry.lunchOpenTime && !!entry.lunchCloseTime) ??
     null
 
@@ -503,7 +505,9 @@ const findOpeningDayForDate = (
     entries.find(
       (entry) => !!entry.secondPeriodOpenTime && !!entry.secondPeriodCloseTime
     ) ??
-    entries.find((entry) => !!entry.dinnerOpenTime && !!entry.dinnerCloseTime) ??
+    entries.find(
+      (entry) => !!entry.dinnerOpenTime && !!entry.dinnerCloseTime
+    ) ??
     null
 
   return {
@@ -590,6 +594,7 @@ const ReservationBlock = ({
   // ── Réglages dynamiques depuis l'admin ───────────────────────────────────
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([])
   const [dynamicMaxCovers, setDynamicMaxCovers] = useState<number>(maxCovers)
+  const [adminOpeningDays, setAdminOpeningDays] = useState<OpeningDay[]>([])
 
   useEffect(() => {
     fetch('/api/public/reservation-settings')
@@ -597,6 +602,7 @@ const ReservationBlock = ({
       .then((d) => {
         if (d.blockedSlots) setBlockedSlots(d.blockedSlots)
         if (d.maxCoversPerSlot) setDynamicMaxCovers(d.maxCoversPerSlot)
+        if (Array.isArray(d.openingDays)) setAdminOpeningDays(d.openingDays)
       })
       .catch(() => {
         /* silently fail — defaults are fine */
@@ -620,10 +626,10 @@ const ReservationBlock = ({
 
   const usableOpeningDays = useMemo(
     () =>
-      openingDays.filter(
+      (adminOpeningDays.length > 0 ? adminOpeningDays : openingDays).filter(
         (entry) => weekdayIndexFromDayLabel(entry.dayLabel || '') !== null
       ),
-    [openingDays]
+    [adminOpeningDays, openingDays]
   )
 
   const blockedWeekdays = useMemo(() => {

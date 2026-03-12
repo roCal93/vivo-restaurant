@@ -17,7 +17,7 @@ export async function GET() {
           next: { revalidate: 60 }, // cache 1 minute
         }
       ),
-      fetch(`${STRAPI_URL}/api/reservation-config`, {
+      fetch(`${STRAPI_URL}/api/reservation-config?populate=openingDays`, {
         headers: { Authorization: `Bearer ${STRAPI_TOKEN}` },
         next: { revalidate: 60 },
       }),
@@ -25,16 +25,17 @@ export async function GET() {
 
     const slotsData = await slotsRes.json()
     const configData = configRes.status === 404
-      ? { data: { maxCoversPerSlot: 20 } }
+      ? { data: { maxCoversPerSlot: 20, openingDays: [] } }
       : await configRes.json()
 
     return NextResponse.json({
       blockedSlots: slotsData.data || [],
       maxCoversPerSlot: configData?.data?.maxCoversPerSlot ?? 20,
+      openingDays: configData?.data?.openingDays ?? [],
     })
   } catch {
     return NextResponse.json(
-      { blockedSlots: [], maxCoversPerSlot: 20 },
+      { blockedSlots: [], maxCoversPerSlot: 20, openingDays: [] },
       { status: 200 }
     )
   }

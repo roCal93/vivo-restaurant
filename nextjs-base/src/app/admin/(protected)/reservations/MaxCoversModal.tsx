@@ -17,7 +17,7 @@ export default function MaxCoversModal({ onClose }: { onClose: () => void }) {
   }, [])
 
   async function handleSave() {
-    if (value < 1) return setError('La valeur doit être supérieure à 0.')
+    if (value < 1) return setError('La valeur doit etre superieure a 0.')
     setError('')
     setLoading(true)
     setSaved(false)
@@ -44,19 +44,19 @@ export default function MaxCoversModal({ onClose }: { onClose: () => void }) {
       <div className="bg-[#EBFFEE] rounded-2xl shadow-2xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
           <h2 className="font-semibold text-neutral-900">
-            Couverts max par créneau
+            Couverts max par creneau
           </h2>
           <button
             onClick={onClose}
             className="cursor-pointer text-neutral-400 hover:text-neutral-700 transition text-xl leading-none"
           >
-            ✕
+            x
           </button>
         </div>
 
         <div className="px-6 py-5 space-y-4">
           <p className="text-sm text-neutral-500">
-            Définissez le nombre maximum de couverts acceptés par créneau
+            Definissez le nombre maximum de couverts acceptes par creneau
             horaire.
           </p>
 
@@ -76,7 +76,7 @@ export default function MaxCoversModal({ onClose }: { onClose: () => void }) {
 
           {error && <p className="text-xs text-red-600">{error}</p>}
           {saved && (
-            <p className="text-xs text-green-600 font-medium">✓ Enregistré !</p>
+            <p className="text-xs text-green-600 font-medium">Enregistre.</p>
           )}
 
           <div className="flex gap-3">
@@ -85,7 +85,7 @@ export default function MaxCoversModal({ onClose }: { onClose: () => void }) {
               onClick={handleSave}
               className="flex-1 bg-neutral-900 text-white rounded-lg py-2 text-sm font-medium hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition"
             >
-              {loading ? 'Enregistrement…' : 'Enregistrer'}
+              {loading ? 'Enregistrement...' : 'Enregistrer'}
             </button>
             <button
               onClick={onClose}
