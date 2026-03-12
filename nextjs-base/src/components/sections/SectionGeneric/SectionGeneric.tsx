@@ -23,6 +23,7 @@ type OpeningDay = {
 type SectionGenericProps = {
   title?: string
   blocks: DynamicBlock[]
+  sharedOpeningDays?: OpeningDay[]
   identifier?: string
   spacingTop?: 'none' | 'small' | 'medium' | 'large'
   spacingBottom?: 'none' | 'small' | 'medium' | 'large'
@@ -33,17 +34,22 @@ export const SectionGeneric = ({
   identifier,
   title,
   blocks,
+  sharedOpeningDays,
   spacingTop = 'medium',
   spacingBottom = 'medium',
   containerWidth = 'medium',
 }: SectionGenericProps) => {
-  const sharedOpeningDays = (blocks || []).find((block) => {
+  const localTextMapWithOpeningDays = (blocks || []).find((block) => {
     const component = (block as { __component?: string }).__component
     const days = (block as { openingDays?: unknown }).openingDays
     return component === 'blocks.text-map-block' && Array.isArray(days)
   }) as ({ openingDays?: OpeningDay[] } & DynamicBlock) | undefined
 
-  const openingDaysFromTextMap = sharedOpeningDays?.openingDays
+  const openingDaysFromTextMap = localTextMapWithOpeningDays?.openingDays
+  const effectiveOpeningDays =
+    openingDaysFromTextMap && openingDaysFromTextMap.length > 0
+      ? openingDaysFromTextMap
+      : sharedOpeningDays
 
   const normalizeSpacing = (
     value: unknown
@@ -93,15 +99,20 @@ export const SectionGeneric = ({
 
     if (BlockComponent) {
       const isReservationBlock = raw === 'blocks.reservation-block'
+      const reservationOwnOpeningDays = (block as { openingDays?: unknown })
+        .openingDays
+      const hasOwnOpeningDays =
+        Array.isArray(reservationOwnOpeningDays) &&
+        reservationOwnOpeningDays.length > 0
       const blockProps =
         isReservationBlock &&
-        Array.isArray(openingDaysFromTextMap) &&
-        openingDaysFromTextMap.length > 0
+        Array.isArray(effectiveOpeningDays) &&
+        effectiveOpeningDays.length > 0
           ? {
               ...(block as Record<string, unknown>),
-              openingDays:
-                (block as { openingDays?: unknown }).openingDays ??
-                openingDaysFromTextMap,
+              openingDays: hasOwnOpeningDays
+                ? reservationOwnOpeningDays
+                : effectiveOpeningDays,
             }
           : (block as Record<string, unknown>)
 
@@ -117,20 +128,13 @@ export const SectionGeneric = ({
                 <div className="h-72 bg-gray-100 animate-pulse rounded-lg" />
               }
             >
-              <BlockComponent
-                {...blockProps}
-              />
+              <BlockComponent {...blockProps} />
             </React.Suspense>
           </div>
         )
       }
 
-      return (
-        <BlockComponent
-          key={index}
-          {...blockProps}
-        />
-      )
+      return <BlockComponent key={index} {...blockProps} />
     }
 
     // Fallback placeholder (starter)

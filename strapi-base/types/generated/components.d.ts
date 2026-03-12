@@ -639,7 +639,18 @@ export interface SharedOpeningDay extends Struct.ComponentSchema {
     displayName: 'Opening Day';
   };
   attributes: {
-    dayLabel: Schema.Attribute.String & Schema.Attribute.Required;
+    dayLabel: Schema.Attribute.Enumeration<
+      [
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday',
+      ]
+    > &
+      Schema.Attribute.Required;
     firstPeriodCloseTime: Schema.Attribute.String;
     firstPeriodOpenTime: Schema.Attribute.String;
     isClosedAllDay: Schema.Attribute.Boolean &

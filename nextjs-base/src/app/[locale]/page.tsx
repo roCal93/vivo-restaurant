@@ -11,6 +11,40 @@ import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { defaultLocale } from '@/lib/locales'
 
+type OpeningDay = {
+  dayLabel: string
+  isClosedAllDay?: boolean | null
+  firstPeriodOpenTime?: string | null
+  firstPeriodCloseTime?: string | null
+  secondPeriodOpenTime?: string | null
+  secondPeriodCloseTime?: string | null
+  lunchOpenTime?: string | null
+  lunchCloseTime?: string | null
+  dinnerOpenTime?: string | null
+  dinnerCloseTime?: string | null
+}
+
+const getSharedOpeningDays = (sections: unknown[]): OpeningDay[] => {
+  for (const section of sections) {
+    const blocks = (section as { blocks?: unknown[] }).blocks
+    if (!Array.isArray(blocks)) continue
+
+    for (const block of blocks) {
+      const component = (block as { __component?: string }).__component
+      const openingDays = (block as { openingDays?: unknown }).openingDays
+      if (
+        component === 'blocks.text-map-block' &&
+        Array.isArray(openingDays) &&
+        openingDays.length > 0
+      ) {
+        return openingDays as OpeningDay[]
+      }
+    }
+  }
+
+  return []
+}
+
 export const revalidate = 60 // Revalidate every minute for faster updates
 
 const fetchHomePageData = async (locale: string, isDraft: boolean) => {
@@ -226,16 +260,20 @@ export default async function HomeLocale({
           )
           .join('\n') || ''
 
+  const sections = Array.isArray(page.sections) ? page.sections : []
+  const sharedOpeningDays = getSharedOpeningDays(sections)
+
   return (
     <Layout locale={locale}>
       {!page.hideTitle && <Hero title={getText(page.title)} />}
 
-      {page.sections?.map((section) => (
+      {sections.map((section) => (
         <SectionGeneric
           key={section.id}
           identifier={section.identifier}
           title={section.hideTitle ? undefined : section.title}
           blocks={section.blocks as DynamicBlock[]}
+          sharedOpeningDays={sharedOpeningDays}
           spacingTop={
             section.spacingTop as
               | 'none'

@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { StrapiBlock, StrapiMedia } from '@/types/strapi'
+import { usePathname } from 'next/navigation'
+import { localizeOpeningDayLabel } from '@/lib/opening-days'
 
 type TextMapBlockProps = {
   title?: string
@@ -266,6 +268,10 @@ const TextMapBlock = ({
   openingHoursDinnerLabel,
   openingDays = [],
 }: TextMapBlockProps) => {
+  const pathname = usePathname()
+  const currentLocale: 'fr' | 'en' =
+    pathname.split('/')[1] === 'en' ? 'en' : 'fr'
+
   const firstPeriodLabel =
     openingHoursFirstPeriodLabel ?? openingHoursLunchLabel ?? 'Service 1'
   const secondPeriodLabel =
@@ -359,7 +365,9 @@ const TextMapBlock = ({
                     key={`${entry.dayLabel}-${index}`}
                     className="flex items-start justify-between gap-4 text-sm"
                   >
-                    <span className="font-medium">{entry.dayLabel}</span>
+                    <span className="font-medium">
+                      {localizeOpeningDayLabel(entry.dayLabel, currentLocale)}
+                    </span>
                     <span
                       className={`text-right ${isClosed ? 'opacity-80 italic' : ''}`}
                     >

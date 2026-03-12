@@ -14,6 +14,40 @@ import { defaultLocale } from '@/lib/locales'
 import { isSupportedLocale } from '@/lib/supported-locales'
 import { draftMode } from 'next/headers'
 
+type OpeningDay = {
+  dayLabel: string
+  isClosedAllDay?: boolean | null
+  firstPeriodOpenTime?: string | null
+  firstPeriodCloseTime?: string | null
+  secondPeriodOpenTime?: string | null
+  secondPeriodCloseTime?: string | null
+  lunchOpenTime?: string | null
+  lunchCloseTime?: string | null
+  dinnerOpenTime?: string | null
+  dinnerCloseTime?: string | null
+}
+
+const getSharedOpeningDays = (sections: unknown[]): OpeningDay[] => {
+  for (const section of sections) {
+    const blocks = (section as { blocks?: unknown[] }).blocks
+    if (!Array.isArray(blocks)) continue
+
+    for (const block of blocks) {
+      const component = (block as { __component?: string }).__component
+      const openingDays = (block as { openingDays?: unknown }).openingDays
+      if (
+        component === 'blocks.text-map-block' &&
+        Array.isArray(openingDays) &&
+        openingDays.length > 0
+      ) {
+        return openingDays as OpeningDay[]
+      }
+    }
+  }
+
+  return []
+}
+
 export const revalidate = 3600 // Revalidate every hour as fallback
 
 const fetchPageData = async (
@@ -251,6 +285,26 @@ export default async function Page({
     (a, b) => (a.order || 0) - (b.order || 0)
   )
 
+  let sharedOpeningDays = getSharedOpeningDays(sections)
+
+  // If the current page has no TextMap opening days, fallback to home page
+  // so ReservationBlock can still enforce closed weekdays and slot ranges.
+  if (sharedOpeningDays.length === 0) {
+    const homeRes = isEnabled || isDraft
+      ? await fetchPageData('home', locale, isDraft)
+      : await getPageData('home', locale)
+    const homeSections = homeRes?.data?.[0]?.sections || []
+    sharedOpeningDays = getSharedOpeningDays(homeSections)
+
+    if (sharedOpeningDays.length === 0 && locale !== defaultLocale) {
+      const homeDefaultRes = isEnabled || isDraft
+        ? await fetchPageData('home', defaultLocale, isDraft)
+        : await getPageData('home', defaultLocale)
+      const homeDefaultSections = homeDefaultRes?.data?.[0]?.sections || []
+      sharedOpeningDays = getSharedOpeningDays(homeDefaultSections)
+    }
+  }
+
   return (
     <Layout locale={locale}>
       {!page.hideTitle && <Hero title={page.title || ''} />}
@@ -261,6 +315,7 @@ export default async function Page({
           identifier={section.identifier}
           title={section.hideTitle ? undefined : section.title}
           blocks={section.blocks as DynamicBlock[]}
+          sharedOpeningDays={sharedOpeningDays}
           spacingTop={
             section.spacingTop as
               | 'none'

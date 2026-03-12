@@ -7,7 +7,16 @@ export default {
   "options": {},
   "attributes": {
     "dayLabel": {
-      "type": "string",
+      "type": "enumeration",
+      "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
       "required": true
     },
     "isClosedAllDay": {
