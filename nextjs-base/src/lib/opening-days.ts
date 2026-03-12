@@ -111,3 +111,47 @@ export const weekdayKeyFromDate = (dateStr: string): WeekdayKey | null => {
   if (!index) return null
   return WEEKDAY_INDEX_TO_KEY[index] ?? null
 }
+
+export type OpeningDayConfig = {
+  dayLabel: string
+  isClosedAllDay?: boolean | null
+  firstPeriodOpenTime?: string | null
+  firstPeriodCloseTime?: string | null
+  secondPeriodOpenTime?: string | null
+  secondPeriodCloseTime?: string | null
+}
+
+/**
+ * Returns true if a reservation for the given date and time is allowed
+ * according to the restaurant's opening day configuration.
+ * When no opening days are configured, all slots are allowed (backward-compatible).
+ */
+export function isReservationAllowed(
+  dateStr: string,
+  time: string,
+  openingDays: OpeningDayConfig[]
+): boolean {
+  if (openingDays.length === 0) return true
+
+  const weekdayKey = weekdayKeyFromDate(dateStr)
+  if (!weekdayKey) return false
+
+  const entries = openingDays.filter(
+    (e) => parseWeekdayKey(e.dayLabel ?? '') === weekdayKey
+  )
+
+  if (entries.length === 0) return false
+  if (entries.some((e) => e.isClosedAllDay)) return false
+
+  return entries.some(
+    (e) =>
+      (e.firstPeriodOpenTime &&
+        e.firstPeriodCloseTime &&
+        time >= e.firstPeriodOpenTime &&
+        time <= e.firstPeriodCloseTime) ||
+      (e.secondPeriodOpenTime &&
+        e.secondPeriodCloseTime &&
+        time >= e.secondPeriodOpenTime &&
+        time <= e.secondPeriodCloseTime)
+  )
+}

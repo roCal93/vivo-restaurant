@@ -13,6 +13,7 @@ import {
   isEmailConfigured,
   sendEmail,
 } from '@/lib/email-client'
+import { isReservationAllowed, type OpeningDayConfig } from '@/lib/opening-days'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000 // 10 minutes
@@ -206,7 +207,7 @@ export async function POST(request: NextRequest) {
       }
 
       const [configRes, existingRes] = await Promise.all([
-        fetch(`${strapiUrl}/api/reservation-config`, {
+        fetch(`${strapiUrl}/api/reservation-config?populate=openingDays`, {
           headers: { Authorization: `Bearer ${strapiToken}` },
           cache: 'no-store',
         }),
@@ -224,9 +225,27 @@ export async function POST(request: NextRequest) {
         return { ok: false as const, status: 503, error: 'SERVICE_UNAVAILABLE' }
       }
 
-      const maxCoversPerSlot = configRes.ok
-        ? ((await configRes.json())?.data?.maxCoversPerSlot ?? 20)
-        : 20
+      let maxCoversPerSlot = 20
+      let configOpeningDays: OpeningDayConfig[] = []
+      if (configRes.ok) {
+        const configData = await configRes.json()
+        maxCoversPerSlot = configData?.data?.maxCoversPerSlot ?? 20
+        configOpeningDays = configData?.data?.openingDays ?? []
+      }
+
+      if (
+        !isReservationAllowed(
+          reservationDate,
+          reservationTime,
+          configOpeningDays
+        )
+      ) {
+        return {
+          ok: false as const,
+          status: 400,
+          error: 'DAY_OR_TIME_NOT_ALLOWED',
+        }
+      }
 
       const existingData = await existingRes.json()
       const existingCovers: number = (existingData.data || []).reduce(
@@ -299,6 +318,15 @@ export async function POST(request: NextRequest) {
       if (reservationWriteResult.error === 'SLOT_BLOCKED') {
         return NextResponse.json(
           { error: "Ce créneau horaire n'est pas disponible." },
+          { status: 400 }
+        )
+      }
+      if (reservationWriteResult.error === 'DAY_OR_TIME_NOT_ALLOWED') {
+        return NextResponse.json(
+          {
+            error:
+              "Ce créneau n'est pas disponible selon les horaires d'ouverture.",
+          },
           { status: 400 }
         )
       }
