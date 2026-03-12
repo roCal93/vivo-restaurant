@@ -7,6 +7,19 @@ const TypedBlocks = Blocks as unknown as BlocksMap
 
 type DynamicBlock = { __component?: string } & Record<string, unknown>
 
+type OpeningDay = {
+  dayLabel: string
+  isClosedAllDay?: boolean | null
+  firstPeriodOpenTime?: string | null
+  firstPeriodCloseTime?: string | null
+  secondPeriodOpenTime?: string | null
+  secondPeriodCloseTime?: string | null
+  lunchOpenTime?: string | null
+  lunchCloseTime?: string | null
+  dinnerOpenTime?: string | null
+  dinnerCloseTime?: string | null
+}
+
 type SectionGenericProps = {
   title?: string
   blocks: DynamicBlock[]
@@ -24,6 +37,14 @@ export const SectionGeneric = ({
   spacingBottom = 'medium',
   containerWidth = 'medium',
 }: SectionGenericProps) => {
+  const sharedOpeningDays = (blocks || []).find((block) => {
+    const component = (block as { __component?: string }).__component
+    const days = (block as { openingDays?: unknown }).openingDays
+    return component === 'blocks.text-map-block' && Array.isArray(days)
+  }) as ({ openingDays?: OpeningDay[] } & DynamicBlock) | undefined
+
+  const openingDaysFromTextMap = sharedOpeningDays?.openingDays
+
   const normalizeSpacing = (
     value: unknown
   ): 'none' | 'small' | 'medium' | 'large' => {
@@ -71,6 +92,19 @@ export const SectionGeneric = ({
       | undefined
 
     if (BlockComponent) {
+      const isReservationBlock = raw === 'blocks.reservation-block'
+      const blockProps =
+        isReservationBlock &&
+        Array.isArray(openingDaysFromTextMap) &&
+        openingDaysFromTextMap.length > 0
+          ? {
+              ...(block as Record<string, unknown>),
+              openingDays:
+                (block as { openingDays?: unknown }).openingDays ??
+                openingDaysFromTextMap,
+            }
+          : (block as Record<string, unknown>)
+
       // Lazy load CarouselBlock if not first block (above-the-fold optimization)
       const isCarousel = componentName === 'CarouselBlock'
       const shouldLazyLoad = isCarousel && index > 0
@@ -84,7 +118,7 @@ export const SectionGeneric = ({
               }
             >
               <BlockComponent
-                {...(block as unknown as Record<string, unknown>)}
+                {...blockProps}
               />
             </React.Suspense>
           </div>
@@ -94,7 +128,7 @@ export const SectionGeneric = ({
       return (
         <BlockComponent
           key={index}
-          {...(block as unknown as Record<string, unknown>)}
+          {...blockProps}
         />
       )
     }

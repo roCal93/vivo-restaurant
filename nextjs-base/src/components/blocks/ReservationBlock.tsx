@@ -15,6 +15,20 @@ interface BlockedSlot {
   label: string | null
 }
 
+type OpeningDay = {
+  dayLabel: string
+  isClosedAllDay?: boolean | null
+  firstPeriodOpenTime?: string | null
+  firstPeriodCloseTime?: string | null
+  secondPeriodOpenTime?: string | null
+  secondPeriodCloseTime?: string | null
+  // Backward compatibility for old field names
+  lunchOpenTime?: string | null
+  lunchCloseTime?: string | null
+  dinnerOpenTime?: string | null
+  dinnerCloseTime?: string | null
+}
+
 // ─── Composant calendrier inline ─────────────────────────────────────────────
 const MONTHS_FR = [
   'Janvier',
@@ -57,6 +71,7 @@ const InlineCalendar = ({
   minDate,
   maxDate,
   blockedDates = [],
+  blockedWeekdays = [],
   locale = 'fr',
 }: {
   value: string
@@ -64,6 +79,7 @@ const InlineCalendar = ({
   minDate: string
   maxDate: string
   blockedDates?: string[]
+  blockedWeekdays?: number[]
   locale?: 'fr' | 'en'
 }) => {
   const today = new Date()
@@ -114,7 +130,14 @@ const InlineCalendar = ({
   const isDisabled = (day: number) => {
     const d = new Date(viewYear, viewMonth, day)
     const dateStr = toDateStr(viewYear, viewMonth, day)
-    return d < minD || d > maxD || blockedDates.includes(dateStr)
+    const jsDay = d.getDay() // 0=Sun ... 6=Sat
+    const weekday = jsDay === 0 ? 7 : jsDay // 1=Mon ... 7=Sun
+    return (
+      d < minD ||
+      d > maxD ||
+      blockedDates.includes(dateStr) ||
+      blockedWeekdays.includes(weekday)
+    )
   }
   const isToday = (day: number) =>
     day === today.getDate() &&
@@ -437,6 +460,56 @@ type ReservationBlockProps = {
   blockAlignment?: 'left' | 'center' | 'right' | 'full'
   maxWidth?: 'small' | 'medium' | 'large' | 'full'
   privacyPolicy?: PrivacyPolicy & StrapiEntity
+  openingDays?: OpeningDay[]
+}
+
+const WEEKDAY_ALIASES: Record<number, string[]> = {
+  1: ['lundi', 'lun', 'monday', 'mon'],
+  2: ['mardi', 'mar', 'tuesday', 'tue'],
+  3: ['mercredi', 'mer', 'wednesday', 'wed'],
+  4: ['jeudi', 'jeu', 'thursday', 'thu'],
+  5: ['vendredi', 'ven', 'friday', 'fri'],
+  6: ['samedi', 'sam', 'saturday', 'sat'],
+  7: ['dimanche', 'dim', 'sunday', 'sun'],
+}
+
+const normalizeDayLabel = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z]/g, '')
+    .toLowerCase()
+    .trim()
+
+const weekdayFromDateStr = (dateStr: string): number | null => {
+  if (!dateStr) return null
+  const date = new Date(`${dateStr}T12:00:00`)
+  if (Number.isNaN(date.getTime())) return null
+  const jsDay = date.getDay() // 0 = Sunday
+  return jsDay === 0 ? 7 : jsDay // 1 = Monday ... 7 = Sunday
+}
+
+const findOpeningDayForDate = (
+  dateStr: string,
+  openingDays: OpeningDay[]
+): OpeningDay | null => {
+  const weekday = weekdayFromDateStr(dateStr)
+  if (!weekday || openingDays.length === 0) return null
+  const aliases = WEEKDAY_ALIASES[weekday]
+
+  return (
+    openingDays.find((entry) =>
+      aliases.includes(normalizeDayLabel(entry.dayLabel || ''))
+    ) ?? null
+  )
+}
+
+const weekdayFromOpeningDayLabel = (label: string): number | null => {
+  const normalized = normalizeDayLabel(label)
+  for (const [weekday, aliases] of Object.entries(WEEKDAY_ALIASES)) {
+    if (aliases.includes(normalized)) return Number(weekday)
+  }
+  return null
 }
 
 const ReservationBlock = ({
@@ -475,6 +548,7 @@ const ReservationBlock = ({
   blockAlignment = 'center',
   maxWidth = 'medium',
   privacyPolicy,
+  openingDays = [],
 }: ReservationBlockProps) => {
   const pathname = usePathname()
   const currentLocale = useMemo<'fr' | 'en'>(() => {
@@ -537,6 +611,17 @@ const ReservationBlock = ({
     [blockedSlots, formData.date]
   )
 
+  const blockedWeekdays = useMemo(() => {
+    if (openingDays.length === 0) return []
+
+    const days = openingDays
+      .filter((entry) => !!entry.isClosedAllDay)
+      .map((entry) => weekdayFromOpeningDayLabel(entry.dayLabel || ''))
+      .filter((weekday): weekday is number => weekday !== null)
+
+    return Array.from(new Set(days))
+  }, [openingDays])
+
   const { minDateStr, maxDateStr } = useMemo(() => {
     const today = new Date()
     const min = new Date(today)
@@ -549,14 +634,34 @@ const ReservationBlock = ({
     }
   }, [minAdvanceDays, maxAdvanceDays])
 
-  const lunchSlots = useMemo(
-    () => generateSlots(lunchStart, lunchEnd),
-    [lunchStart, lunchEnd]
-  )
-  const dinnerSlots = useMemo(
-    () => generateSlots(dinnerStart, dinnerEnd),
-    [dinnerStart, dinnerEnd]
-  )
+  const lunchSlots = useMemo(() => {
+    const fallback = generateSlots(lunchStart, lunchEnd)
+    if (!formData.date || openingDays.length === 0) return fallback
+
+    const openingDay = findOpeningDayForDate(formData.date, openingDays)
+    if (!openingDay || openingDay.isClosedAllDay) return []
+
+    const open = openingDay.firstPeriodOpenTime ?? openingDay.lunchOpenTime
+    const close = openingDay.firstPeriodCloseTime ?? openingDay.lunchCloseTime
+
+    if (!open || !close) return []
+    return generateSlots(open, close)
+  }, [formData.date, lunchStart, lunchEnd, openingDays])
+
+  const dinnerSlots = useMemo(() => {
+    const fallback = generateSlots(dinnerStart, dinnerEnd)
+    if (!formData.date || openingDays.length === 0) return fallback
+
+    const openingDay = findOpeningDayForDate(formData.date, openingDays)
+    if (!openingDay || openingDay.isClosedAllDay) return []
+
+    const open = openingDay.secondPeriodOpenTime ?? openingDay.dinnerOpenTime
+    const close =
+      openingDay.secondPeriodCloseTime ?? openingDay.dinnerCloseTime
+
+    if (!open || !close) return []
+    return generateSlots(open, close)
+  }, [formData.date, dinnerStart, dinnerEnd, openingDays])
 
   const blockAlignmentClasses = {
     left: 'mr-auto',
@@ -668,6 +773,7 @@ const ReservationBlock = ({
                   minDate={minDateStr}
                   maxDate={maxDateStr}
                   blockedDates={blockedDates}
+                  blockedWeekdays={blockedWeekdays}
                   locale={currentLocale}
                 />
                 {formData.date ? (
