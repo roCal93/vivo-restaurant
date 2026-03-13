@@ -1033,7 +1033,7 @@ const ReservationBlock = ({
                   </label>
                 </div>
                 {rgpdInfoText && (
-                  <div className="whitespace-pre-line rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-[#ebffee]">
+                  <div className="whitespace-pre-line rounded-xl border border-white/20 bg-transparent p-4 text-xs text-[#ebffee]">
                     {rgpdInfoText}
                   </div>
                 )}
