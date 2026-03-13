@@ -50,6 +50,7 @@ export async function sendEmail({
         ToAddresses: toAddresses,
       },
       ReplyToAddresses: replyTo ? [replyTo] : undefined,
+      ConfigurationSetName: process.env.SES_CONFIGURATION_SET || 'vivo-transactional',
       Content: {
         Simple: {
           Subject: {
