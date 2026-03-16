@@ -3,9 +3,7 @@ import {
   validateReservationInput,
   isValidReservationTime,
 } from '@/lib/reservation-validation'
-import {
-  generateSlots,
-} from '@/lib/reservation-slots'
+import { generateSlots } from '@/lib/reservation-slots'
 import {
   buildCustomerPendingEmail,
   buildRestaurantNewReservationEmail,
@@ -218,7 +216,7 @@ export async function POST(request: NextRequest) {
       }
 
       const [configRes, existingRes] = await Promise.all([
-        fetch(`${strapiUrl}/api/reservation-config?populate=openingDays`, {
+        fetch(`${strapiUrl}/api/reservation-config`, {
           headers: { Authorization: `Bearer ${strapiToken}` },
           cache: 'no-store',
         }),
@@ -237,12 +235,13 @@ export async function POST(request: NextRequest) {
       }
 
       let maxCoversPerSlot = 20
-      let configOpeningDays: OpeningDayConfig[] = []
       if (configRes.ok) {
         const configData = await configRes.json()
         maxCoversPerSlot = configData?.data?.maxCoversPerSlot ?? 20
-        configOpeningDays = configData?.data?.openingDays ?? []
       }
+
+      const configOpeningDays: OpeningDayConfig[] =
+        await fetchOpeningDaysFromTextMap(strapiUrl, strapiToken)
 
       // Generate valid slots for the specific reservation day from opening hours
       const reservationWeekday = weekdayKeyFromDate(reservationDate)
@@ -255,10 +254,20 @@ export async function POST(request: NextRequest) {
       for (const entry of dayEntries) {
         if (entry.isClosedAllDay) continue
         if (entry.firstPeriodOpenTime && entry.firstPeriodCloseTime) {
-          daySlots.push(...generateSlots(entry.firstPeriodOpenTime, entry.firstPeriodCloseTime))
+          daySlots.push(
+            ...generateSlots(
+              entry.firstPeriodOpenTime,
+              entry.firstPeriodCloseTime
+            )
+          )
         }
         if (entry.secondPeriodOpenTime && entry.secondPeriodCloseTime) {
-          daySlots.push(...generateSlots(entry.secondPeriodOpenTime, entry.secondPeriodCloseTime))
+          daySlots.push(
+            ...generateSlots(
+              entry.secondPeriodOpenTime,
+              entry.secondPeriodCloseTime
+            )
+          )
         }
       }
       // Fall back to ALL_RESERVATION_SLOTS if no periods configured for this day

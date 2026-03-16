@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, COOKIE_NAME } from '@/lib/admin-auth'
 import { enforceSameOrigin } from '@/lib/csrf'
+import { fetchOpeningDaysFromTextMap } from '@/lib/opening-days-from-strapi'
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN
@@ -262,31 +263,11 @@ async function getPeriodLabelsFromTextMap(): Promise<{
 }
 
 async function getOpeningDaysFromTextMap(): Promise<OpeningDayPayload[]> {
-  try {
-    const pagesRes = await fetch(
-      `${STRAPI_URL}/api/pages?filters[slug][$eq]=home&locale=fr&pagination[pageSize]=1&populate[sections][populate][blocks][populate]=*`,
-      {
-        headers: strapiHeaders(),
-        cache: 'no-store',
-      }
-    )
-
-    if (!pagesRes.ok) return []
-    const pagesData = await pagesRes.json()
-    const page = pagesData?.data?.[0]
-    if (!page) return []
-
-    for (const section of page.sections || []) {
-      for (const block of section.blocks || []) {
-        if (block.__component !== 'blocks.text-map-block') continue
-        return sanitizeOpeningDays(block.openingDays)
-      }
-    }
-  } catch {
-    return []
-  }
-
-  return []
+  const days = await fetchOpeningDaysFromTextMap(
+    STRAPI_URL ?? '',
+    STRAPI_TOKEN ?? ''
+  )
+  return sanitizeOpeningDays(days)
 }
 
 async function syncTextMapOpeningDays(openingDays: OpeningDayPayload[]) {
