@@ -23,6 +23,7 @@ import {
   parseWeekdayKey,
   type OpeningDayConfig,
 } from '@/lib/opening-days'
+import { fetchOpeningDaysFromTextMap } from '@/lib/opening-days-from-strapi'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000 // 10 minutes
