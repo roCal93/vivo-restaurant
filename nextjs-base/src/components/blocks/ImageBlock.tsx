@@ -11,9 +11,10 @@ type ImageBlockProps = {
   caption?: string
   alignment: 'left' | 'center' | 'right' | 'full'
   size: 'small' | 'medium' | 'large' | 'full'
+  priority?: boolean
 }
 
-const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
+const ImageBlock = ({ image, caption, alignment, size, priority }: ImageBlockProps) => {
   const shouldReduce = useReducedMotion()
   const [visible, setVisible] = useState(false)
   const ref = useRef<HTMLElement>(null)
@@ -60,12 +61,12 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
     <motion.figure
       ref={ref}
       className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}
-      initial={{ opacity: 0, y: 80 }}
+      initial={priority ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
       animate={
-        shouldReduce || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }
+        priority || shouldReduce || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }
       }
       transition={
-        shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
+        priority || shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
       }
     >
       <Image
@@ -76,6 +77,7 @@ const ImageBlock = ({ image, caption, alignment, size }: ImageBlockProps) => {
         className="w-full h-auto object-cover rounded-lg"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
         quality={85}
+        priority={priority}
       />
       {caption && (
         <figcaption className="text-sm text-gray-600 mt-2 text-center italic">

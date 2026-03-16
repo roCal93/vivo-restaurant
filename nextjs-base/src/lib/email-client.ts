@@ -9,9 +9,7 @@ type SendEmailArgs = {
 }
 
 const apiKey = process.env.RESEND_API_KEY
-const defaultFrom =
-  process.env.RESEND_FROM_EMAIL ||
-  process.env.MAIL_FROM_EMAIL
+const defaultFrom = process.env.RESEND_FROM_EMAIL || process.env.MAIL_FROM_EMAIL
 
 export function isEmailConfigured() {
   return Boolean(apiKey && defaultFrom)

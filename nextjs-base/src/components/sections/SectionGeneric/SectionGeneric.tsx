@@ -28,6 +28,7 @@ type SectionGenericProps = {
   spacingTop?: 'none' | 'small' | 'medium' | 'large'
   spacingBottom?: 'none' | 'small' | 'medium' | 'large'
   containerWidth?: 'small' | 'medium' | 'large' | 'full'
+  isFirstSection?: boolean
 }
 
 export const SectionGeneric = ({
@@ -38,6 +39,7 @@ export const SectionGeneric = ({
   spacingTop = 'medium',
   spacingBottom = 'medium',
   containerWidth = 'medium',
+  isFirstSection = false,
 }: SectionGenericProps) => {
   const localTextMapWithOpeningDays = (blocks || []).find((block) => {
     const component = (block as { __component?: string }).__component
@@ -134,7 +136,11 @@ export const SectionGeneric = ({
         )
       }
 
-      return <BlockComponent key={index} {...blockProps} />
+      // Add priority to the first ImageBlock of the first section (LCP optimization)
+      const isFirstImageBlock = isFirstSection && index === 0 && componentName === 'ImageBlock'
+      const finalProps = isFirstImageBlock ? { ...blockProps, priority: true } : blockProps
+
+      return <BlockComponent key={index} {...finalProps} />
     }
 
     // Fallback placeholder (starter)

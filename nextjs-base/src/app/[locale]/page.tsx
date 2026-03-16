@@ -267,13 +267,14 @@ export default async function HomeLocale({
     <Layout locale={locale}>
       {!page.hideTitle && <Hero title={getText(page.title)} />}
 
-      {sections.map((section) => (
+      {sections.map((section, sectionIndex) => (
         <SectionGeneric
           key={section.id}
           identifier={section.identifier}
           title={section.hideTitle ? undefined : section.title}
           blocks={section.blocks as DynamicBlock[]}
           sharedOpeningDays={sharedOpeningDays}
+          isFirstSection={sectionIndex === 0}
           spacingTop={
             section.spacingTop as
               | 'none'
