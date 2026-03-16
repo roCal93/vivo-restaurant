@@ -15,7 +15,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aws-sdk/client-sesv2": "^3.1004.0",
+    "@getbrevo/brevo": "^5.0.1",
     "@vercel/analytics": "^2.0.0",
     "framer-motion": "^12.34.5",
     "js-cookie": "^3.0.5",
