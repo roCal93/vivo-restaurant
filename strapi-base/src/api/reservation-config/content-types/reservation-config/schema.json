@@ -16,6 +16,22 @@
       "default": 20,
       "min": 1
     },
+    "lunchStart": {
+      "type": "string",
+      "default": "11:00"
+    },
+    "lunchEnd": {
+      "type": "string",
+      "default": "13:00"
+    },
+    "dinnerStart": {
+      "type": "string",
+      "default": "18:00"
+    },
+    "dinnerEnd": {
+      "type": "string",
+      "default": "20:00"
+    },
     "openingDays": {
       "type": "component",
       "repeatable": true,
