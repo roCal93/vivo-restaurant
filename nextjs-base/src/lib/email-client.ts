@@ -1,4 +1,4 @@
-import { BrevoClient } from '@getbrevo/brevo'
+import { Resend } from 'resend'
 
 type SendEmailArgs = {
   from?: string
@@ -8,8 +8,10 @@ type SendEmailArgs = {
   replyTo?: string
 }
 
-const apiKey = process.env.BREVO_API_KEY
-const defaultFrom = process.env.BREVO_FROM_EMAIL || process.env.SES_FROM_EMAIL || process.env.MAIL_FROM_EMAIL
+const apiKey = process.env.RESEND_API_KEY
+const defaultFrom =
+  process.env.RESEND_FROM_EMAIL ||
+  process.env.MAIL_FROM_EMAIL
 
 export function isEmailConfigured() {
   return Boolean(apiKey && defaultFrom)
@@ -27,25 +29,29 @@ export async function sendEmail({
   replyTo,
 }: SendEmailArgs) {
   if (!apiKey) {
-    throw new Error('BREVO_API_KEY is not configured.')
+    throw new Error('RESEND_API_KEY is not configured.')
   }
 
   const fromAddress = from || defaultFrom
   if (!fromAddress) {
-    throw new Error('BREVO_FROM_EMAIL is missing.')
+    throw new Error('RESEND_FROM_EMAIL is missing.')
   }
 
   const toAddresses = Array.isArray(to) ? to : [to]
 
-  const client = new BrevoClient({ apiKey })
+  const resend = new Resend(apiKey)
 
-  const result = await client.transactionalEmails.sendTransacEmail({
-    sender: { email: fromAddress },
-    to: toAddresses.map((email) => ({ email })),
+  const { data, error } = await resend.emails.send({
+    from: fromAddress,
+    to: toAddresses,
     subject,
-    htmlContent: html,
-    ...(replyTo ? { replyTo: { email: replyTo } } : {}),
+    html,
+    ...(replyTo ? { replyTo } : {}),
   })
 
-  return result.messageId
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data?.id
 }
