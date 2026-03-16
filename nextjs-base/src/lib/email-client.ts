@@ -47,5 +47,5 @@ export async function sendEmail({
     ...(replyTo ? { replyTo: { email: replyTo } } : {}),
   })
 
-  return (result as any).messageId ?? (result as any).body?.messageId
+  return result.messageId
 }

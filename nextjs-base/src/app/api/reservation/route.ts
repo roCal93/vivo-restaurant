@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateReservationInput } from '@/lib/reservation-validation'
+import {
+  validateReservationInput,
+  isValidReservationTime,
+} from '@/lib/reservation-validation'
+import {
+  generateSlots,
+  LUNCH_START,
+  LUNCH_END,
+  DINNER_START,
+  DINNER_END,
+} from '@/lib/reservation-slots'
 import {
   buildCustomerPendingEmail,
   buildRestaurantNewReservationEmail,
@@ -227,10 +237,28 @@ export async function POST(request: NextRequest) {
 
       let maxCoversPerSlot = 20
       let configOpeningDays: OpeningDayConfig[] = []
+      let validTimeSlots: string[] | null = null
       if (configRes.ok) {
         const configData = await configRes.json()
         maxCoversPerSlot = configData?.data?.maxCoversPerSlot ?? 20
         configOpeningDays = configData?.data?.openingDays ?? []
+        const lunchStart: string = configData?.data?.lunchStart ?? LUNCH_START
+        const lunchEnd: string = configData?.data?.lunchEnd ?? LUNCH_END
+        const dinnerStart: string = configData?.data?.dinnerStart ?? DINNER_START
+        const dinnerEnd: string = configData?.data?.dinnerEnd ?? DINNER_END
+        validTimeSlots = [
+          ...generateSlots(lunchStart, lunchEnd),
+          ...generateSlots(dinnerStart, dinnerEnd),
+        ]
+      }
+
+      if (
+        !isValidReservationTime(
+          reservationTime,
+          validTimeSlots ?? undefined
+        )
+      ) {
+        return { ok: false as const, status: 400, error: 'INVALID_TIME_SLOT' }
       }
 
       if (
@@ -309,6 +337,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (!reservationWriteResult.ok) {
+      if (reservationWriteResult.error === 'INVALID_TIME_SLOT') {
+        return NextResponse.json(
+          { error: 'Créneau horaire invalide.' },
+          { status: 400 }
+        )
+      }
       if (reservationWriteResult.error === 'DAY_BLOCKED') {
         return NextResponse.json(
           { error: "Ce jour n'est pas disponible pour les réservations." },

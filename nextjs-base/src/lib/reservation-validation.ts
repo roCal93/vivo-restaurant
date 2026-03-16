@@ -35,9 +35,16 @@ export function isPastDate(value: string): boolean {
   return value < todayUTC
 }
 
-export function isValidReservationTime(value: string): boolean {
-  if (!/^\d{2}:\d{2}$/.test(value)) return false
-  return ALL_RESERVATION_SLOTS.includes(value)
+export function isValidReservationTimeFormat(value: string): boolean {
+  return /^\d{2}:\d{2}$/.test(value)
+}
+
+export function isValidReservationTime(
+  value: string,
+  validSlots: string[] = ALL_RESERVATION_SLOTS
+): boolean {
+  if (!isValidReservationTimeFormat(value)) return false
+  return validSlots.includes(value)
 }
 
 export function isValidBlockedSlotInput(date: unknown, time: unknown): boolean {
@@ -95,7 +102,7 @@ export function validateReservationInput(
     return { ok: false, error: 'La date ne peut pas être dans le passé.' }
   }
 
-  if (!isValidReservationTime(time)) {
+  if (!isValidReservationTimeFormat(time)) {
     return { ok: false, error: 'Créneau horaire invalide.' }
   }
 
