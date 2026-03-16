@@ -5,10 +5,6 @@ import {
 } from '@/lib/reservation-validation'
 import {
   generateSlots,
-  LUNCH_START,
-  LUNCH_END,
-  DINNER_START,
-  DINNER_END,
 } from '@/lib/reservation-slots'
 import {
   buildCustomerPendingEmail,
@@ -23,7 +19,12 @@ import {
   isEmailConfigured,
   sendEmail,
 } from '@/lib/email-client'
-import { isReservationAllowed, type OpeningDayConfig } from '@/lib/opening-days'
+import {
+  isReservationAllowed,
+  weekdayKeyFromDate,
+  parseWeekdayKey,
+  type OpeningDayConfig,
+} from '@/lib/opening-days'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000 // 10 minutes
@@ -237,27 +238,33 @@ export async function POST(request: NextRequest) {
 
       let maxCoversPerSlot = 20
       let configOpeningDays: OpeningDayConfig[] = []
-      let validTimeSlots: string[] | null = null
       if (configRes.ok) {
         const configData = await configRes.json()
         maxCoversPerSlot = configData?.data?.maxCoversPerSlot ?? 20
         configOpeningDays = configData?.data?.openingDays ?? []
-        const lunchStart: string = configData?.data?.lunchStart ?? LUNCH_START
-        const lunchEnd: string = configData?.data?.lunchEnd ?? LUNCH_END
-        const dinnerStart: string = configData?.data?.dinnerStart ?? DINNER_START
-        const dinnerEnd: string = configData?.data?.dinnerEnd ?? DINNER_END
-        validTimeSlots = [
-          ...generateSlots(lunchStart, lunchEnd),
-          ...generateSlots(dinnerStart, dinnerEnd),
-        ]
       }
 
-      if (
-        !isValidReservationTime(
-          reservationTime,
-          validTimeSlots ?? undefined
-        )
-      ) {
+      // Generate valid slots for the specific reservation day from opening hours
+      const reservationWeekday = weekdayKeyFromDate(reservationDate)
+      const dayEntries = reservationWeekday
+        ? configOpeningDays.filter(
+            (e) => parseWeekdayKey(e.dayLabel ?? '') === reservationWeekday
+          )
+        : []
+      const daySlots: string[] = []
+      for (const entry of dayEntries) {
+        if (entry.isClosedAllDay) continue
+        if (entry.firstPeriodOpenTime && entry.firstPeriodCloseTime) {
+          daySlots.push(...generateSlots(entry.firstPeriodOpenTime, entry.firstPeriodCloseTime))
+        }
+        if (entry.secondPeriodOpenTime && entry.secondPeriodCloseTime) {
+          daySlots.push(...generateSlots(entry.secondPeriodOpenTime, entry.secondPeriodCloseTime))
+        }
+      }
+      // Fall back to ALL_RESERVATION_SLOTS if no periods configured for this day
+      const validTimeSlots = daySlots.length > 0 ? daySlots : undefined
+
+      if (!isValidReservationTime(reservationTime, validTimeSlots)) {
         return { ok: false as const, status: 400, error: 'INVALID_TIME_SLOT' }
       }
 
