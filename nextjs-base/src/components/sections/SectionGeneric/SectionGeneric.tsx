@@ -68,6 +68,21 @@ export const SectionGeneric = ({
     return 'medium'
   }
 
+  const toPascalStatic = (s: string) =>
+    s
+      .split('-')
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join('')
+
+  // Pre-compute the index of the first ImageBlock for LCP priority (only needed in first section)
+  const firstImageBlockIndex = isFirstSection
+    ? (blocks || []).findIndex((b) => {
+        const raw = (b as { __component?: string }).__component ?? ''
+        const key = raw.split('.').pop() || raw
+        return toPascalStatic(key) === 'ImageBlock'
+      })
+    : -1
+
   const getContainerWidthClass = (
     width: 'small' | 'medium' | 'large' | 'full'
   ) => {
@@ -137,8 +152,8 @@ export const SectionGeneric = ({
       }
 
       // Add priority to the first ImageBlock of the first section (LCP optimization)
-      const isFirstImageBlock = isFirstSection && index === 0 && componentName === 'ImageBlock'
-      const finalProps = isFirstImageBlock ? { ...blockProps, priority: true } : blockProps
+      const isLCPImage = index === firstImageBlockIndex
+      const finalProps = isLCPImage ? { ...blockProps, priority: true } : blockProps
 
       return <BlockComponent key={index} {...finalProps} />
     }

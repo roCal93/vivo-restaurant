@@ -78,6 +78,7 @@ const ImageBlock = ({ image, caption, alignment, size, priority }: ImageBlockPro
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
         quality={85}
         priority={priority}
+        fetchPriority={priority ? 'high' : undefined}
       />
       {caption && (
         <figcaption className="text-sm text-gray-600 mt-2 text-center italic">
