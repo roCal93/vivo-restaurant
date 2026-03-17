@@ -85,6 +85,10 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'ID manquant.' }, { status: 400 })
   }
 
+  if (!/^\d+$/.test(id)) {
+    return NextResponse.json({ error: 'ID invalide.' }, { status: 400 })
+  }
+
   const res = await fetch(`${STRAPI_URL}/api/upload/files/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${STRAPI_TOKEN}` },

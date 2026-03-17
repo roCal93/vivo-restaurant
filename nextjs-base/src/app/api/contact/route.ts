@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Validation email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@.]+\.[^\s@.]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: 'Adresse email invalide.' },

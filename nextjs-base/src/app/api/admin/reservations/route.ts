@@ -49,6 +49,10 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'ID manquant.' }, { status: 400 })
   }
 
+  if (!/^[a-zA-Z0-9_-]+$/.test(documentId)) {
+    return NextResponse.json({ error: 'ID invalide.' }, { status: 400 })
+  }
+
   const res = await fetch(`${STRAPI_URL}/api/reservations/${documentId}`, {
     method: 'DELETE',
     headers: strapiHeaders(),

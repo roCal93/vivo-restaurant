@@ -116,6 +116,10 @@ export async function PUT(request: NextRequest) {
     )
   }
 
+  if (!/^[a-zA-Z0-9_-]+$/.test(sectionDocumentId)) {
+    return NextResponse.json({ error: 'Paramètre invalide.' }, { status: 400 })
+  }
+
   // 1. Fetch the full section with all blocks populated so we can rebuild it
   const fetchUrl =
     `${STRAPI_URL}/api/sections/${sectionDocumentId}` +

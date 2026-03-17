@@ -21,7 +21,7 @@ export type ReservationValidated = {
   covers: number
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+\.[^\s@.]+$/
 const PHONE_REGEX = /^\+?[\d\s\-().]{6,20}$/
 
 export function isValidDateString(value: string): boolean {

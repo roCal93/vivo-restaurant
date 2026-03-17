@@ -64,6 +64,13 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  if (!/^[a-zA-Z0-9_-]+$/.test(decision.id)) {
+    return new NextResponse(
+      htmlPage('Lien invalide', 'Ce lien de décision est invalide.', '#dc2626'),
+      { status: 400, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    )
+  }
+
   const currentRes = await fetch(
     `${STRAPI_URL}/api/reservations/${decision.id}`,
     {
