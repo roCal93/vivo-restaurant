@@ -12,3 +12,9 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
+    ignore:
+      # These are transitive dependency security pins managed via pnpm.overrides.
+      # Dependabot cannot update transitive dependencies in pnpm and will error.
+      - dependency-name: "flatted"
+      - dependency-name: "serialize-javascript"
+      - dependency-name: "undici"
