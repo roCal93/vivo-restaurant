@@ -20,7 +20,7 @@ try {
 
     if (!bindingExists) {
         console.log('[ensure-native-deps] Compiling better-sqlite3...');
-        execSync('npm rebuild better-sqlite3', {
+        execSync('pnpm rebuild better-sqlite3', {
             stdio: 'inherit',
             cwd: process.cwd(),
         });
@@ -103,15 +103,10 @@ if (missing.length === 0) {
 }
 
 console.log(`[ensure-native-deps] Missing native optional deps on linux/${arch}: ${missing.join(', ')}`);
-console.log('[ensure-native-deps] Running npm install --include=optional to repair...');
+console.log('[ensure-native-deps] Running pnpm install to repair optional deps...');
 
-execSync('npm install --include=optional --no-audit --no-fund', {
+execSync('pnpm install --prefer-offline', {
     stdio: 'inherit',
-    env: {
-        ...process.env,
-        // Ensure optional deps are not omitted.
-        NPM_CONFIG_OPTIONAL: 'true',
-    },
 });
 
 const stillMissing = [];
@@ -131,12 +126,8 @@ for (const pkgName of stillMissing) {
     const version = pkgName.startsWith('@rollup/') ? rollupVersion : swcCoreVersion;
     const spec = version ? `${pkgName}@${version}` : pkgName;
     console.log(`[ensure-native-deps] Forcing install: ${spec}`);
-    execSync(`npm install --no-save --no-package-lock --no-audit --no-fund ${spec}`, {
+    execSync(`pnpm add --prefer-offline ${spec}`, {
         stdio: 'inherit',
-        env: {
-            ...process.env,
-            NPM_CONFIG_OPTIONAL: 'true',
-        },
     });
 }
 
