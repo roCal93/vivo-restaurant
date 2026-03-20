@@ -105,8 +105,13 @@ if (missing.length === 0) {
 console.log(`[ensure-native-deps] Missing native optional deps on linux/${arch}: ${missing.join(', ')}`);
 console.log('[ensure-native-deps] Running pnpm install to repair optional deps...');
 
-execSync('pnpm install --prefer-offline', {
+execSync('pnpm install --prefer-offline --ignore-scripts', {
     stdio: 'inherit',
+    env: {
+        ...process.env,
+        // Prevent re-entering this script via workspace postinstall.
+        SKIP_ENSURE_NATIVE_DEPS: '1',
+    },
 });
 
 const stillMissing = [];
@@ -126,8 +131,12 @@ for (const pkgName of stillMissing) {
     const version = pkgName.startsWith('@rollup/') ? rollupVersion : swcCoreVersion;
     const spec = version ? `${pkgName}@${version}` : pkgName;
     console.log(`[ensure-native-deps] Forcing install: ${spec}`);
-    execSync(`pnpm add --prefer-offline ${spec}`, {
+    execSync(`pnpm add --prefer-offline --ignore-scripts ${spec}`, {
         stdio: 'inherit',
+        env: {
+            ...process.env,
+            SKIP_ENSURE_NATIVE_DEPS: '1',
+        },
     });
 }
 
