@@ -13,10 +13,10 @@ importers:
   .:
     dependencies:
       '@vercel/analytics':
-        specifier: ^2.0.1
+        specifier: ^2.0.0
         version: 2.0.1(next@16.2.0(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(nuxt@4.3.1(@parcel/watcher@2.5.6)(@types/node@25.5.0)(@vue/compiler-sfc@3.5.30)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.2(jiti@2.6.1))(ioredis@5.10.1)(lightningcss@1.32.0)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.2))(yaml@2.8.2))(react@19.2.4)(vue-router@4.6.4(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
       framer-motion:
-        specifier: ^12.38.0
+        specifier: ^12.34.5
         version: 12.38.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       js-cookie:
         specifier: ^3.0.5
@@ -25,7 +25,7 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       next:
-        specifier: 16.2.0
+        specifier: 16.1.6
         version: 16.2.0(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
         specifier: 19.2.4
@@ -37,7 +37,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       resend:
-        specifier: ^6.9.4
+        specifier: ^6.9.3
         version: 6.9.4
     devDependencies:
       '@tailwindcss/postcss':
