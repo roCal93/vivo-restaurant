@@ -105,8 +105,13 @@ export async function PUT(request: NextRequest) {
   const csrfError = enforceSameOrigin(request)
   if (csrfError) return csrfError
 
-  const { sectionDocumentId, blockId, buttonId, fileId, locale: bodyLocale } =
-    await request.json()
+  const {
+    sectionDocumentId,
+    blockId,
+    buttonId,
+    fileId,
+    locale: bodyLocale,
+  } = await request.json()
   const locale = normalizeLocale(bodyLocale)
 
   if (!sectionDocumentId || !blockId || !buttonId || !fileId) {

@@ -23,16 +23,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version-file: 'nextjs-base/.nvmrc'
-    - name: Get pnpm store directory
-      shell: bash
-      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-    - name: Cache pnpm store
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('nextjs-base/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+        cache: 'pnpm'
+        cache-dependency-path: nextjs-base/pnpm-lock.yaml
     - name: Install dependencies (Next.js)
       run: cd nextjs-base && pnpm install --frozen-lockfile
     - name: Lint
