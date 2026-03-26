@@ -62,7 +62,12 @@
       "file-type": ">=21.3.2",
       "tmp": ">=0.2.4",
       "ajv": ">=8.18.0",
-      "qs": ">=6.14.2"
+      "qs": ">=6.14.2",
+      "micromatch>picomatch": "2.3.2",
+      "tinyglobby>picomatch": "4.0.4",
+      "anymatch>picomatch": "2.3.2",
+      "readdirp>picomatch": "2.3.2",
+      "cosmiconfig>yaml": "1.10.3"
     },
     "onlyBuiltDependencies": [
       "@swc/core",
