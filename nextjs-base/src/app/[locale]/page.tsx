@@ -8,8 +8,6 @@ import { SectionGeneric } from '@/components/sections/SectionGeneric'
 import { PageCollectionResponse, StrapiBlock } from '@/types/strapi'
 import { DynamicBlock } from '@/types/custom'
 import { draftMode } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { defaultLocale } from '@/lib/locales'
 
 type OpeningDay = {
   dayLabel: string
@@ -134,9 +132,9 @@ const getHomePageData = async (locale: string) =>
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string } | Promise<{ locale: string }>
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await Promise.resolve(params)
+  const { locale } = await params
 
   // Fetch home data to get the first image for preload
   const res = await getHomePageData(locale)
@@ -232,12 +230,6 @@ export default async function HomeLocale({
       : await getHomePageData(locale)
 
   const page = res?.data?.[0]
-
-  // If Strapi doesn't have the home page in this locale, we serve the default locale.
-  // Redirect so the URL matches the served locale.
-  if (page?.locale && page.locale !== locale && page.locale === defaultLocale) {
-    redirect(`/${defaultLocale}`)
-  }
 
   if (!page) {
     return (
