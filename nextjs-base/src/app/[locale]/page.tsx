@@ -7,7 +7,6 @@ import { Hero } from '@/components/sections/Hero'
 import { SectionGeneric } from '@/components/sections/SectionGeneric'
 import { PageCollectionResponse, StrapiBlock } from '@/types/strapi'
 import { DynamicBlock } from '@/types/custom'
-import { draftMode } from 'next/headers'
 
 type OpeningDay = {
   dayLabel: string
@@ -215,19 +214,17 @@ export default async function HomeLocale({
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams?: { draft?: string } | Promise<{ draft?: string }>
+  searchParams?: Promise<{ draft?: string }>
 }) {
   const { locale } = await params
 
-  const sparams = searchParams ? await Promise.resolve(searchParams) : undefined
-  const { isEnabled } = await draftMode()
+  const sparams = searchParams ? await searchParams : undefined
   const isDraft = sparams?.draft === 'true'
 
   // Bypass cache when Draft Mode is enabled (preview mode) regardless of draft/published status
-  const res =
-    isEnabled || isDraft
-      ? await fetchHomePageData(locale, isDraft)
-      : await getHomePageData(locale)
+  const res = isDraft
+    ? await fetchHomePageData(locale, true)
+    : await getHomePageData(locale)
 
   const page = res?.data?.[0]
 

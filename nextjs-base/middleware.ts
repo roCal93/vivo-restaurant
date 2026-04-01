@@ -76,6 +76,10 @@ async function isValidAdminToken(token: string | undefined): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl
+    const isRscOrPrefetchRequest =
+      req.headers.get('rsc') === '1' ||
+      req.headers.has('next-router-prefetch') ||
+      req.headers.get('accept')?.includes('text/x-component')
 
     // ── Admin routes ──────────────────────────────────────────────────────────
     if (pathname.startsWith('/admin')) {
@@ -141,6 +145,16 @@ export async function middleware(req: NextRequest) {
     }
 
     const res = NextResponse.next()
+
+    // Avoid mutating cookies on RSC/prefetch requests used by App Router soft navigation.
+    if (isRscOrPrefetchRequest) {
+      return res
+    }
+
+    const currentLocaleCookie = req.cookies.get('locale')?.value
+    if (currentLocaleCookie === locale) {
+      return res
+    }
 
     try {
       // Prefer the Cookies API when available (sets HttpOnly cookie)

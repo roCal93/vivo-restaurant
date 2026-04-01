@@ -12,7 +12,6 @@ import { DynamicBlock } from '@/types/custom'
 import { notFound, redirect } from 'next/navigation'
 import { defaultLocale } from '@/lib/locales'
 import { isSupportedLocale } from '@/lib/supported-locales'
-import { draftMode } from 'next/headers'
 
 type OpeningDay = {
   dayLabel: string
@@ -223,7 +222,7 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>
-  searchParams?: { draft?: string } | Promise<{ draft?: string }>
+  searchParams?: Promise<{ draft?: string }>
 }) {
   const { locale, slug } = await params
 
@@ -237,14 +236,12 @@ export default async function Page({
     redirect(`/${locale}`)
   }
 
-  const sparams = searchParams ? await Promise.resolve(searchParams) : undefined
-  const { isEnabled } = await draftMode()
-  // Draft Mode is the source of truth, searchParams is fallback
-  const isDraft = isEnabled || sparams?.draft === 'true'
+  const sparams = searchParams ? await searchParams : undefined
+  const isDraft = sparams?.draft === 'true'
 
   // Bypass cache when Draft Mode is enabled (preview mode) regardless of draft/published status
   let pageRes = isDraft
-    ? await fetchPageData(slug, locale, isDraft)
+    ? await fetchPageData(slug, locale, true)
     : await getPageData(slug, locale)
 
   if (!pageRes.data.length) {
@@ -252,8 +249,8 @@ export default async function Page({
     // which can trigger ERR_HTTP_HEADERS_SENT during streamed navigation.
     if (locale !== defaultLocale) {
       const defaultRes =
-        isEnabled || isDraft
-          ? await fetchPageData(slug, defaultLocale, isDraft)
+        isDraft
+          ? await fetchPageData(slug, defaultLocale, true)
           : await getPageData(slug, defaultLocale)
 
       if (defaultRes.data.length) {
@@ -264,8 +261,8 @@ export default async function Page({
     if (!pageRes.data.length) {
       // Fallback: try without locale (global)
       const fallbackRes =
-        isEnabled || isDraft
-          ? await fetchPageDataFallback(slug, isDraft)
+        isDraft
+          ? await fetchPageDataFallback(slug, true)
           : await getPageDataFallback(slug)
 
       if (!fallbackRes.data.length) {
@@ -288,16 +285,16 @@ export default async function Page({
   // so ReservationBlock can still enforce closed weekdays and slot ranges.
   if (sharedOpeningDays.length === 0) {
     const homeRes =
-      isEnabled || isDraft
-        ? await fetchPageData('home', locale, isDraft)
+      isDraft
+        ? await fetchPageData('home', locale, true)
         : await getPageData('home', locale)
     const homeSections = homeRes?.data?.[0]?.sections || []
     sharedOpeningDays = getSharedOpeningDays(homeSections)
 
     if (sharedOpeningDays.length === 0 && locale !== defaultLocale) {
       const homeDefaultRes =
-        isEnabled || isDraft
-          ? await fetchPageData('home', defaultLocale, isDraft)
+        isDraft
+          ? await fetchPageData('home', defaultLocale, true)
           : await getPageData('home', defaultLocale)
       const homeDefaultSections = homeDefaultRes?.data?.[0]?.sections || []
       sharedOpeningDays = getSharedOpeningDays(homeDefaultSections)
