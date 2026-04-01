@@ -48,7 +48,7 @@ const getSharedOpeningDays = (sections: unknown[]): OpeningDay[] => {
   return []
 }
 
-export const revalidate = 3600 // Revalidate every hour as fallback
+export const dynamic = 'force-dynamic'
 
 const fetchPageData = async (
   slug: string,

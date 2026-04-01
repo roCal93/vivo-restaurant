@@ -45,7 +45,7 @@ const getSharedOpeningDays = (sections: unknown[]): OpeningDay[] => {
   return []
 }
 
-export const revalidate = 60 // Revalidate every minute for faster updates
+export const dynamic = 'force-dynamic'
 
 const fetchHomePageData = async (locale: string, isDraft: boolean) => {
   const apiToken = isDraft
