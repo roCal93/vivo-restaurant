@@ -243,12 +243,13 @@ export default async function Page({
   const isDraft = isEnabled || sparams?.draft === 'true'
 
   // Bypass cache when Draft Mode is enabled (preview mode) regardless of draft/published status
-  const pageRes = isDraft
+  let pageRes = isDraft
     ? await fetchPageData(slug, locale, isDraft)
     : await getPageData(slug, locale)
 
   if (!pageRes.data.length) {
-    // Prefer redirecting to the default locale when the page doesn't exist in the requested locale.
+    // Resolve locale fallback in-place instead of redirecting late in RSC render,
+    // which can trigger ERR_HTTP_HEADERS_SENT during streamed navigation.
     if (locale !== defaultLocale) {
       const defaultRes =
         isEnabled || isDraft
@@ -256,25 +257,24 @@ export default async function Page({
           : await getPageData(slug, defaultLocale)
 
       if (defaultRes.data.length) {
-        redirect(`/${defaultLocale}/${slug}`)
+        pageRes = defaultRes
       }
     }
 
-    // Fallback: try without locale (global)
-    const fallbackRes =
-      isEnabled || isDraft
-        ? await fetchPageDataFallback(slug, isDraft)
-        : await getPageDataFallback(slug)
+    if (!pageRes.data.length) {
+      // Fallback: try without locale (global)
+      const fallbackRes =
+        isEnabled || isDraft
+          ? await fetchPageDataFallback(slug, isDraft)
+          : await getPageDataFallback(slug)
 
-    if (!fallbackRes.data.length) {
-      // Nothing found in any locale → show 404 page
-      notFound()
+      if (!fallbackRes.data.length) {
+        // Nothing found in any locale → show 404 page
+        notFound()
+      }
+
+      pageRes = fallbackRes
     }
-
-    const fallbackPage = fallbackRes.data[0]
-
-    // Redirect to the page in its original locale
-    redirect(`/${fallbackPage.locale}/${slug}`)
   }
 
   const page = pageRes.data[0]
