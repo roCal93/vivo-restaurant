@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Julius_Sans_One } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
+import ConditionalAnalytics from '@/components/shared/ConditionalAnalytics'
 import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { cookies, headers } from 'next/headers'
@@ -183,7 +183,7 @@ export default async function RootLayout({
         <DevPerfProtector />
         {children}
         {!cookieConsent && <CookieConsentBanner />}
-        {cookieConsent === 'accepted' && <Analytics />}
+        <ConditionalAnalytics />
       </body>
     </html>
   )

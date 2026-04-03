@@ -21,11 +21,15 @@ export default function CookieConsentBanner() {
   const labels = isEn
     ? {
         text: 'We use audience measurement cookies to improve the website. You can accept or refuse these cookies.',
+        learnMore: 'Privacy policy',
+        learnMoreHref: '/en/privacy-policy',
         accept: 'Accept',
         reject: 'Refuse',
       }
     : {
         text: "Nous utilisons des cookies de mesure d'audience pour ameliorer le site. Vous pouvez accepter ou refuser ces cookies.",
+        learnMore: 'Politique de confidentialité',
+        learnMoreHref: '/fr/privacy-policy',
         accept: 'Accepter',
         reject: 'Refuser',
       }
@@ -41,7 +45,12 @@ export default function CookieConsentBanner() {
             'radial-gradient(43.41% 65.16% at 65.56% 45.02%, #3CB152 0%, #194B23 79.62%)',
         }}
       >
-        <p className="text-sm leading-relaxed">{labels.text}</p>
+        <p className="text-sm leading-relaxed">
+          {labels.text}{' '}
+          <a href={labels.learnMoreHref} className="underline hover:opacity-75">
+            {labels.learnMore}
+          </a>
+        </p>
         <div className="mt-3 flex flex-wrap gap-3">
           <Button
             type="button"
@@ -58,7 +67,7 @@ export default function CookieConsentBanner() {
             onClick={() => {
               setConsentCookie('accepted')
               setVisible(false)
-              window.location.reload()
+              window.dispatchEvent(new Event('cookie-consent-accepted'))
             }}
             className="!text-sm !leading-normal px-5 py-2"
           >
