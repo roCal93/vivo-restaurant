@@ -1,6 +1,5 @@
 import React from 'react'
 import { LangSetter } from '@/components/locale'
-import { PageTransition } from '@/components/animations/PageTransition'
 import { notFound } from 'next/navigation'
 import { isSupportedLocale } from '@/lib/supported-locales'
 
@@ -13,7 +12,10 @@ interface LocaleLayoutProps {
   }>
 }
 
-export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+export default async function LocaleLayout({
+  children,
+  params,
+}: LocaleLayoutProps) {
   const { locale } = await params
 
   if (!(await isSupportedLocale(locale))) {
@@ -21,9 +23,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   }
 
   return (
-    <PageTransition>
+    <>
       <LangSetter lang={locale} />
       {children}
-    </PageTransition>
+    </>
   )
 }

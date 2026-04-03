@@ -14,6 +14,7 @@ type TextImageBlockProps = {
   verticalAlignment: 'top' | 'center' | 'bottom'
   textAlignment?: 'left' | 'center' | 'right' | 'justify'
   roundedImage?: boolean
+  priority?: boolean
 }
 
 const TextImageBlock = ({
@@ -24,6 +25,7 @@ const TextImageBlock = ({
   verticalAlignment,
   textAlignment = 'left',
   roundedImage = false,
+  priority = false,
 }: TextImageBlockProps) => {
   const shouldReduce = useReducedMotion()
 
@@ -163,7 +165,8 @@ const TextImageBlock = ({
         height={roundedImage ? 800 : image.height || 600}
         className={`${roundedImage ? 'w-full h-full object-cover rounded-full' : 'w-full h-auto object-cover rounded-lg'}`}
         sizes="(max-width: 768px) 100vw, 50vw"
-        unoptimized={true}
+        priority={priority}
+        loading={priority ? undefined : 'lazy'}
       />
     </motion.div>
   )
