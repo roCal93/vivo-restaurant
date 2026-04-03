@@ -217,14 +217,14 @@ export const Header = memo(
                   priority
                 />
               ) : (
-                <h1 className="text-5xl font-caveat cursor-pointer hover:text-gray-600 text-left">
+                <span className="text-5xl font-caveat cursor-pointer hover:text-gray-600 text-left">
                   {title.split(' ').map((word, i) => (
                     <span key={i} className="block">
                       {word}
                       {i < title.split(' ').length - 1 && ' '}
                     </span>
                   ))}
-                </h1>
+                </span>
               )}
             </Link>
 
@@ -333,14 +333,14 @@ export const Header = memo(
               priority
             />
           ) : (
-            <h1 className="text-5xl font-caveat cursor-pointer hover:text-gray-600 text-center mx-auto min-[850px]:text-left min-[850px]:mx-0">
+            <span className="text-5xl font-caveat cursor-pointer hover:text-gray-600 text-center mx-auto min-[850px]:text-left min-[850px]:mx-0">
               {title.split(' ').map((word, i) => (
                 <span key={i} className="block min-[850px]:inline">
                   {word}
                   {i < title.split(' ').length - 1 && ' '}
                 </span>
               ))}
-            </h1>
+            </span>
           )}
         </Link>
         <div className="hidden min-[850px]:flex items-center space-x-12">

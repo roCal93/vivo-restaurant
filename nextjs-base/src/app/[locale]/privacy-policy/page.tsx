@@ -88,8 +88,12 @@ export default async function PrivacyPolicyPage({
           </h1>
           {policy.lastUpdated && (
             <p className="text-sm opacity-80 mb-6">
-              {locale === 'en' ? 'Last updated:' : 'Derniere mise a jour :'}{' '}
-              {policy.lastUpdated}
+              {locale === 'en' ? 'Last updated:' : 'Dernière mise à jour :'}{' '}
+              {new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'fr-FR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              }).format(new Date(policy.lastUpdated))}
             </p>
           )}
           <article

@@ -42,7 +42,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: legal?.title || (locale === 'en' ? 'Legal Notice' : 'Mentions legales'),
+    title: legal?.title || (locale === 'en' ? 'Legal Notice' : 'Mentions légales'),
   }
 }
 
@@ -88,8 +88,12 @@ export default async function LegalNoticePage({
           </h1>
           {legal.lastUpdated && (
             <p className="text-sm opacity-80 mb-6">
-              {locale === 'en' ? 'Last updated:' : 'Derniere mise a jour :'}{' '}
-              {legal.lastUpdated}
+              {locale === 'en' ? 'Last updated:' : 'Dernière mise à jour :'}{' '}
+              {new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'fr-FR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              }).format(new Date(legal.lastUpdated))}
             </p>
           )}
           <article

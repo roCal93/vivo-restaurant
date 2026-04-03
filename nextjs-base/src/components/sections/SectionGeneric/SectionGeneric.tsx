@@ -153,7 +153,9 @@ export const SectionGeneric = ({
 
       // Add priority to the first ImageBlock of the first section (LCP optimization)
       const isLCPImage = index === firstImageBlockIndex
-      const finalProps = isLCPImage ? { ...blockProps, priority: true } : blockProps
+      const finalProps = isLCPImage
+        ? { ...blockProps, priority: true }
+        : blockProps
 
       return <BlockComponent key={index} {...finalProps} />
     }
@@ -210,11 +212,14 @@ export const SectionGeneric = ({
       className={`relative ${getTopSpacingClass(spacingTop)} ${getBottomSpacingClass(spacingBottom)} px-4`}
     >
       <div className={`${getContainerWidthClass(containerWidth)} mx-auto`}>
-        {title && (
-          <FadeIn>
+        {title &&
+          (isFirstSection ? (
             <h2 className="text-3xl font-bold mb-8 text-center">{title}</h2>
-          </FadeIn>
-        )}
+          ) : (
+            <FadeIn>
+              <h2 className="text-3xl font-bold mb-8 text-center">{title}</h2>
+            </FadeIn>
+          ))}
         <div className="space-y-4">
           {blocks?.map((block, index) => renderBlock(block, index))}
         </div>
