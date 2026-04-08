@@ -91,7 +91,7 @@ const nextConfig: NextConfig = {
 
     const csp = [
       "default-src 'self';",
-      `img-src 'self' data: blob: https://res.cloudinary.com ${normalizedStrapiOrigin} https://tile.openstreetmap.org https://*.tile.openstreetmap.org;`,
+      `img-src 'self' data: blob: https://res.cloudinary.com ${normalizedStrapiOrigin} https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://data.geopf.fr;`,
       `script-src 'self' 'unsafe-inline'${isProd ? '' : " 'unsafe-eval'"};`,
       "frame-src 'self';",
       "style-src 'self';",
