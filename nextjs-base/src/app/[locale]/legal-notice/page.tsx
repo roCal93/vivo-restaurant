@@ -42,7 +42,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: legal?.title || (locale === 'en' ? 'Legal Notice' : 'Mentions légales'),
+    title:
+      legal?.title || (locale === 'en' ? 'Legal Notice' : 'Mentions légales'),
   }
 }
 

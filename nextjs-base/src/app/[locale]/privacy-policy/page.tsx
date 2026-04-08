@@ -42,7 +42,9 @@ export async function generateMetadata({
   }
 
   return {
-    title: policy?.title || (locale === 'en' ? 'Privacy Policy' : 'Politique de confidentialite'),
+    title:
+      policy?.title ||
+      (locale === 'en' ? 'Privacy Policy' : 'Politique de confidentialite'),
   }
 }
 

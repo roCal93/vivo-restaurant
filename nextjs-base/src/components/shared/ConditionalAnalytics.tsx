@@ -5,7 +5,9 @@ import { Analytics } from '@vercel/analytics/next'
 
 function hasConsent(): boolean {
   if (typeof document === 'undefined') return false
-  return document.cookie.split(';').some((c) => c.trim() === 'cookie_consent=accepted')
+  return document.cookie
+    .split(';')
+    .some((c) => c.trim() === 'cookie_consent=accepted')
 }
 
 export default function ConditionalAnalytics() {
