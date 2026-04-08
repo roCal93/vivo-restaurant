@@ -76,6 +76,33 @@ async function isValidAdminToken(token: string | undefined): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl
+    const isReservationPage =
+      pathname === '/reservation-page' || pathname.endsWith('/reservation-page')
+    if (req.method === 'GET' && isReservationPage) {
+      const sensitiveParams = [
+        'firstName',
+        'lastName',
+        'email',
+        'phone',
+        'message',
+        'website',
+        'consent',
+      ]
+
+      const cleanedUrl = req.nextUrl.clone()
+      let removed = false
+      for (const key of sensitiveParams) {
+        if (cleanedUrl.searchParams.has(key)) {
+          cleanedUrl.searchParams.delete(key)
+          removed = true
+        }
+      }
+
+      if (removed) {
+        return NextResponse.redirect(cleanedUrl)
+      }
+    }
+
     const isRscOrPrefetchRequest =
       req.headers.get('rsc') === '1' ||
       req.headers.has('next-router-prefetch') ||
