@@ -30,7 +30,9 @@ function getAllowedOrigins() {
   }
 
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'http://localhost:3000'
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    'http://localhost:3000'
   const siteOrigin = normalizeOrigin(siteUrl)
   if (siteOrigin) set.add(siteOrigin)
 
@@ -39,7 +41,9 @@ function getAllowedOrigins() {
 
 function getSiteOrigin(): string {
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'http://localhost:3000'
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    'http://localhost:3000'
   return normalizeOrigin(siteUrl) || 'http://localhost:3000'
 }
 
