@@ -23,8 +23,8 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ username, password }),
       })
       if (res.ok) {
-        router.push('/admin')
         router.refresh()
+        router.push('/admin')
       } else {
         const data = await res.json()
         setError(data.error || 'Connexion échouée.')
