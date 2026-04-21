@@ -3,24 +3,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function AdminNav() {
   const pathname = usePathname()
   const router = useRouter()
-  const prefersReducedMotion = useReducedMotion()
-  const [mounted, setMounted] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-
-  // Guard: ensure server render and initial client hydration use the same value.
-  // useReducedMotion reads window.matchMedia on the client immediately, but
-  // returns null on the server — causing a React #418 hydration mismatch.
-  // By reading the real value only after mount we keep SSR and client in sync.
-  const shouldReduceMotion = mounted ? prefersReducedMotion : null
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   async function handleLogout() {
     await fetch('/api/admin/auth', {
@@ -65,18 +54,13 @@ export default function AdminNav() {
                 <motion.span
                   aria-hidden
                   className="absolute left-3 right-3 bottom-1 h-[1px] w-[calc(100%-1.5rem)] bg-white origin-left"
-                  initial={shouldReduceMotion ? {} : { scaleX: active ? 1 : 0 }}
-                  animate={
+                  initial={{ scaleX: active ? 1 : 0 }}
+                  animate={{ scaleX: active || hovered ? 1 : 0 }}
+                  transition={
                     shouldReduceMotion
-                      ? {}
-                      : { scaleX: active || hovered ? 1 : 0 }
+                      ? { duration: 0 }
+                      : { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 }
                   }
-                  transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 30,
-                    duration: 0.18,
-                  }}
                 />
               </Link>
             )
