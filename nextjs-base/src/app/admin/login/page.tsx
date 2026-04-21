@@ -2,11 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 
 export default function AdminLoginPage() {
-  const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -23,8 +21,7 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ username, password }),
       })
       if (res.ok) {
-        router.refresh()
-        router.push('/admin')
+        window.location.replace('/admin')
       } else {
         const data = await res.json()
         setError(data.error || 'Connexion échouée.')

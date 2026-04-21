@@ -59,7 +59,12 @@ export default function AdminNav() {
                   transition={
                     shouldReduceMotion
                       ? { duration: 0 }
-                      : { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 }
+                      : {
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 30,
+                          duration: 0.18,
+                        }
                   }
                 />
               </Link>
