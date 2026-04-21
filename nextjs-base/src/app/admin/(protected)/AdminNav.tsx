@@ -1,13 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
 
 export default function AdminNav() {
   const pathname = usePathname()
-  const router = useRouter()
   const shouldReduceMotion = useReducedMotion()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
@@ -17,8 +16,7 @@ export default function AdminNav() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'logout' }),
     })
-    router.push('/admin/login')
-    router.refresh()
+    window.location.replace('/')
   }
 
   const navLinks = [
