@@ -8,8 +8,19 @@ import { useState } from 'react'
 export default function AdminNav() {
   const pathname = usePathname()
   const router = useRouter()
-  const shouldReduceMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion()
+  const [mounted, setMounted] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  // Guard: ensure server render and initial client hydration use the same value.
+  // useReducedMotion reads window.matchMedia on the client immediately, but
+  // returns null on the server — causing a React #418 hydration mismatch.
+  // By reading the real value only after mount we keep SSR and client in sync.
+  const shouldReduceMotion = mounted ? prefersReducedMotion : null
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   async function handleLogout() {
     await fetch('/api/admin/auth', {
