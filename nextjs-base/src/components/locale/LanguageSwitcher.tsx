@@ -106,9 +106,12 @@ export function LanguageSwitcher({
 
   const [canHover, setCanHover] = React.useState(false)
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      setCanHover(window.matchMedia('(hover: hover)').matches)
+    function detectHover() {
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        setCanHover(window.matchMedia('(hover: hover)').matches)
+      }
     }
+    detectHover()
   }, [])
 
   const shouldReduceMotion = useReducedMotion()

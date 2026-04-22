@@ -188,7 +188,10 @@ export default function BlockedSlotsModal({
   }
 
   useEffect(() => {
-    load()
+    async function run() {
+      await load()
+    }
+    run()
   }, [])
 
   function toggleDay(date: string) {

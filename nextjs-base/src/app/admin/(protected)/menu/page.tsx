@@ -118,7 +118,10 @@ export default function MenuPage() {
   }, [])
 
   useEffect(() => {
-    loadButtons(currentLocale)
+    async function run() {
+      await loadButtons(currentLocale)
+    }
+    run()
   }, [currentLocale, loadButtons])
 
   async function uploadAndAssign(btn: MenuButton, rawFile: File) {

@@ -285,15 +285,15 @@ const TextMapBlock = ({
   const [geoError, setGeoError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (latitude && longitude) {
-      setCoords([latitude, longitude])
-      return
-    }
-
-    if (!address) return
-
     let mounted = true
     const fetchGeo = async () => {
+      if (latitude && longitude) {
+        if (mounted) setCoords([latitude, longitude])
+        return
+      }
+
+      if (!address) return
+
       try {
         setLoadingGeo(true)
         setGeoError(null)

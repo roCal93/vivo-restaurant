@@ -250,7 +250,10 @@ export default function ReservationsPage() {
   }, [])
 
   useEffect(() => {
-    fetchReservations()
+    async function run() {
+      await fetchReservations()
+    }
+    run()
   }, [fetchReservations])
 
   async function handleStatusChange(
