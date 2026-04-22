@@ -107,7 +107,7 @@ importers:
         version: 2.0.15
       tailwindcss:
         specifier: ^4
-        version: 4.2.2
+        version: 4.2.4
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -4984,9 +4984,6 @@ packages:
   tagged-tag@1.0.0:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
     engines: {node: '>=20'}
-
-  tailwindcss@4.2.2:
-    resolution: {integrity: sha512-KWBIxs1Xb6NoLdMVqhbhgwZf2PGBpPEiwOqgI4pFIYbNTfBXiKYyWoTsXgBQ9WFg/OlhnvHaY+AEpW7wSmFo2Q==}
 
   tailwindcss@4.2.4:
     resolution: {integrity: sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA==}
@@ -11237,8 +11234,6 @@ snapshots:
 
   tagged-tag@1.0.0:
     optional: true
-
-  tailwindcss@4.2.2: {}
 
   tailwindcss@4.2.4: {}
 
