@@ -96,7 +96,9 @@ export default function MenuPage() {
         if (!res.ok) return
         const data = await res.json()
         const list = Array.isArray(data?.locales)
-          ? data.locales.filter((l: unknown): l is string => typeof l === 'string')
+          ? data.locales.filter(
+              (l: unknown): l is string => typeof l === 'string'
+            )
           : []
 
         if (list.length === 0) return
@@ -104,7 +106,8 @@ export default function MenuPage() {
         setLocales(list)
 
         const preferredLocale =
-          typeof data?.defaultLocale === 'string' && list.includes(data.defaultLocale)
+          typeof data?.defaultLocale === 'string' &&
+          list.includes(data.defaultLocale)
             ? data.defaultLocale
             : list[0]
 
