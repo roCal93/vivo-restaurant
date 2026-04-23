@@ -2,8 +2,77 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { locales, defaultLocale } from './src/lib/locales'
 
+export const runtime = 'edge'
+
 const ADMIN_COOKIE = 'admin_token'
 const ADMIN_SECRET = process.env.ADMIN_SECRET
+
+function normalizeOrigin(input: string): string | null {
+  try {
+    return new URL(input).origin
+  } catch {
+    return null
+  }
+}
+
+function getAllowedFrameAncestors(): string[] {
+  const allowedEnv =
+    process.env.ALLOWED_ORIGINS ?? process.env.NEXT_PUBLIC_ALLOWED_ORIGINS
+  const strapiOrigin =
+    process.env.NEXT_PUBLIC_STRAPI_URL ?? 'http://localhost:1337'
+  const origins = new Set<string>()
+
+  if (allowedEnv) {
+    allowedEnv
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .forEach((value) => {
+        const origin = normalizeOrigin(value)
+        if (origin) origins.add(origin)
+      })
+  } else {
+    const origin = normalizeOrigin(strapiOrigin)
+    if (origin) origins.add(origin)
+  }
+
+  const siteOrigin = normalizeOrigin(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.SITE_URL ||
+      'http://localhost:3000'
+  )
+  if (siteOrigin) origins.add(siteOrigin)
+
+  return Array.from(origins)
+}
+
+function buildCsp(nonce: string): string {
+  const strapiOrigin =
+    process.env.NEXT_PUBLIC_STRAPI_URL ?? 'http://localhost:1337'
+  const normalizedStrapiOrigin = normalizeOrigin(strapiOrigin) || strapiOrigin
+  const isProd = process.env.NODE_ENV === 'production'
+  const frameAncestors = ["'self'", ...getAllowedFrameAncestors()].join(' ')
+
+  const directives = [
+    "default-src 'self';",
+    `img-src 'self' data: https://res.cloudinary.com https://data.geopf.fr ${normalizedStrapiOrigin};`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isProd ? '' : " 'unsafe-eval'"};`,
+    "style-src 'self';",
+    "style-src-attr 'unsafe-inline';",
+    `connect-src 'self' ${normalizedStrapiOrigin} https://nominatim.openstreetmap.org https://vitals.vercel-insights.com;`,
+    "font-src 'self' data:;",
+    "object-src 'none';",
+    "base-uri 'self';",
+    "form-action 'self';",
+    'upgrade-insecure-requests;',
+    `frame-ancestors ${frameAncestors};`,
+  ]
+
+  return directives
+    .join(' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
 
 function decodeBase64Url(input: string): string | null {
   try {
@@ -108,29 +177,45 @@ export async function middleware(req: NextRequest) {
       req.headers.has('next-router-prefetch') ||
       req.headers.get('accept')?.includes('text/x-component')
 
+    // Ignore static assets, API and other non-page requests
+    if (
+      pathname.startsWith('/_next') ||
+      pathname.startsWith('/api/') ||
+      pathname.startsWith('/static') ||
+      pathname.includes('.')
+    ) {
+      return NextResponse.next()
+    }
+
+    const nonce = btoa(crypto.randomUUID())
+    const csp = buildCsp(nonce)
+    const requestHeaders = new Headers(req.headers)
+    requestHeaders.set('x-nonce', nonce)
+
     // ── Admin routes ──────────────────────────────────────────────────────────
     if (pathname.startsWith('/admin')) {
-      // Always allow the login page
-      if (pathname === '/admin/login') return NextResponse.next()
-      // Redirect to login if token is missing or invalid
+      if (pathname === '/admin/login') {
+        const response = NextResponse.next({
+          request: { headers: requestHeaders },
+        })
+        response.headers.set('Content-Security-Policy', csp)
+        return response
+      }
+
       const token = req.cookies.get(ADMIN_COOKIE)?.value
       const isValid = await isValidAdminToken(token)
       if (!isValid) {
         const loginUrl = req.nextUrl.clone()
         loginUrl.pathname = '/admin/login'
-        return NextResponse.redirect(loginUrl)
+        const response = NextResponse.redirect(loginUrl)
+        response.headers.set('Content-Security-Policy', csp)
+        return response
       }
-      return NextResponse.next()
-    }
-
-    // Ignore static assets, API and other non-page requests
-    if (
-      pathname.startsWith('/_next') ||
-      pathname.startsWith('/api') ||
-      pathname.startsWith('/static') ||
-      pathname.includes('.')
-    ) {
-      return NextResponse.next()
+      const response = NextResponse.next({
+        request: { headers: requestHeaders },
+      })
+      response.headers.set('Content-Security-Policy', csp)
+      return response
     }
 
     const segments = pathname.split('/').filter(Boolean)
@@ -163,15 +248,22 @@ export async function middleware(req: NextRequest) {
         redirectRes.headers.set('set-cookie', cookieValue)
       }
 
+      redirectRes.headers.set('Content-Security-Policy', csp)
+
       return redirectRes
     }
 
     // If the first segment exists but is not a supported locale, do not rewrite/redirect.
     if (!(locales as readonly string[]).includes(first)) {
-      return NextResponse.next()
+      const response = NextResponse.next({
+        request: { headers: requestHeaders },
+      })
+      response.headers.set('Content-Security-Policy', csp)
+      return response
     }
 
-    const res = NextResponse.next()
+    const res = NextResponse.next({ request: { headers: requestHeaders } })
+    res.headers.set('Content-Security-Policy', csp)
 
     // Avoid mutating cookies on RSC/prefetch requests used by App Router soft navigation.
     if (isRscOrPrefetchRequest) {
@@ -214,5 +306,5 @@ export async function middleware(req: NextRequest) {
 
 // Match all non-api and non-_next routes (including /admin)
 export const config = {
-  matcher: ['/((?!_next|api|static).*)'],
+  matcher: ['/((?!_next|api/|static).*)'],
 }
