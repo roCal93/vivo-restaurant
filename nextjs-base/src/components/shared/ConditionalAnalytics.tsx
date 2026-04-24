@@ -11,9 +11,11 @@ function hasConsent(): boolean {
 }
 
 export default function ConditionalAnalytics() {
-  const [accepted, setAccepted] = useState(hasConsent)
+  const [accepted, setAccepted] = useState(false)
 
   useEffect(() => {
+    setAccepted(hasConsent())
+
     const handler = () => setAccepted(true)
     window.addEventListener('cookie-consent-accepted', handler)
     return () => window.removeEventListener('cookie-consent-accepted', handler)

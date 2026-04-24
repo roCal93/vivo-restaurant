@@ -62,9 +62,7 @@ export const BurgerMenu = ({
   }, [isOpen])
 
   // Track current hash to determine active state for anchor links
-  const getInitialHash = () =>
-    typeof window === 'undefined' ? '' : window.location.hash
-  const [currentHash, setCurrentHash] = useState<string>(getInitialHash)
+  const [currentHash, setCurrentHash] = useState<string>('')
   useEffect(() => {
     if (typeof window === 'undefined') return
     const onHashChange = () => setCurrentHash(window.location.hash)

@@ -1,22 +1,25 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 
 const CONSENT_COOKIE_NAME = 'cookie_consent'
 const ONE_YEAR = 60 * 60 * 24 * 365
 
+type CookieConsentBannerProps = {
+  locale?: string
+}
+
 function setConsentCookie(value: 'accepted' | 'rejected') {
   document.cookie = `${CONSENT_COOKIE_NAME}=${value}; Path=/; Max-Age=${ONE_YEAR}; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`
 }
 
-export default function CookieConsentBanner() {
+export default function CookieConsentBanner({
+  locale = 'fr',
+}: CookieConsentBannerProps) {
   const [visible, setVisible] = useState(true)
 
-  const isEn = useMemo(() => {
-    if (typeof document === 'undefined') return false
-    return document.documentElement.lang?.toLowerCase().startsWith('en')
-  }, [])
+  const isEn = locale === 'en'
 
   const labels = isEn
     ? {

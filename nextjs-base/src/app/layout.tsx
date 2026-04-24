@@ -182,7 +182,7 @@ export default async function RootLayout({
         {/* Dev-only protective wrapper to avoid dev tooling throwing on performance.measure */}
         <DevPerfProtector />
         {children}
-        {!cookieConsent && <CookieConsentBanner />}
+        {!cookieConsent && <CookieConsentBanner locale={locale} />}
         <ConditionalAnalytics />
       </body>
     </html>
