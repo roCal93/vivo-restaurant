@@ -283,6 +283,11 @@ const TextMapBlock = ({
   )
   const [loadingGeo, setLoadingGeo] = useState(false)
   const [geoError, setGeoError] = useState<string | null>(null)
+  const [shouldLoadMap, setShouldLoadMap] = useState(false)
+  const mapViewportRef = useRef<HTMLDivElement>(null)
+  const resolvedItineraryLinkLabel =
+    itineraryLinkLabel.trim() ||
+    (currentLocale === 'en' ? 'Get directions on Google Maps' : 'Itineraire Google Maps')
 
   useEffect(() => {
     let mounted = true
@@ -321,6 +326,30 @@ const TextMapBlock = ({
       mounted = false
     }
   }, [address, latitude, longitude])
+
+  useEffect(() => {
+    const node = mapViewportRef.current
+
+    if (!node || shouldLoadMap) return
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const entry = entries[0]
+
+        if (!entry?.isIntersecting) return
+
+        setShouldLoadMap(true)
+        observer.disconnect()
+      },
+      { rootMargin: '200px 0px' }
+    )
+
+    observer.observe(node)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [shouldLoadMap])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
@@ -404,6 +433,7 @@ const TextMapBlock = ({
       </motion.div>
 
       <motion.div
+        ref={mapViewportRef}
         className="rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900 h-64 md:h-96 relative md:mt-24"
         initial={{ opacity: 0, x: 60 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -426,7 +456,7 @@ const TextMapBlock = ({
           </div>
         )}
 
-        {coords && (
+        {coords && shouldLoadMap && (
           <>
             <LeafletMap
               lat={coords[0]}
@@ -453,7 +483,7 @@ const TextMapBlock = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute bottom-3 left-3 z-[1000] inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-md hover:bg-gray-100 transition-colors"
-                aria-label={itineraryLinkLabel}
+                aria-label={resolvedItineraryLinkLabel}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -482,10 +512,18 @@ const TextMapBlock = ({
                     d="M12.612 188.892S0 164.194 0 128.414c0-33.817 13.146-63.377 30.015-82.649l60.318 50.759z"
                   />
                 </svg>
-                {itineraryLinkLabel}
+                {resolvedItineraryLinkLabel}
               </a>
             )}
           </>
+        )}
+
+        {coords && !shouldLoadMap && (
+          <div className="flex h-full items-center justify-center px-6 text-center text-sm text-gray-500">
+            {currentLocale === 'en'
+              ? 'Map loading when this section becomes visible.'
+              : 'La carte se charge a l\'approche de cette section.'}
+          </div>
         )}
       </motion.div>
     </div>
