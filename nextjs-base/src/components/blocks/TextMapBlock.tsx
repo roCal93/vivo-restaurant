@@ -326,7 +326,7 @@ const TextMapBlock = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
       <motion.div
         className="prose max-w-none text-[var(--foreground)] pr-4 md:pr-8"
-        initial={shouldReduce ? {} : { opacity: 0, x: -60 }}
+        initial={{ opacity: 0, x: -60 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={
@@ -405,7 +405,7 @@ const TextMapBlock = ({
 
       <motion.div
         className="rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900 h-64 md:h-96 relative md:mt-24"
-        initial={shouldReduce ? {} : { opacity: 0, x: 60 }}
+        initial={{ opacity: 0, x: 60 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={

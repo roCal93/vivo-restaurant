@@ -83,7 +83,7 @@ const ButtonBlock = ({
         return (
           <motion.div
             key={index}
-            initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.35 }}
             transition={

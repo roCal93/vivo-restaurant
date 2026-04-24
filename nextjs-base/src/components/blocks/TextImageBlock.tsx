@@ -149,7 +149,7 @@ const TextImageBlock = ({
   const imageElement = (
     <motion.div
       className={`${roundedImage ? roundedImageSizeClasses[imageSize] : `w-full ${imageSizeClasses[imageSize]}`} flex-shrink-0 mx-auto`}
-      initial={shouldReduce ? {} : { opacity: 0, x: 60 }}
+      initial={{ opacity: 0, x: 60 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={
@@ -174,7 +174,7 @@ const TextImageBlock = ({
   const textElement = (
     <motion.div
       className="flex-1"
-      initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={

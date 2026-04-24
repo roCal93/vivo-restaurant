@@ -21,7 +21,6 @@ const CardsBlock = ({
   const shouldReduce = useReducedMotion()
 
   const getInitial = (index: number) => {
-    if (shouldReduce) return {}
     const directions = [
       { opacity: 0, x: -90 },
       { opacity: 0, y: 90 },
@@ -52,9 +51,7 @@ const CardsBlock = ({
 
   if (overlap) {
     return (
-      <div
-        className="flex flex-col md:flex-row items-center justify-center my-8 px-4 sm:px-8 gap-4 md:gap-0"
-      >
+      <div className="flex flex-col md:flex-row items-center justify-center my-8 px-4 sm:px-8 gap-4 md:gap-0">
         {cards.map((card, index) => (
           <motion.div
             key={card.id}
@@ -98,7 +95,9 @@ const CardsBlock = ({
   }
 
   return (
-    <div className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}>
+    <div
+      className={`grid ${columnClasses[columns]} ${alignmentClasses[alignment]} gap-6 my-8`}
+    >
       {cards.map((card, index) => (
         <motion.div
           key={card.id}

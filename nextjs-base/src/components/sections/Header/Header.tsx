@@ -246,13 +246,9 @@ export const Header = memo(
               return (
                 <motion.div
                   key={`${link.slug}-${link.anchor ?? index}`}
-                  initial={shouldReduceMotion ? {} : { opacity: 0, x: -60 }}
+                  initial={{ opacity: 0, x: -60 }}
                   animate={
-                    shouldReduceMotion
-                      ? {}
-                      : mounted
-                        ? { opacity: 1, x: 0 }
-                        : { opacity: 0, x: -60 }
+                    mounted ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }
                   }
                   transition={
                     shouldReduceMotion
@@ -282,16 +278,8 @@ export const Header = memo(
                     <motion.span
                       aria-hidden
                       className="absolute left-0 bottom-0 h-[1px] w-full bg-current origin-left transform"
-                      initial={
-                        shouldReduceMotion
-                          ? {}
-                          : { scaleX: active || hovered ? 1 : 0 }
-                      }
-                      animate={
-                        shouldReduceMotion
-                          ? {}
-                          : { scaleX: active || hovered ? 1 : 0 }
-                      }
+                      initial={{ scaleX: active || hovered ? 1 : 0 }}
+                      animate={{ scaleX: active || hovered ? 1 : 0 }}
                       transition={{
                         type: 'spring',
                         stiffness: 400,
@@ -355,13 +343,9 @@ export const Header = memo(
               return (
                 <motion.div
                   key={`${link.slug}-${link.anchor ?? index}`}
-                  initial={shouldReduceMotion ? {} : { opacity: 0, x: -60 }}
+                  initial={{ opacity: 0, x: -60 }}
                   animate={
-                    shouldReduceMotion
-                      ? {}
-                      : mounted
-                        ? { opacity: 1, x: 0 }
-                        : { opacity: 0, x: -60 }
+                    mounted ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }
                   }
                   transition={
                     shouldReduceMotion
@@ -393,16 +377,8 @@ export const Header = memo(
                     <motion.span
                       aria-hidden
                       className="absolute left-0 bottom-0 h-[1px] w-full bg-current origin-left transform"
-                      initial={
-                        shouldReduceMotion
-                          ? {}
-                          : { scaleX: active || hovered ? 1 : 0 }
-                      }
-                      animate={
-                        shouldReduceMotion
-                          ? {}
-                          : { scaleX: active || hovered ? 1 : 0 }
-                      }
+                      initial={{ scaleX: active || hovered ? 1 : 0 }}
+                      animate={{ scaleX: active || hovered ? 1 : 0 }}
                       transition={{
                         type: 'spring',
                         stiffness: 400,

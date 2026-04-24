@@ -41,7 +41,7 @@ const HeroBlockSimpleText = ({
           {title && (
             <motion.h1
               className="text-3xl md:text-4xl lg:text-5xl font-medium"
-              initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={
@@ -56,7 +56,7 @@ const HeroBlockSimpleText = ({
 
           <motion.p
             className="text-lg md:text-xl lg:text-2xl max-w-4xl whitespace-pre-line"
-            initial={shouldReduce ? {} : { opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={

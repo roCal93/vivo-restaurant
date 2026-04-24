@@ -14,14 +14,25 @@ type ImageBlockProps = {
   priority?: boolean
 }
 
-const ImageBlock = ({ image, caption, alignment, size, priority }: ImageBlockProps) => {
+const ImageBlock = ({
+  image,
+  caption,
+  alignment,
+  size,
+  priority,
+}: ImageBlockProps) => {
   const shouldReduce = useReducedMotion()
   const [visible, setVisible] = useState(false)
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const el = ref.current
-    if (!el || shouldReduce) {
+    if (shouldReduce) {
+      setVisible(true)
+      return
+    }
+
+    if (!el) {
       return
     }
     const observer = new IntersectionObserver(
@@ -63,10 +74,12 @@ const ImageBlock = ({ image, caption, alignment, size, priority }: ImageBlockPro
       className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}
       initial={priority ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
       animate={
-        priority || shouldReduce || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }
+        priority || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }
       }
       transition={
-        priority || shouldReduce ? { duration: 0 } : { duration: 0.7, ease: 'easeOut' }
+        priority || shouldReduce
+          ? { duration: 0 }
+          : { duration: 0.7, ease: 'easeOut' }
       }
     >
       <Image
