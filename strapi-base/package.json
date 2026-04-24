@@ -59,6 +59,8 @@
       "undici": "6.24.0",
       "axios": "1.15.0",
       "follow-redirects": "1.16.0",
+      "vite": "8.0.8",
+      "@vitejs/plugin-react-swc": "4.3.0",
       "esbuild": ">=0.25.0",
       "lodash-es": ">=4.18.0",
       "lodash": ">=4.18.0",
