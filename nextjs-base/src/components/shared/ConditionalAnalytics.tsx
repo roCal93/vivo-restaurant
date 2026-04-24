@@ -14,11 +14,16 @@ export default function ConditionalAnalytics() {
   const [accepted, setAccepted] = useState(false)
 
   useEffect(() => {
-    setAccepted(hasConsent())
+    const frame = window.requestAnimationFrame(() => {
+      setAccepted(hasConsent())
+    })
 
     const handler = () => setAccepted(true)
     window.addEventListener('cookie-consent-accepted', handler)
-    return () => window.removeEventListener('cookie-consent-accepted', handler)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('cookie-consent-accepted', handler)
+    }
   }, [])
 
   if (!accepted) return null

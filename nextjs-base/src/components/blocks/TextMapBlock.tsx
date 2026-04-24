@@ -15,7 +15,7 @@ type TextMapBlockProps = {
   zoom?: number
   showMarker?: boolean
   showItineraryLink?: boolean
-  itineraryLinkLabel?: string
+  itineraryLinkLabel?: string | null
   markerImage?: StrapiMedia | null
   showOpeningHours?: boolean
   openingHoursTitle?: string
@@ -289,7 +289,9 @@ const TextMapBlock = ({
     typeof itineraryLinkLabel === 'string' ? itineraryLinkLabel.trim() : ''
   const resolvedItineraryLinkLabel =
     sanitizedItineraryLinkLabel ||
-    (currentLocale === 'en' ? 'Get directions on Google Maps' : 'Itineraire Google Maps')
+    (currentLocale === 'en'
+      ? 'Get directions on Google Maps'
+      : 'Itineraire Google Maps')
 
   useEffect(() => {
     let mounted = true
@@ -335,7 +337,7 @@ const TextMapBlock = ({
     if (!node || shouldLoadMap) return
 
     const observer = new IntersectionObserver(
-      entries => {
+      (entries) => {
         const entry = entries[0]
 
         if (!entry?.isIntersecting) return
@@ -524,7 +526,7 @@ const TextMapBlock = ({
           <div className="flex h-full items-center justify-center px-6 text-center text-sm text-gray-500">
             {currentLocale === 'en'
               ? 'Map loading when this section becomes visible.'
-              : 'La carte se charge a l\'approche de cette section.'}
+              : "La carte se charge a l'approche de cette section."}
           </div>
         )}
       </motion.div>

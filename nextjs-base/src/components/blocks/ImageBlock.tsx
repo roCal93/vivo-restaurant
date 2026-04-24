@@ -22,15 +22,12 @@ const ImageBlock = ({
   priority,
 }: ImageBlockProps) => {
   const shouldReduce = useReducedMotion()
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(() => shouldReduce)
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const el = ref.current
-    if (shouldReduce) {
-      setVisible(true)
-      return
-    }
+    if (shouldReduce) return
 
     if (!el) {
       return
@@ -74,7 +71,9 @@ const ImageBlock = ({
       className={`my-6 ${alignmentClasses[alignment]} ${sizeClasses[size]}`}
       initial={priority ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
       animate={
-        priority || visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }
+        priority || shouldReduce || visible
+          ? { opacity: 1, y: 0 }
+          : { opacity: 0, y: 80 }
       }
       transition={
         priority || shouldReduce
