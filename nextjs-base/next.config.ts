@@ -97,8 +97,8 @@ const nextConfig: NextConfig = {
       "default-src 'self';",
       `img-src 'self' data: blob: https://res.cloudinary.com ${normalizedStrapiOrigin} https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://data.geopf.fr;`,
       `script-src 'self' 'unsafe-inline'${isProd ? '' : " 'unsafe-eval'"};`,
-      "frame-src 'self';",
-      "style-src 'self';",
+      "frame-src 'self' https://vercel.live;",
+      "style-src 'self' 'unsafe-inline';",
       "style-src-attr 'unsafe-inline';",
       `connect-src 'self' ${normalizedStrapiOrigin} https://nominatim.openstreetmap.org;`,
       // allow OSM geocoding requests (Nominatim)

@@ -285,8 +285,10 @@ const TextMapBlock = ({
   const [geoError, setGeoError] = useState<string | null>(null)
   const [shouldLoadMap, setShouldLoadMap] = useState(false)
   const mapViewportRef = useRef<HTMLDivElement>(null)
+  const sanitizedItineraryLinkLabel =
+    typeof itineraryLinkLabel === 'string' ? itineraryLinkLabel.trim() : ''
   const resolvedItineraryLinkLabel =
-    itineraryLinkLabel.trim() ||
+    sanitizedItineraryLinkLabel ||
     (currentLocale === 'en' ? 'Get directions on Google Maps' : 'Itineraire Google Maps')
 
   useEffect(() => {
