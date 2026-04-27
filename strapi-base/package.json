@@ -21,17 +21,17 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.42.0",
-    "@strapi/plugin-users-permissions": "5.42.0",
-    "@strapi/provider-upload-cloudinary": "5.42.0",
-    "@strapi/strapi": "5.42.0",
+    "@strapi/plugin-cloud": "5.43.0",
+    "@strapi/plugin-users-permissions": "5.43.0",
+    "@strapi/provider-upload-cloudinary": "5.43.0",
+    "@strapi/strapi": "5.43.0",
     "better-sqlite3": "12.6.0",
     "pg": "^8.17.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.3",
     "sharp": "^0.34.5",
-    "styled-components": "^6.3.6"
+    "styled-components": "^6.4.1"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -53,6 +53,7 @@
       "rollup": "4.59.0",
       "tar": "7.5.11",
       "serialize-javascript": "7.0.5",
+      "postcss": "8.5.10",
       "handlebars": "4.7.9",
       "brace-expansion@5": "5.0.5",
       "minimatch": ">=10.2.3",
