@@ -1,0 +1,96 @@
+{
+  "lockfileVersion": 1,
+  "starterVersion": "2.0.0",
+  "blockLibraryVersion": "1.0.0",
+  "blocks": {
+    "TextBlock": {
+      "version": "1.4.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "c9a5dfaf2c3003348bf7a40d7a1397413347e960e949e24e4722f55c5627d5dc",
+        "strapi": "427719aa16ff16fbe1ed6c8e7df629b536587131376911c47482d744020a6906"
+      }
+    },
+    "ImageBlock": {
+      "version": "1.2.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "df44c377d406982625281783fb8c4bee88e634de96d93381f38e50ce524ccd8d",
+        "strapi": "3ebd501f0cb8332a3f31e719c4bb45b95d0e3d098185dbc82a4cff7a8744ad1a"
+      }
+    },
+    "BackgroundBlock": {
+      "version": "1.0.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "89ba2a6e8250f5149026fe20ed2a761c7f6f693f28f706cf921e27a72c831a85",
+        "strapi": "c0b8e283abafa4de9b8e3e8ad794857610801833af840dbdf226f0b1d3a05b12"
+      }
+    },
+    "ButtonBlock": {
+      "version": "1.1.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "d837328de112d2546cc5878f8f3bba30f29d8c83af776575889493fce752ec45",
+        "strapi": "93561ecb8095349e725ab6ca1f3d6e7a1469e71e28a400b1396f5094df10efba"
+      }
+    },
+    "HeroBlockSimpleText": {
+      "version": "1.1.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "dfcdba0b776fd31b94d274805032d8629280d98d3b907d0cacf3979422866c0e",
+        "strapi": "cc54a7176b86909a753616556e194abc95225efd8ce1acf206a57f3867c3a8a1"
+      }
+    },
+    "TextImageBlock": {
+      "version": "1.4.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "55e05aab820ca7fcfb70a927fc531c8f1bc13ea3bd29e9e59949eca3a11580df",
+        "strapi": "29fcfcffdef8e44ae64610f7ee2ea742ca134c18873f67aaee82223470234dfe"
+      }
+    },
+    "CardsBlock": {
+      "version": "1.3.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "8050df86fafb9c71696548c2e8a06c296b460e203f316a74ceea424cf3c7aad4",
+        "strapi": "56457a0cc8f462d03d78fedc02fd92e4d93f7ddda0d92f10120d469a31b40f93"
+      }
+    },
+    "WorkBlock": {
+      "version": "1.0.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "e4616ecd1d738988d1371e13f2e8cf4dfb8c5d4dd12cbdc35c35a22cbc68aa97",
+        "strapi": "c842708304778d4625fe5890bdcc8aabf81697606235fc511ace344414b7d71b"
+      }
+    },
+    "WorkCard": {
+      "version": "1.0.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "a21d33ad5607bdb882ff9b7afd4d58454a6ea6fe987066033d312b717215ffd1",
+        "strapi": "unknown"
+      }
+    },
+    "ContactFormBlock": {
+      "version": "1.2.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "075c9708dfee13217791fcd891e76d3b100f5c7acb4c4259af7b155f123c84e1",
+        "strapi": "810cfd7cb07d5b165d357981f84e7004434bb62f0c026b71772475f6d99dd222"
+      }
+    },
+    "ReservationBlock": {
+      "version": "1.0.0",
+      "installedAt": "2026-05-19T12:19:42Z",
+      "checksum": {
+        "nextjs": "3d616a4946711f27a1acb249229ea41e68c52c815d3b592d10a7f61c76a1ecb9",
+        "strapi": "8b1497247857e1229302da03df1610c1bf0fc9b2d067a310087aa09c52581ead"
+      }
+    }
+  },
+  "lastUpdate": "2026-05-19T12:19:42Z"
+}
