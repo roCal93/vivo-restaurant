@@ -20,7 +20,7 @@
     "js-cookie": "^3.0.7",
     "leaflet": "^1.9.4",
     "next": "16.2.6",
-    "react": "19.2.5",
+    "react": "19.2.6",
     "react-dom": "19.2.5",
     "react-leaflet": "^5.0.0",
     "resend": "^6.12.2"
@@ -39,12 +39,12 @@
     "eslint-config-next": "16.2.4",
     "husky": "^9.1.6",
     "jsdom": "^29.1.1",
-    "lint-staged": "^16.3.3",
+    "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
     "strapi-to-typescript": "^2.0.15",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.7"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "pnpm": {
