@@ -62,7 +62,7 @@ export const Footer = ({
         <p className="text-sm text-[#EBFFEE]">
           {madeWithLabel}{' '}
           <a
-            href="https://hakuna-mataweb.com"
+            href="https://hakunamataweb.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#EBFFEE] hover:underline"
