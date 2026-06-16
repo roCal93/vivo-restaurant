@@ -52,6 +52,7 @@
       "serialize-javascript": "7.0.5",
       "postcss": "8.5.10",
       "vite": "7.3.2",
+      "esbuild": ">=0.28.1",
       "uuid": "14.0.0",
       "defu": "6.1.7",
       "unhead": "2.1.13",
