@@ -110,7 +110,7 @@ importers:
         version: 2.0.15
       tailwindcss:
         specifier: ^4
-        version: 4.3.0
+        version: 4.3.2
       typescript:
         specifier: ^6
         version: 6.0.3
@@ -2773,9 +2773,6 @@ packages:
   table-layout@0.4.5:
     resolution: {integrity: sha512-zTvf0mcggrGeTe/2jJ6ECkJHAQPIYEwDoqsiqBjI24mvRmQbInK5jq33fyypaCBxX08hMkfmdOqj6haT33EqWw==}
     engines: {node: '>=4.0.0'}
-
-  tailwindcss@4.3.0:
-    resolution: {integrity: sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q==}
 
   tailwindcss@4.3.2:
     resolution: {integrity: sha512-WtctNNSH8A9jlMIqxzuYumOHU5uGZyRv0Q5svQl+oEPy5w84YpBxdb7MdqyiSPQge5jTJ6zFQLq0PFygdccSBA==}
@@ -5717,8 +5714,6 @@ snapshots:
       lodash.padend: 4.6.1
       typical: 2.6.1
       wordwrapjs: 3.0.0
-
-  tailwindcss@4.3.0: {}
 
   tailwindcss@4.3.2: {}
 
