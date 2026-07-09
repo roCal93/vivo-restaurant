@@ -44,21 +44,22 @@
     "strapi-to-typescript": "^2.0.15",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "vite": "7.3.5"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "pnpm": {
     "overrides": {
       "serialize-javascript": "7.0.5",
       "postcss": "8.5.10",
-      "vite": "7.3.2",
+      "vite": "7.3.5",
       "esbuild": ">=0.28.1",
       "uuid": "14.0.0",
       "defu": "6.1.7",
       "unhead": "2.1.13",
       "lodash": "4.18.1",
       "lodash-es": "4.18.1",
-      "undici": ">=7.24.0",
+      "undici": ">=8.5.0",
       "flatted": ">=3.4.0",
       "micromatch>picomatch": "2.3.2",
       "tinyglobby>picomatch": "4.0.4",
@@ -70,7 +71,10 @@
       "unplugin-utils>picomatch": "4.0.4",
       "anymatch>picomatch": "2.3.2",
       "@parcel/watcher>picomatch": "4.0.4",
-      "@parcel/watcher-wasm>picomatch": "4.0.4"
+      "@parcel/watcher-wasm>picomatch": "4.0.4",
+      "js-yaml": ">=4.2.0",
+      "brace-expansion@>=4": "5.0.6",
+      "@babel/core": ">=7.29.6 <8.0.0"
     }
   }
 }
