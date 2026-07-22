@@ -106,8 +106,8 @@ importers:
         specifier: ^17.0.8
         version: 17.0.8
       prettier:
-        specifier: ^3.9.5
-        version: 3.9.5
+        specifier: ^3.9.6
+        version: 3.9.6
       strapi-to-typescript:
         specifier: ^2.0.15
         version: 2.0.15
@@ -2518,8 +2518,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier@3.9.5:
-    resolution: {integrity: sha512-/FVl766LpUfB5vXgCYOYa0MeV/441Ia99AeICQIQFTY/Nw0roZwULcXpku5i1/m5kt/baz+s4Zogspd839HSMg==}
+  prettier@3.9.6:
+    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -2813,9 +2813,6 @@ packages:
   table-layout@0.4.5:
     resolution: {integrity: sha512-zTvf0mcggrGeTe/2jJ6ECkJHAQPIYEwDoqsiqBjI24mvRmQbInK5jq33fyypaCBxX08hMkfmdOqj6haT33EqWw==}
     engines: {node: '>=4.0.0'}
-
-  tailwindcss@4.3.0:
-    resolution: {integrity: sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q==}
 
   tailwindcss@4.3.2:
     resolution: {integrity: sha512-WtctNNSH8A9jlMIqxzuYumOHU5uGZyRv0Q5svQl+oEPy5w84YpBxdb7MdqyiSPQge5jTJ6zFQLq0PFygdccSBA==}
@@ -5399,7 +5396,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier@3.9.5: {}
+  prettier@3.9.6: {}
 
   pretty-format@27.5.1:
     dependencies:
@@ -5785,8 +5782,6 @@ snapshots:
       lodash.padend: 4.6.1
       typical: 2.6.1
       wordwrapjs: 3.0.0
-
-  tailwindcss@4.3.0: {}
 
   tailwindcss@4.3.2: {}
 
