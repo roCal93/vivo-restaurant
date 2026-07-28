@@ -45,6 +45,10 @@ export async function generateMetadata({
     title:
       policy?.title ||
       (locale === 'en' ? 'Privacy Policy' : 'Politique de confidentialite'),
+    robots: {
+      index: false,
+      follow: true,
+    },
   }
 }
 
