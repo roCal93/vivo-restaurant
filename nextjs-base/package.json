@@ -51,7 +51,7 @@
   "pnpm": {
     "overrides": {
       "serialize-javascript": "7.0.5",
-      "postcss": "8.5.10",
+      "postcss": "8.5.24",
       "vite": "7.3.5",
       "esbuild": ">=0.28.1",
       "uuid": "14.0.0",
