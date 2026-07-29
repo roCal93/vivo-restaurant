@@ -18,3 +18,6 @@ updates:
       - dependency-name: "flatted"
       - dependency-name: "serialize-javascript"
       - dependency-name: "undici"
+      # Upstream eslint/minimatch currently resolves brace-expansion@1.x; no
+      # non-vulnerable version is resolvable without upstream major updates.
+      - dependency-name: "brace-expansion"
