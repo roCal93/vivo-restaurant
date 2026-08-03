@@ -27,8 +27,9 @@ overrides:
   anymatch>picomatch: 2.3.2
   '@parcel/watcher>picomatch': 4.0.4
   '@parcel/watcher-wasm>picomatch': 4.0.4
-  js-yaml: '>=4.3.0'
+  js-yaml: 5.2.2
   brace-expansion@>=4: 5.0.8
+  brace-expansion@1: 1.1.18
   sharp: '>=0.35.0'
   '@babel/core': '>=7.29.6 <8.0.0'
 
@@ -1421,8 +1422,8 @@ packages:
   bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}
 
-  brace-expansion@1.1.14:
-    resolution: {integrity: sha512-MWPGfDxnyzKU7rNOW9SP/c50vi3xrmrua/+6hfPbCS2ABNWfx24vPidzvC7krjU/RTo235sV776ymlsMtGKj8g==}
+  brace-expansion@1.1.18:
+    resolution: {integrity: sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==}
 
   brace-expansion@5.0.8:
     resolution: {integrity: sha512-JZyDyq3D4AUifKTPOB7DELf6XsB3WdPuNxCtob1vFXPsSXhdAiHBWJ/tJ8HAc9aH84BK+5JFZLNkJKx3G9kzQg==}
@@ -2119,8 +2120,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@5.2.1:
-    resolution: {integrity: sha512-zfLtNfQqxVqq3uaTqSkh4x4hZw3KHobGUA0fJUj4wawW8bsQLTVqpHdXSIzidh7o+4lEW36tANuAGdaFx6Zgnw==}
+  js-yaml@5.2.2:
+    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
     hasBin: true
 
   jsdom@30.0.1:
@@ -3288,7 +3289,7 @@ snapshots:
       globals: 14.0.0
       ignore: 5.3.2
       import-fresh: 3.3.1
-      js-yaml: 5.2.1
+      js-yaml: 5.2.2
       minimatch: 3.1.5
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
@@ -4070,7 +4071,7 @@ snapshots:
     dependencies:
       require-from-string: 2.0.2
 
-  brace-expansion@1.1.14:
+  brace-expansion@1.1.18:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
@@ -4940,7 +4941,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@5.2.1:
+  js-yaml@5.2.2:
     dependencies:
       argparse: 2.0.1
 
@@ -5110,7 +5111,7 @@ snapshots:
 
   minimatch@3.1.5:
     dependencies:
-      brace-expansion: 1.1.14
+      brace-expansion: 1.1.18
 
   minimist@1.2.8: {}
 
