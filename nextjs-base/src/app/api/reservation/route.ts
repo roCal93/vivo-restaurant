@@ -24,6 +24,7 @@ import {
   type OpeningDayConfig,
 } from '@/lib/opening-days'
 import { fetchOpeningDaysFromTextMap } from '@/lib/opening-days-from-strapi'
+import { DEFAULT_STRAPI_URL } from '@/lib/constants'
 
 const RATE_LIMIT = 3 // Max 3 soumissions
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000 // 10 minutes
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
     const companyName = process.env.COMPANY_NAME || 'Le restaurant'
 
     const strapiUrl =
-      process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
+      process.env.NEXT_PUBLIC_STRAPI_URL || DEFAULT_STRAPI_URL
     const strapiToken = process.env.STRAPI_API_TOKEN
     const strapiWriteToken =
       process.env.STRAPI_WRITE_API_TOKEN || process.env.STRAPI_API_TOKEN

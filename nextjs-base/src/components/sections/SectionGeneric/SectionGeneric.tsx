@@ -1,6 +1,11 @@
 import React from 'react'
 import * as Blocks from '@/components/blocks'
 import { FadeIn } from '@/components/animations/FadeIn'
+const kebabToPascal = (s: string): string =>
+  s
+    .split('-')
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join('')
 
 type BlocksMap = Record<string, React.ComponentType<Record<string, unknown>>>
 const TypedBlocks = Blocks as unknown as BlocksMap
@@ -68,18 +73,12 @@ export const SectionGeneric = ({
     return 'medium'
   }
 
-  const toPascalStatic = (s: string) =>
-    s
-      .split('-')
-      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-      .join('')
-
   // Pre-compute the index of the first image-bearing block for LCP priority (only needed in first section)
   const firstImageBlockIndex = isFirstSection
     ? (blocks || []).findIndex((b) => {
         const raw = (b as { __component?: string }).__component ?? ''
         const key = raw.split('.').pop() || raw
-        const name = toPascalStatic(key)
+        const name = kebabToPascal(key)
         return name === 'ImageBlock' || name === 'TextImageBlock'
       })
     : -1
@@ -105,15 +104,9 @@ export const SectionGeneric = ({
     // Component names are generated from Strapi __component like 'blocks.cards-block' -> 'CardsBlock'
     const raw = (block as { __component?: string }).__component ?? ''
     const key = raw.split('.').pop() || raw
-    const toPascal = (s: string) =>
-      s
-        .split('-')
-        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-        .join('')
-    const componentName = toPascal(key)
+    const componentName = kebabToPascal(key)
     const BlockComponent = TypedBlocks[componentName] as
-      | React.ComponentType<Record<string, unknown>>
-      | undefined
+      React.ComponentType<Record<string, unknown>> | undefined
 
     if (BlockComponent) {
       const isReservationBlock = raw === 'blocks.reservation-block'
@@ -175,42 +168,29 @@ export const SectionGeneric = ({
     )
   }
 
-  const getTopSpacingClass = (spacingValue: unknown) => {
-    const spacing = normalizeSpacing(spacingValue)
+  const getSpacingClass = (
+    spacing: 'none' | 'small' | 'medium' | 'large',
+    side: 'top' | 'bottom'
+  ) => {
+    const prefix = side === 'top' ? 'mt' : 'mb'
     switch (spacing) {
       case 'none':
         return ''
       case 'small':
-        return 'mt-12'
+        return `${prefix}-12`
       case 'medium':
-        return 'mt-24'
+        return `${prefix}-24`
       case 'large':
-        return 'mt-48'
+        return `${prefix}-48`
       default:
-        return 'mt-24'
-    }
-  }
-
-  const getBottomSpacingClass = (spacingValue: unknown) => {
-    const spacing = normalizeSpacing(spacingValue)
-    switch (spacing) {
-      case 'none':
-        return ''
-      case 'small':
-        return 'mb-12'
-      case 'medium':
-        return 'mb-24'
-      case 'large':
-        return 'mb-48'
-      default:
-        return 'mb-24'
+        return `${prefix}-24`
     }
   }
 
   return (
     <section
       id={identifier}
-      className={`relative ${getTopSpacingClass(spacingTop)} ${getBottomSpacingClass(spacingBottom)} px-4`}
+      className={`relative ${getSpacingClass(spacingTop, 'top')} ${getSpacingClass(spacingBottom, 'bottom')} px-4`}
     >
       <div className={`${getContainerWidthClass(containerWidth)} mx-auto`}>
         {title &&
