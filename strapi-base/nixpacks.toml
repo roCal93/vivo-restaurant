@@ -3,7 +3,7 @@
 # due to optional dependencies being omitted or the wrong Node version being used.
 
 [variables]
-NIXPACKS_NODE_VERSION = "20"
+NIXPACKS_NODE_VERSION = "22"
 NPM_CONFIG_OPTIONAL = "true"
 
 [phases.install]

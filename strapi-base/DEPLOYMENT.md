@@ -5,7 +5,7 @@
 - Compte GitHub
 - Compte Railway (gratuit)
 - Code poussé sur GitHub
-- Node 20.x (`nvm use` lit le `.nvmrc`)
+- Node 22.12.0 ou ultérieur (`nvm use` lit le `.nvmrc`)
 
 ## 🚀 Étapes de déploiement
 
@@ -58,11 +58,11 @@ ALLOWED_ORIGINS=https://amandatraduction.com,https://www.amandatraduction.com,ht
 
 Astuce (si erreur SWC lors du build) :
 
-- Ajoutez aussi `NIXPACKS_NODE_VERSION=20` dans les variables Railway
+- Ajoutez aussi `NIXPACKS_NODE_VERSION=22` dans les variables Railway
 - Assurez-vous que les dépendances optionnelles NPM ne sont pas omises (SWC)
 	- Option 1 : ajoutez `NPM_CONFIG_OPTIONAL=true` dans Railway
 	- Option 2 : gardez `optional=true` dans `.npmrc` (déjà configuré dans ce template)
-- Ou commitez un fichier `.nvmrc` avec `20` (déjà présent dans ce template)
+- Ou commitez un fichier `.nvmrc` avec `22` (déjà présent dans ce template)
 - Relancez un déploiement en vidant le cache (`Redeploy → Clear build cache`)
 
 Note : certaines configurations Railway/Railpack peuvent réutiliser un cache d'installation (`npm ci cached`).
