@@ -44,8 +44,8 @@
     "strapi-to-typescript": "^2.0.15",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "vitest": "^5.0.3",
-    "vite": "7.3.5"
+    "vite": "7.3.5",
+    "vitest": "^5.0.3"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "pnpm": {
@@ -72,12 +72,14 @@
       "anymatch>picomatch": "2.3.2",
       "@parcel/watcher>picomatch": "4.0.4",
       "@parcel/watcher-wasm>picomatch": "4.0.4",
-      "js-yaml": "5.2.2",
+      "js-yaml": "5.4.1",
       "nanoid": "3.3.18",
-      "brace-expansion@>=4": "5.0.8",
-      "brace-expansion@1": "1.1.18",
+      "minimatch@3>brace-expansion": "1.1.21",
+      "brace-expansion@>=4": "5.0.12",
+      "brace-expansion@1": "1.1.21",
       "sharp": ">=0.35.4",
-      "@babel/core": ">=7.29.6 <8.0.0"
+      "@babel/core": ">=7.29.6 <8.0.0",
+      "source-map-js": "1.2.2"
     }
   }
 }
